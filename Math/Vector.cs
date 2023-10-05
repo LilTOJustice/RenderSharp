@@ -20,6 +20,18 @@ namespace RenderSharp.Math
             this.vec = vec;
         }
 
+        public Vector(Vector<T> other)
+        {
+            vec = new T[other.Dimensions];
+            vec.CopyTo(vec, 0);
+        }
+
+        public Vector(Vector<T> other, int dimensions)
+        {
+            vec = new T[dimensions];
+            other.vec.CopyTo(vec, 0);
+        }
+
         private static Vector<T>? InitializeBinaryOperation(Vector<T> vec1, Vector<T> vec2, bool makeVec = true)
         {
             if (vec1.vec.Length != vec2.vec.Length)
@@ -56,6 +68,18 @@ namespace RenderSharp.Math
             for (int i = 0; i < lhs.vec.Length; i++)
             {
                 result[i] = lhs.vec[i] - rhs.vec[i];
+            }
+
+            return result;
+        }
+
+        public static Vector<T> operator /(Vector<T> lhs, Vector<T> rhs)
+        {
+            Vector<T> result = InitializeBinaryOperation(lhs, rhs)!;
+
+            for (int i = 0; i < lhs.vec.Length; i++)
+            {
+                result[i] = lhs.vec[i] / rhs.vec[i];
             }
 
             return result;

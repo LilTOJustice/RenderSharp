@@ -9,11 +9,11 @@ namespace RenderSharp.Math
 
         public T Y { get { return this[1]; } set { this[1] = value; } }
 
-        public Vector2()
-            : base(2)
-        {}
+        public Vector2() : base(2) { }
 
-        public Vector2(T X, T Y)
+        public Vector2(Vector2<T> vec) : base(vec) { }
+
+        public Vector2(T X, T Y) 
             : base(2)
         {
             this.X = X;

@@ -11,9 +11,54 @@ namespace RenderSharp.Math
 
         public T Z { get { return this[2]; } set { this[2] = value; } }
 
-        public Vector3()
-            : base(3)
-        {}
+        public Vector2<T> XY
+        {
+            get
+            {
+                return new Vector2<T>(X, Y);
+            }
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+            }
+        }
+
+        public Vector2<T> XZ
+        {
+            get
+            {
+                return new Vector2<T>(X, Z);
+            }
+            set
+            {
+                X = value.X;
+                Z = value.Y;
+            }
+        }
+
+        public Vector2<T> YZ
+        {
+            get
+            {
+                return new Vector2<T>(Y, Z);
+            }
+            set
+            {
+                Y = value.X;
+                Z = value.Y;
+            }
+        }
+
+        public Vector3() : base(3) { }
+
+        public Vector3(Vector2<T> vec, T Z)
+            : base(vec, 3)
+        {
+            this.Z = Z;
+        }
+
+        public Vector3(Vector3<T> vec) : base(vec) { }
 
         public Vector3(T X, T Y, T Z)
             : base(3)
