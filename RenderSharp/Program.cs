@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            
+            Vec2 vec = new();
         }
     }
 }
