@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text;
 
 namespace RenderSharp.Math
 {
@@ -6,6 +7,8 @@ namespace RenderSharp.Math
         where T : INumber<T>
     {
         private T[] vec;
+
+        public int Dimensions { get { return vec.Length; } }
 
         public Vector(int dimensions)
         {
@@ -27,15 +30,6 @@ namespace RenderSharp.Math
             return makeVec ? new Vector<T>(vec1.vec.Length) : null;
         }
         
-        private static void InitializeCrossOperation(Vector<T> vec1, Vector<T> vec2)
-        {
-            if (vec1.vec.Length != 3 && vec2.vec.Length != 3)
-            {
-                throw new VectorOperationException<T>(vec1, vec2);
-            }
-        }
-
-        // indexer
         public T this[int i]
         {
             get { return vec[i]; }
@@ -47,7 +41,7 @@ namespace RenderSharp.Math
         {
             Vector<T> result = InitializeBinaryOperation(lhs, rhs)!;
 
-            for (int i = 0; i <= lhs.vec.Length; i++)
+            for (int i = 0; i < lhs.vec.Length; i++)
             {
                 result[i] = lhs.vec[i] + rhs.vec[i];
             }
@@ -55,12 +49,11 @@ namespace RenderSharp.Math
             return result;
         }
 
-        // Subtraction operator
         public static Vector<T> operator -(Vector<T> lhs, Vector<T> rhs)
         {
             Vector<T> result = InitializeBinaryOperation(lhs, rhs)!;
 
-            for (int i = 0; i <= lhs.vec.Length; i++)
+            for (int i = 0; i < lhs.vec.Length; i++)
             {
                 result[i] = lhs.vec[i] - rhs.vec[i];
             }
@@ -68,46 +61,7 @@ namespace RenderSharp.Math
             return result;
         }
 
-        // Dot product
-        public static T Dot(Vector<T> lhs, Vector<T> rhs)
-        {
-            InitializeBinaryOperation(lhs, rhs, false);
-            T result = default!;
 
-            for (int i = 0; i <= lhs.vec.Length; i++)
-            {
-                result += (lhs.vec[i] * rhs.vec[i]);
-            }
-
-            return result;
-        }
-
-        // Cross product
-        public static Vector<T> Cross(Vector<T> lhs, Vector<T> rhs)
-        {
-            InitializeCrossOperation(lhs, rhs);
-            return new Vector<T>(
-                new T[] 
-                { 
-                    lhs[1] * rhs[2] - lhs[2] * rhs[1], 
-                    lhs[2] * rhs[0] - lhs[0] * rhs[2], 
-                    lhs[0] * rhs[1] - lhs[1] * rhs[0] 
-                }
-            );
-        }
-
-        // Cross product of 2d vectors
-        public static T Cross2d(Vector<T> lhs, Vector<T> rhs)
-        {
-            if (lhs.vec.Length != 2 || rhs.vec.Length != 2)
-            {
-                throw new VectorOperationException<T>(lhs, rhs);
-            }
-
-            return lhs[0] * rhs[1] - lhs[1] * rhs[0];
-        }
-
-        // Length function
         public double Length()
         {
             T len = default!;
@@ -118,6 +72,40 @@ namespace RenderSharp.Math
             }
             
             return System.Math.Sqrt(Convert.ToDouble(len));
+        }
+
+        public override string ToString()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("<");
+            for (int i = 0; i < vec.Length; i++)
+            {
+                stringBuilder.Append(vec[i].ToString());
+                if (i < vec.Length - 1)
+                {
+                    stringBuilder.Append(", ");
+                }
+            }
+            stringBuilder.Append(">");
+
+            return stringBuilder.ToString();
+        }
+        public static T Dot(Vector<T> lhs, Vector<T> rhs)
+        {
+            InitializeBinaryOperation(lhs, rhs);
+            T result = default!;
+
+            for (int i = 0; i < lhs.vec.Length; i++)
+            {
+                result += lhs[i] * rhs[i];
+            }
+
+            return result;
+        }
+
+        public T Dot(Vector<T> rhs)
+        {
+            return Dot(this, rhs);
         }
     }
 }

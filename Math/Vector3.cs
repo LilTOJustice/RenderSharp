@@ -22,5 +22,20 @@ namespace RenderSharp.Math
             this.Y = Y;
             this.Z = Z;
         }
+
+        public static Vector3<T> Cross(Vector3<T> lhs, Vector3<T> rhs)
+        {
+            return new Vector3<T>
+            (
+                lhs[1] * rhs[2] - lhs[2] * rhs[1],
+                lhs[2] * rhs[0] - lhs[0] * rhs[2],
+                lhs[0] * rhs[1] - lhs[1] * rhs[0]
+            );
+        }
+
+        public Vector3<T> Cross(Vector3<T> rhs)
+        {
+            return Cross(this, rhs);
+        }
     }
 }

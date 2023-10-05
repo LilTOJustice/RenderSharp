@@ -1,6 +1,9 @@
-﻿namespace RenderSharp.Math
+﻿using System.Numerics;
+
+namespace RenderSharp.Math
 {
     public class VectorOperationException<T> : Exception
+        where T : INumber<T>
     {
         public VectorOperationException(Vector<T> vector)
             : base($"Operation not supported for vector {vector.ToString()}")
