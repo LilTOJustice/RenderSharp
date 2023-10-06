@@ -8,18 +8,13 @@ namespace RendererCommon
 {
     public class Texture
     {
+        private RGBA[,] _texture; 
 
-        //Fields
-        private RGBA[,] _texture; //This is the color+alpha of pixel [i,j]
-
-        //Properties
-        public Vec2 Size { get; set; } //Unsigned vect
+        public Vec2 Size { get; set; } 
 
         public int Height { get { return Size.Y; } }
+
         public int Width { get { return Size.X; } }
-        
-
-
 
         public Texture(Vec2 size)
         {
@@ -41,18 +36,12 @@ namespace RendererCommon
             }
         }
 
-
         public Texture(string filename)
         {
-
             var image = new MagickImage(filename);
-
             var bmp = image.ToByteArray(MagickFormat.Rgba);
 
-            var channels = image.ChannelCount;
-
-            Size = new Vec2 (image.Width, image.Height); //X-Y so we swap the order
-
+            Size = new Vec2 (image.Width, image.Height);
             _texture = new RGBA[Height, Width];
 
             for (int i = 0; i < image.Height; i++)
@@ -74,7 +63,6 @@ namespace RendererCommon
             }
         }
 
-        //Indexer
         public RGBA this[int x, int y]
         {
             get { return _texture[y, x]; }
