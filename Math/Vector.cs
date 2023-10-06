@@ -6,9 +6,11 @@ namespace RenderSharp.Math
     public class Vector<T>
         where T : INumber<T>
     {
-        private T[] vec;
+        protected T[] vec;
 
         public int Dimensions { get { return vec.Length; } }
+
+        public T[] Components { get { return vec; } }
 
         public Vector(int dimensions)
         {
@@ -48,7 +50,6 @@ namespace RenderSharp.Math
             set { vec[i] = value; }
         }
 
-        // Addition operator
         public static Vector<T> operator +(Vector<T> lhs, Vector<T> rhs)
         {
             Vector<T> result = InitializeBinaryOperation(lhs, rhs)!;
@@ -68,6 +69,18 @@ namespace RenderSharp.Math
             for (int i = 0; i < lhs.vec.Length; i++)
             {
                 result[i] = lhs.vec[i] - rhs.vec[i];
+            }
+
+            return result;
+        }
+
+        public static Vector<T> operator *(Vector<T> lhs, Vector<T> rhs)
+        {
+            Vector<T> result = InitializeBinaryOperation(lhs, rhs)!;
+
+            for (int i = 0; i < lhs.vec.Length; i++)
+            {
+                result[i] = lhs.vec[i] * rhs.vec[i];
             }
 
             return result;

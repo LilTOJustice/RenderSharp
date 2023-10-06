@@ -51,6 +51,8 @@ namespace RenderSharp.Math
         }
 
         public Vector3() : base(3) { }
+        
+        public Vector3(T[] vec) : base(vec) { }
 
         public Vector3(Vector2<T> vec, T Z)
             : base(vec, 3)
@@ -81,6 +83,26 @@ namespace RenderSharp.Math
         public Vector3<T> Cross(Vector3<T> rhs)
         {
             return Cross(this, rhs);
+        }
+
+        public static Vector3<T> operator +(Vector3<T> lhs, Vector3<T> rhs)
+        {
+            return new Vector3<T>(((Vector<T>)lhs + (Vector<T>)rhs).Components);
+        }
+
+        public static Vector3<T> operator -(Vector3<T> lhs, Vector3<T> rhs)
+        {
+            return new Vector3<T>(((Vector<T>)lhs - (Vector<T>)rhs).Components);
+        }
+
+        public static Vector3<T> operator *(Vector3<T> lhs, Vector3<T> rhs)
+        {
+            return new Vector3<T>(((Vector<T>)lhs * (Vector<T>)rhs).Components);
+        }
+
+        public static Vector3<T> operator /(Vector3<T> lhs, Vector3<T> rhs)
+        {
+            return new Vector3<T>(((Vector<T>)lhs / (Vector<T>)rhs).Components);
         }
     }
 }

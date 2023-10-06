@@ -29,6 +29,8 @@ namespace RenderSharp.Renderer.Color
 
         public RGBA() { }
 
+        public RGBA(byte[] vec) : base(vec) { }
+
         public RGBA(RGBA rgba) : base(rgba) { }
 
         public RGBA(RGB rgb, byte a) : base(rgb, a) { }
@@ -83,6 +85,26 @@ namespace RenderSharp.Renderer.Color
         public static explicit operator HSV(RGBA rgba)
         {
             return rgba.ToHSV();
+        }
+
+        public static RGBA operator +(RGBA lhs, RGBA rhs)
+        {
+            return new RGBA(((Vector4<byte>)lhs + (Vector4<byte>)rhs).Components);
+        }
+
+        public static RGBA operator -(RGBA lhs, RGBA rhs)
+        {
+            return new RGBA(((Vector4<byte>)lhs + (Vector4<byte>)rhs).Components);
+        }
+
+        public static RGBA operator *(RGBA lhs, RGBA rhs)
+        {
+            return new RGBA(((Vector4<byte>)lhs * (Vector4<byte>)rhs).Components);
+        }
+
+        public static RGBA operator /(RGBA lhs, RGBA rhs)
+        {
+            return new RGBA(((Vector4<byte>)lhs / (Vector4<byte>)rhs).Components);
         }
     }
 }

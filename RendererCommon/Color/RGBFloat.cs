@@ -13,6 +13,8 @@ namespace RenderSharp.Renderer.Color
 
         public RGBFloat() { }
 
+        public RGBFloat(double[] vec) : base(vec) { }
+
         public RGBFloat(RGBFloat rgbf) : base(rgbf) { }
 
         public RGBFloat(double r, double g, double b) : base(r, g, b) { }
@@ -65,6 +67,31 @@ namespace RenderSharp.Renderer.Color
         public static implicit operator HSVA(RGBFloat rgbf)
         {
             return rgbf.ToHSVA();
+        }
+
+        public RGBFloat Cross(RGBFloat rhs)
+        {
+            return new RGBFloat(Cross((Vector3<double>)this, (Vector3<double>)rhs).Components);
+        }
+
+        public static RGBFloat operator +(RGBFloat lhs, RGBFloat rhs)
+        {
+            return new RGBFloat(((Vector3<double>)lhs + (Vector3<double>)rhs).Components);
+        }
+
+        public static RGBFloat operator -(RGBFloat lhs, RGBFloat rhs)
+        {
+            return new RGBFloat(((Vector3<double>)lhs + (Vector3<double>)rhs).Components);
+        }
+
+        public static RGBFloat operator *(RGBFloat lhs, RGBFloat rhs)
+        {
+            return new RGBFloat(((Vector3<double>)lhs * (Vector3<double>)rhs).Components);
+        }
+
+        public static RGBFloat operator /(RGBFloat lhs, RGBFloat rhs)
+        {
+            return new RGBFloat(((Vector3<double>)lhs / (Vector3<double>)rhs).Components);
         }
     }
 }

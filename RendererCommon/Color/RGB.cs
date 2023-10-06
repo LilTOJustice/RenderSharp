@@ -12,6 +12,8 @@ namespace RenderSharp.Renderer.Color
 
         public RGB() { }
 
+        public RGB(byte[] vec) : base(vec) { }
+
         public RGB(RGB rgb) : base(rgb) { }
 
         public RGB(byte r, byte g, byte b) : base(r, g, b) { }
@@ -78,6 +80,31 @@ namespace RenderSharp.Renderer.Color
         public static implicit operator HSVA(RGB rgb)
         {
             return rgb.ToHSVA();
+        }
+
+        public RGB Cross(RGB rhs)
+        {
+            return new RGB(Cross((Vector3<byte>)this, (Vector3<byte>)rhs).Components);
+        }
+
+        public static RGB operator +(RGB lhs, RGB rhs)
+        {
+            return new RGB(((Vector3<byte>)lhs + (Vector3<byte>)rhs).Components);
+        }
+
+        public static RGB operator -(RGB lhs, RGB rhs)
+        {
+            return new RGB(((Vector3<byte>)lhs + (Vector3<byte>)rhs).Components);
+        }
+
+        public static RGB operator *(RGB lhs, RGB rhs)
+        {
+            return new RGB(((Vector3<byte>)lhs * (Vector3<byte>)rhs).Components);
+        }
+
+        public static RGB operator /(RGB lhs, RGB rhs)
+        {
+            return new RGB(((Vector3<byte>)lhs / (Vector3<byte>)rhs).Components);
         }
     }
 }

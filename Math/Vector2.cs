@@ -11,6 +11,8 @@ namespace RenderSharp.Math
 
         public Vector2() : base(2) { }
 
+        public Vector2(T[] vec) : base(vec) { }
+
         public Vector2(Vector2<T> vec) : base(vec) { }
 
         public Vector2(T X, T Y) 
@@ -38,6 +40,26 @@ namespace RenderSharp.Math
         public T Cross2d(Vector2<T> rhs)
         {
             return Cross2d(this, rhs);
+        }
+
+        public static Vector2<T> operator +(Vector2<T> lhs, Vector2<T> rhs)
+        {
+            return new Vector2<T>(((Vector<T>)lhs + (Vector<T>)rhs).Components);
+        }
+
+        public static Vector2<T> operator -(Vector2<T> lhs, Vector2<T> rhs)
+        {
+            return new Vector2<T>(((Vector<T>)lhs - (Vector<T>)rhs).Components);
+        }
+
+        public static Vector2<T> operator *(Vector2<T> lhs, Vector2<T> rhs)
+        {
+            return new Vector2<T>(((Vector<T>)lhs * (Vector<T>)rhs).Components);
+        }
+
+        public static Vector2<T> operator /(Vector2<T> lhs, Vector2<T> rhs)
+        {
+            return new Vector2<T>(((Vector<T>)lhs / (Vector<T>)rhs).Components);
         }
     }
 }

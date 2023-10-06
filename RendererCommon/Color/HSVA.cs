@@ -28,6 +28,8 @@ namespace RenderSharp.Renderer.Color
 
         public HSVA() { }
 
+        public HSVA(double[] vec) : base(vec) { }
+
         public HSVA(HSVA hsva) : base(hsva) { }
 
         public HSVA(HSV hsv, double a) : base(hsv, a) { }
@@ -82,6 +84,26 @@ namespace RenderSharp.Renderer.Color
         public static explicit operator HSV(HSVA hsva)
         {
             return hsva.ToHSV();
+        }
+
+        public static HSVA operator +(HSVA lhs, HSVA rhs)
+        {
+            return new HSVA(((Vector4<double>)lhs + (Vector4<double>)rhs).Components);
+        }
+
+        public static HSVA operator -(HSVA lhs, HSVA rhs)
+        {
+            return new HSVA(((Vector4<double>)lhs + (Vector4<double>)rhs).Components);
+        }
+
+        public static HSVA operator *(HSVA lhs, HSVA rhs)
+        {
+            return new HSVA(((Vector4<double>)lhs * (Vector4<double>)rhs).Components);
+        }
+
+        public static HSVA operator /(HSVA lhs, HSVA rhs)
+        {
+            return new HSVA(((Vector4<double>)lhs / (Vector4<double>)rhs).Components);
         }
     }
 }

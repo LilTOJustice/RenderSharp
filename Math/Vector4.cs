@@ -110,6 +110,8 @@ namespace RenderSharp.Math
 
         public Vector4() : base(4) { }
 
+        public Vector4(T[] vec) : base(vec) { }
+
         public Vector4(Vector2<T> vec, T Z, T W)
             : base(vec, 4)
         {
@@ -132,6 +134,26 @@ namespace RenderSharp.Math
             this.Y = Y;
             this.Z = Z;
             this.W = W;
+        }
+
+        public static Vector4<T> operator +(Vector4<T> lhs, Vector4<T> rhs)
+        {
+            return new Vector4<T>(((Vector<T>)lhs + (Vector<T>)rhs).Components);
+        }
+
+        public static Vector4<T> operator -(Vector4<T> lhs, Vector4<T> rhs)
+        {
+            return new Vector4<T>(((Vector<T>)lhs - (Vector<T>)rhs).Components);
+        }
+
+        public static Vector4<T> operator *(Vector4<T> lhs, Vector4<T> rhs)
+        {
+            return new Vector4<T>(((Vector<T>)lhs * (Vector<T>)rhs).Components);
+        }
+
+        public static Vector4<T> operator /(Vector4<T> lhs, Vector4<T> rhs)
+        {
+            return new Vector4<T>(((Vector<T>)lhs / (Vector<T>)rhs).Components);
         }
     }
 }
