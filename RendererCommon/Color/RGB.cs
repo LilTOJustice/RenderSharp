@@ -106,5 +106,15 @@ namespace RenderSharp.Renderer.Color
         {
             return new RGB(((Vector3<byte>)lhs / (Vector3<byte>)rhs).Components);
         }
+
+        public static RGB operator /(RGB lhs, byte scalar)
+        {
+            return new RGB(((Vector3<byte>)lhs / scalar).Components);
+        }
+
+        public static FVec3 operator /(RGB lhs, double scalar)
+        {
+            return new FVec3((new Vector3<double>(lhs.R, lhs.G, lhs.B) / scalar).Components);
+        }
     }
 }
