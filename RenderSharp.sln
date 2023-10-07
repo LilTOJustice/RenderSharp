@@ -12,7 +12,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp", "RenderSharp\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RendererCommon", "RendererCommon\RendererCommon.csproj", "{7DB2BA01-2256-41B7-A068-C43C8ED6A4DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math", "Math\Math.csproj", "{8FE7CD98-C5DE-4081-BC1D-B2CE98D3D7A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Math", "Math\Math.csproj", "{8FE7CD98-C5DE-4081-BC1D-B2CE98D3D7A3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cppsrc", "cppsrc", "{93361095-72F5-4A1F-A51D-35BE84BD3BD1}"
+	ProjectSection(SolutionItems) = preProject
+		cppsrc\CImg.h = cppsrc\CImg.h
+		cppsrc\exampleshaders.h = cppsrc\exampleshaders.h
+		cppsrc\frame.cpp = cppsrc\frame.cpp
+		cppsrc\frame.h = cppsrc\frame.h
+		cppsrc\linalg.cpp = cppsrc\linalg.cpp
+		cppsrc\linalg.h = cppsrc\linalg.h
+		cppsrc\main.cpp = cppsrc\main.cpp
+		cppsrc\render2d.cpp = cppsrc\render2d.cpp
+		cppsrc\render2d.h = cppsrc\render2d.h
+		cppsrc\scene2d.cpp = cppsrc\scene2d.cpp
+		cppsrc\scene2d.h = cppsrc\scene2d.h
+		cppsrc\shader.h = cppsrc\shader.h
+		cppsrc\shapes.cpp = cppsrc\shapes.cpp
+		cppsrc\shapes.h = cppsrc\shapes.h
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +53,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{93361095-72F5-4A1F-A51D-35BE84BD3BD1} = {7220F2A5-231B-4606-8111-E6373949C413}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AB45FEA9-459B-4CB1-A66E-3CEE1D6D901A}
