@@ -135,5 +135,10 @@ namespace RenderSharp.Renderer.Color
         {
             return new HSV (((Vector3<double>)lhs / (Vector3<double>)rhs).Components);
         }
+
+        public static HSV operator /(HSV lhs, double scalar)
+        {
+            return new HSV(((Vector3<double>)lhs / scalar).Components);
+        }
     }
 }

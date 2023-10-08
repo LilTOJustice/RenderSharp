@@ -155,5 +155,10 @@ namespace RenderSharp.Math
         {
             return new Vector4<T>(((Vector<T>)lhs / (Vector<T>)rhs).Components);
         }
+
+        public static Vector4<T> operator /(Vector4<T> lhs, T scalar)
+        {
+            return new Vector4<T>(((Vector<T>)lhs / scalar).Components);
+        }
     }
 }

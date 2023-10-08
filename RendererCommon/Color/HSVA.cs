@@ -105,5 +105,10 @@ namespace RenderSharp.Renderer.Color
         {
             return new HSVA(((Vector4<double>)lhs / (Vector4<double>)rhs).Components);
         }
+
+        public static HSVA operator /(HSVA lhs, double scalar)
+        {
+            return new HSVA(((Vector4<double>)lhs / scalar).Components);
+        }
     }
 }

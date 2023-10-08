@@ -93,5 +93,10 @@ namespace RenderSharp.Renderer.Color
         {
             return new RGBFloat(((Vector3<double>)lhs / (Vector3<double>)rhs).Components);
         }
+
+        public static RGBFloat operator /(RGBFloat lhs, double scalar)
+        {
+            return new RGBFloat(((Vector3<double>)lhs / scalar).Components);
+        }
     }
 }
