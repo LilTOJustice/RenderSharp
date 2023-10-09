@@ -6,7 +6,7 @@ namespace RenderSharp
 {
     public class ExampleShaders
     {
-        const int MAXITS = 100;
+        static int MAXITS = 100;
         static double Mandel(Complex c)
         {
             int its = 0;
