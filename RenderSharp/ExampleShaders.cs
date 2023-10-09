@@ -73,9 +73,4 @@ namespace RenderSharp
             args.fragOut = (RGBAFloat)args.fragIn * ((RGBAFloat)new HSV(180 * args.time % 360, 1d, 1d) / 255d);
         }
     }
-
-    public class TestClass
-    {
-        public FragShader shaderQueue { get; set; } = (FragShaderArgs) => { };
-    }
 }
