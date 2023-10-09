@@ -1,7 +1,6 @@
 ﻿using RenderSharp.Math;
-using System.Runtime.CompilerServices;
 
-namespace RenderSharp.Renderer.Color
+namespace RenderSharp.RendererCommon
 {
     public class RGBA : Vector4<byte>
     {
