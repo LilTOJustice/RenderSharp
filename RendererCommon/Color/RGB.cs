@@ -84,22 +84,22 @@ namespace RenderSharp.RendererCommon
 
         public RGB Cross(RGB rhs)
         {
-            return new RGB(Cross((Vector3<byte>)this, (Vector3<byte>)rhs).Components);
+            return new RGB(Cross(this, rhs).Components);
         }
 
         public static RGB operator +(RGB lhs, RGB rhs)
         {
-            return new RGB(((Vector3<byte>)lhs + (Vector3<byte>)rhs).Components);
+            return new RGB(((Vector3<byte>)lhs + rhs).Components);
         }
 
         public static RGB operator -(RGB lhs, RGB rhs)
         {
-            return new RGB(((Vector3<byte>)lhs + (Vector3<byte>)rhs).Components);
+            return new RGB(((Vector3<byte>)lhs + rhs).Components);
         }
 
         public static RGB operator *(RGB lhs, RGB rhs)
         {
-            return new RGB(((Vector3<byte>)lhs * (Vector3<byte>)rhs).Components);
+            return new RGB(((Vector3<byte>)lhs * rhs).Components);
         }
 
         public static RGB operator *(RGB lhs, byte scalar)
@@ -114,7 +114,7 @@ namespace RenderSharp.RendererCommon
 
         public static RGB operator /(RGB lhs, RGB rhs)
         {
-            return new RGB(((Vector3<byte>)lhs / (Vector3<byte>)rhs).Components);
+            return new RGB(((Vector3<byte>)lhs / rhs).Components);
         }
 
         public static RGB operator /(RGB lhs, byte scalar)

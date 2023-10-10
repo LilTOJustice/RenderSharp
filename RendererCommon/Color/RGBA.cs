@@ -88,17 +88,17 @@ namespace RenderSharp.RendererCommon
 
         public static RGBA operator +(RGBA lhs, RGBA rhs)
         {
-            return new RGBA(((Vector4<byte>)lhs + (Vector4<byte>)rhs).Components);
+            return new RGBA(((Vector4<byte>)lhs + rhs).Components);
         }
 
         public static RGBA operator -(RGBA lhs, RGBA rhs)
         {
-            return new RGBA(((Vector4<byte>)lhs + (Vector4<byte>)rhs).Components);
+            return new RGBA(((Vector4<byte>)lhs + rhs).Components);
         }
 
         public static RGBA operator *(RGBA lhs, RGBA rhs)
         {
-            return new RGBA(((Vector4<byte>)lhs * (Vector4<byte>)rhs).Components);
+            return new RGBA(((Vector4<byte>)lhs * rhs).Components);
         }
 
         public static RGBA operator *(RGBA lhs, byte scalar)
@@ -113,7 +113,7 @@ namespace RenderSharp.RendererCommon
 
         public static RGBA operator /(RGBA lhs, RGBA rhs)
         {
-            return new RGBA(((Vector4<byte>)lhs / (Vector4<byte>)rhs).Components);
+            return new RGBA(((Vector4<byte>)lhs / rhs).Components);
         }
 
         public static RGBA operator /(RGBA lhs, byte scalar)

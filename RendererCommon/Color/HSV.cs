@@ -113,22 +113,22 @@ namespace RenderSharp.RendererCommon
 
         public HSV Cross(HSV rhs)
         {
-            return new HSV(Cross((Vector3<double>)this, (Vector3<double>)rhs).Components);
+            return new HSV(Cross(this, rhs).Components);
         }
 
         public static HSV operator +(HSV lhs, HSV rhs)
         {
-            return new HSV(((Vector3<double>)lhs + (Vector3<double>)rhs).Components);
+            return new HSV(((Vector3<double>)lhs + rhs).Components);
         }
 
         public static HSV operator -(HSV lhs, HSV rhs)
         {
-            return new HSV(((Vector3<double>)lhs + (Vector3<double>)rhs).Components);
+            return new HSV(((Vector3<double>)lhs + rhs).Components);
         }
 
         public static HSV operator *(HSV lhs, HSV rhs)
         {
-            return new RGBFloat(((Vector3<double>)lhs * (Vector3<double>)rhs).Components);
+            return new RGBFloat(((Vector3<double>)lhs * rhs).Components);
         }
 
         public static HSV operator *(HSV lhs, double scalar)
@@ -138,7 +138,7 @@ namespace RenderSharp.RendererCommon
 
         public static HSV operator /(HSV lhs, HSV rhs)
         {
-            return new HSV (((Vector3<double>)lhs / (Vector3<double>)rhs).Components);
+            return new HSV (((Vector3<double>)lhs / rhs).Components);
         }
 
         public static HSV operator /(HSV lhs, double scalar)

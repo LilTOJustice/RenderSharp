@@ -88,17 +88,17 @@ namespace RenderSharp.RendererCommon
 
         public static HSVA operator +(HSVA lhs, HSVA rhs)
         {
-            return new HSVA(((Vector4<double>)lhs + (Vector4<double>)rhs).Components);
+            return new HSVA(((Vector4<double>)lhs + rhs).Components);
         }
 
         public static HSVA operator -(HSVA lhs, HSVA rhs)
         {
-            return new HSVA(((Vector4<double>)lhs + (Vector4<double>)rhs).Components);
+            return new HSVA(((Vector4<double>)lhs + rhs).Components);
         }
 
         public static HSVA operator *(HSVA lhs, HSVA rhs)
         {
-            return new HSVA(((Vector4<double>)lhs * (Vector4<double>)rhs).Components);
+            return new HSVA(((Vector4<double>)lhs * rhs).Components);
         }
 
         public static HSVA operator *(HSVA lhs, double scalar)
@@ -108,7 +108,7 @@ namespace RenderSharp.RendererCommon
 
         public static HSVA operator /(HSVA lhs, HSVA rhs)
         {
-            return new HSVA(((Vector4<double>)lhs / (Vector4<double>)rhs).Components);
+            return new HSVA(((Vector4<double>)lhs / rhs).Components);
         }
 
         public static HSVA operator /(HSVA lhs, double scalar)

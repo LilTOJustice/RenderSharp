@@ -88,17 +88,17 @@ namespace RenderSharp.RendererCommon
 
         public static RGBAFloat operator +(RGBAFloat lhs, RGBAFloat rhs)
         {
-            return new RGBAFloat(((Vector4<double>)lhs + (Vector4<double>)rhs).Components);
+            return new RGBAFloat(((Vector4<double>)lhs + rhs).Components);
         }
 
         public static RGBAFloat operator -(RGBAFloat lhs, RGBAFloat rhs)
         {
-            return new RGBAFloat(((Vector4<double>)lhs + (Vector4<double>)rhs).Components);
+            return new RGBAFloat(((Vector4<double>)lhs + rhs).Components);
         }
 
         public static RGBAFloat operator *(RGBAFloat lhs, RGBAFloat rhs)
         {
-            return new RGBAFloat(((Vector4<double>)lhs * (Vector4<double>)rhs).Components);
+            return new RGBAFloat(((Vector4<double>)lhs * rhs).Components);
         }
 
         public static RGBAFloat operator *(RGBAFloat lhs, double scalar)
@@ -108,7 +108,7 @@ namespace RenderSharp.RendererCommon
 
         public static RGBAFloat operator /(RGBAFloat lhs, RGBAFloat rhs)
         {
-            return new RGBAFloat(((Vector4<double>)lhs / (Vector4<double>)rhs).Components);
+            return new RGBAFloat(((Vector4<double>)lhs / rhs).Components);
         }
 
         public static RGBAFloat operator /(RGBAFloat lhs, double scalar)
