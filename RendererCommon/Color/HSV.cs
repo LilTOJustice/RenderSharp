@@ -131,6 +131,11 @@ namespace RenderSharp.RendererCommon
             return new RGBFloat(((Vector3<double>)lhs * (Vector3<double>)rhs).Components);
         }
 
+        public static HSV operator *(HSV lhs, double scalar)
+        {
+            return new HSV(((Vector3<double>)lhs * scalar).Components);
+        }
+
         public static HSV operator /(HSV lhs, HSV rhs)
         {
             return new HSV (((Vector3<double>)lhs / (Vector3<double>)rhs).Components);

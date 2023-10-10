@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace RenderSharp.Math
+﻿namespace RenderSharp.Math
 {
     public class Vec2 : Vector2<int>
     {
@@ -38,6 +36,16 @@ namespace RenderSharp.Math
         public static Vec2 operator *(Vec2 lhs, Vec2 rhs)
         {
             return new Vec2(((Vector2<int>)lhs * (Vector2<int>)rhs).Components);
+        }
+
+        public static Vec2 operator *(Vec2 lhs, int scalar)
+        {
+            return new Vec2(((Vector2<int>)lhs * scalar).Components);
+        }
+
+        public static FVec2 operator *(Vec2 lhs, double scalar)
+        {
+            return new FVec2((new Vector2<double>(lhs.X, lhs.Y) * scalar).Components);
         }
 
         public static Vec2 operator /(Vec2 lhs, Vec2 rhs)
@@ -94,6 +102,16 @@ namespace RenderSharp.Math
             return new Vec3(((Vector3<int>)lhs * (Vector3<int>)rhs).Components);
         }
 
+        public static Vec3 operator *(Vec3 lhs, int scalar)
+        {
+            return new Vec3(((Vector3<int>)lhs * scalar).Components);
+        }
+
+        public static FVec3 operator *(Vec3 lhs, double scalar)
+        {
+            return new FVec3((new Vector3<double>(lhs.X, lhs.Y, lhs.Z) * scalar).Components);
+        }
+
         public static Vec3 operator /(Vec3 lhs, Vec3 rhs)
         {
             return new Vec3(((Vector3<int>)lhs / (Vector3<int>)rhs).Components);
@@ -141,6 +159,16 @@ namespace RenderSharp.Math
         public static Vec4 operator *(Vec4 lhs, Vec4 rhs)
         {
             return new Vec4(((Vector4<int>)lhs * (Vector4<int>)rhs).Components);
+        }
+
+        public static Vec4 operator *(Vec4 lhs, int scalar)
+        {
+            return new Vec4(((Vector4<int>)lhs * scalar).Components);
+        }
+
+        public static FVec4 operator *(Vec4 lhs, double scalar)
+        {
+            return new FVec4((new Vector4<double>(lhs.X, lhs.Y, lhs.Z, lhs.W) * scalar).Components);
         }
 
         public static Vec4 operator /(Vec4 lhs, Vec4 rhs)
@@ -197,6 +225,16 @@ namespace RenderSharp.Math
             return new UVec2(((Vector2<ulong>)lhs * (Vector2<ulong>)rhs).Components);
         }
 
+        public static UVec2 operator *(UVec2 lhs, ulong scalar)
+        {
+            return new UVec2(((Vector2<ulong>)lhs * scalar).Components);
+        }
+
+        public static FVec2 operator *(UVec2 lhs, double scalar)
+        {
+            return new FVec2((new Vector2<double>(lhs.X, lhs.Y) * scalar).Components);
+        }
+
         public static UVec2 operator /(UVec2 lhs, UVec2 rhs)
         {
             return new UVec2(((Vector2<ulong>)lhs / (Vector2<ulong>)rhs).Components);
@@ -251,6 +289,16 @@ namespace RenderSharp.Math
             return new UVec3(((Vector3<ulong>)lhs * (Vector3<ulong>)rhs).Components);
         }
 
+        public static UVec3 operator *(UVec3 lhs, ulong scalar)
+        {
+            return new UVec3(((Vector3<ulong>)lhs * scalar).Components);
+        }
+
+        public static FVec3 operator *(UVec3 lhs, double scalar)
+        {
+            return new FVec3((new Vector3<double>(lhs.X, lhs.Y, lhs.Z) * scalar).Components);
+        }
+
         public static UVec3 operator /(UVec3 lhs, UVec3 rhs)
         {
             return new UVec3(((Vector3<ulong>)lhs / (Vector3<ulong>)rhs).Components);
@@ -298,6 +346,16 @@ namespace RenderSharp.Math
         public static UVec4 operator *(UVec4 lhs, UVec4 rhs)
         {
             return new UVec4(((Vector4<ulong>)lhs * (Vector4<ulong>)rhs).Components);
+        }
+
+        public static UVec4 operator *(UVec4 lhs, ulong scalar)
+        {
+            return new UVec4(((Vector4<ulong>)lhs * scalar).Components);
+        }
+
+        public static FVec4 operator *(UVec4 lhs, double scalar)
+        {
+            return new FVec4((new Vector4<double>(lhs.X, lhs.Y, lhs.Z, lhs.W) * scalar).Components);
         }
 
         public static UVec4 operator /(UVec4 lhs, UVec4 rhs)
@@ -354,6 +412,11 @@ namespace RenderSharp.Math
             return new FVec2(((Vector2<double>)lhs * (Vector2<double>)rhs).Components);
         }
 
+        public static FVec2 operator *(FVec2 lhs, double scalar)
+        {
+            return new FVec2(((Vector2<double>)lhs * scalar).Components);
+        }
+
         public static FVec2 operator /(FVec2 lhs, FVec2 rhs)
         {
             return new FVec2(((Vector2<double>)lhs / (Vector2<double>)rhs).Components);
@@ -403,6 +466,11 @@ namespace RenderSharp.Math
             return new FVec3(((Vector3<double>)lhs * (Vector3<double>)rhs).Components);
         }
 
+        public static FVec3 operator *(FVec3 lhs, double scalar)
+        {
+            return new FVec3(((Vector3<double>)lhs * scalar).Components);
+        }
+
         public static FVec3 operator /(FVec3 lhs, FVec3 rhs)
         {
             return new FVec3(((Vector3<double>)lhs / (Vector3<double>)rhs).Components);
@@ -445,6 +513,11 @@ namespace RenderSharp.Math
         public static FVec4 operator *(FVec4 lhs, FVec4 rhs)
         {
             return new FVec4(((Vector4<double>)lhs * (Vector4<double>)rhs).Components);
+        }
+
+        public static FVec4 operator *(FVec4 lhs, double scalar)
+        {
+            return new FVec4(((Vector4<double>)lhs * scalar).Components);
         }
 
         public static FVec4 operator /(FVec4 lhs, FVec4 rhs)
