@@ -86,6 +86,18 @@ namespace RenderSharp.Math
             return result;
         }
 
+        public static Vector<T> operator *(Vector<T> lhs, T scalar)
+        {
+            Vector<T> result = new Vector<T>(lhs.vec.Length);
+            
+            for (int i = 0; i < lhs.vec.Length; i++)
+            {
+                result[i] = lhs[i] * scalar;
+            }
+
+            return result;
+        }
+
         public static Vector<T> operator /(Vector<T> lhs, Vector<T> rhs)
         {
             Vector<T> result = InitializeBinaryOperation(lhs, rhs)!;

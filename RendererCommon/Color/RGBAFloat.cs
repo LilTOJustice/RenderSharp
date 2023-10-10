@@ -101,6 +101,11 @@ namespace RenderSharp.RendererCommon
             return new RGBAFloat(((Vector4<double>)lhs * (Vector4<double>)rhs).Components);
         }
 
+        public static RGBAFloat operator *(RGBAFloat lhs, double scalar)
+        {
+            return new RGBAFloat(((Vector4<double>)lhs * scalar).Components);
+        }
+
         public static RGBAFloat operator /(RGBAFloat lhs, RGBAFloat rhs)
         {
             return new RGBAFloat(((Vector4<double>)lhs / (Vector4<double>)rhs).Components);

@@ -101,6 +101,11 @@ namespace RenderSharp.RendererCommon
             return new HSVA(((Vector4<double>)lhs * (Vector4<double>)rhs).Components);
         }
 
+        public static HSVA operator *(HSVA lhs, double scalar)
+        {
+            return new HSVA(((Vector4<double>)lhs * scalar).Components);
+        }
+
         public static HSVA operator /(HSVA lhs, HSVA rhs)
         {
             return new HSVA(((Vector4<double>)lhs / (Vector4<double>)rhs).Components);

@@ -100,6 +100,11 @@ namespace RenderSharp.Math
             return new Vector3<T>(((Vector<T>)lhs * (Vector<T>)rhs).Components);
         }
 
+        public static Vector3<T> operator *(Vector3<T> lhs, T scalar)
+        {
+            return new Vector3<T>(((Vector<T>)lhs * scalar).Components);
+        }
+
         public static Vector3<T> operator /(Vector3<T> lhs, Vector3<T> rhs)
         {
             return new Vector3<T>(((Vector<T>)lhs / (Vector<T>)rhs).Components);

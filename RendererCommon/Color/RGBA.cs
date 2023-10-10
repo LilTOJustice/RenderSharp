@@ -101,6 +101,16 @@ namespace RenderSharp.RendererCommon
             return new RGBA(((Vector4<byte>)lhs * (Vector4<byte>)rhs).Components);
         }
 
+        public static RGBA operator *(RGBA lhs, byte scalar)
+        {
+            return new RGBA(((Vector4<byte>)lhs * scalar).Components);
+        }
+
+        public static FVec4 operator *(RGBA lhs, double scalar)
+        {
+            return new FVec4((new Vector4<double>(lhs.R, lhs.G, lhs.B, lhs.A) * scalar).Components);
+        }
+
         public static RGBA operator /(RGBA lhs, RGBA rhs)
         {
             return new RGBA(((Vector4<byte>)lhs / (Vector4<byte>)rhs).Components);
