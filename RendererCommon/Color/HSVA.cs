@@ -1,6 +1,6 @@
 ﻿using RenderSharp.Math;
 
-namespace RenderSharp.Renderer.Color
+namespace RenderSharp.RendererCommon
 {
     public class HSVA : Vector4<double>
     {

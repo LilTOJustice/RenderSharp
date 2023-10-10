@@ -1,6 +1,6 @@
 ﻿using ImageMagick;
 using RenderSharp.Math;
-using RenderSharp.Renderer.Color;
+using RenderSharp.RendererCommon;
 
 
 

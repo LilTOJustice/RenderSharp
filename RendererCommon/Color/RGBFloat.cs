@@ -1,7 +1,6 @@
 ﻿using RenderSharp.Math;
-using System.Numerics;
 
-namespace RenderSharp.Renderer.Color
+namespace RenderSharp.RendererCommon
 {
     public class RGBFloat : Vector3<double>
     {

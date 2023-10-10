@@ -1,6 +1,6 @@
 ﻿using RenderSharp.Math;
 
-namespace RenderSharp.Renderer.Color
+namespace RenderSharp.RendererCommon
 {
     public class RGB : Vector3<byte>
     {
