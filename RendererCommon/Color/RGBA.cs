@@ -36,9 +36,9 @@ namespace RenderSharp.RendererCommon
 
         public RGBA(byte r, byte g, byte b, byte a) : base(r, g, b, a) { }
 
-        public RGBAFloat ToRGBAFloat()
+        public FRGBA ToRGBAFloat()
         {
-            return new RGBAFloat(ToRGBFloat(), A / 255d);
+            return new FRGBA(ToRGBFloat(), A / 255d);
         }
 
         public HSVA ToHSVA()
@@ -51,9 +51,9 @@ namespace RenderSharp.RendererCommon
             return new RGB(R, G, B);
         }
 
-        public RGBFloat ToRGBFloat()
+        public FRGB ToRGBFloat()
         {
-            return new RGBFloat(R / 255d, G / 255d, B / 255d);
+            return new FRGB(R / 255d, G / 255d, B / 255d);
         }
 
         public HSV ToHSV()
@@ -61,7 +61,7 @@ namespace RenderSharp.RendererCommon
             return RGB;
         }
 
-        public static implicit operator RGBAFloat(RGBA rgba)
+        public static implicit operator FRGBA(RGBA rgba)
         {
             return rgba.ToRGBAFloat();
         }
@@ -76,7 +76,7 @@ namespace RenderSharp.RendererCommon
             return rgba.ToRGB();
         }
 
-        public static explicit operator RGBFloat(RGBA rgba)
+        public static explicit operator FRGB(RGBA rgba)
         {
             return rgba.ToRGBFloat();
         }
