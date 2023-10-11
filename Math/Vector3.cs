@@ -87,17 +87,17 @@ namespace RenderSharp.Math
 
         public static Vector3<T> operator +(Vector3<T> lhs, Vector3<T> rhs)
         {
-            return new Vector3<T>(((Vector<T>)lhs + (Vector<T>)rhs).Components);
+            return new Vector3<T>(((Vector<T>)lhs + rhs).Components);
         }
 
         public static Vector3<T> operator -(Vector3<T> lhs, Vector3<T> rhs)
         {
-            return new Vector3<T>(((Vector<T>)lhs - (Vector<T>)rhs).Components);
+            return new Vector3<T>(((Vector<T>)lhs - rhs).Components);
         }
 
         public static Vector3<T> operator *(Vector3<T> lhs, Vector3<T> rhs)
         {
-            return new Vector3<T>(((Vector<T>)lhs * (Vector<T>)rhs).Components);
+            return new Vector3<T>(((Vector<T>)lhs * rhs).Components);
         }
 
         public static Vector3<T> operator *(Vector3<T> lhs, T scalar)
@@ -107,7 +107,7 @@ namespace RenderSharp.Math
 
         public static Vector3<T> operator /(Vector3<T> lhs, Vector3<T> rhs)
         {
-            return new Vector3<T>(((Vector<T>)lhs / (Vector<T>)rhs).Components);
+            return new Vector3<T>(((Vector<T>)lhs / rhs).Components);
         }
 
         public static Vector3<T> operator /(Vector3<T> lhs, T scalar)
