@@ -74,7 +74,6 @@ namespace RenderSharp.Scene
         }
 
 
-        public FragShader Shader { get; set; }
         public double Framerate { get { return 1d/DeltaTime; } private set { DeltaTime = 1d/value; } }
         public Camera SceneCamera { get; set; }
         public List<double> TimeSeq { get; private set; }
@@ -83,6 +82,7 @@ namespace RenderSharp.Scene
         public HashSet<Actor> Actors { get; set; }
         public RGB BgColor { get; set; }
         public Texture BgTexture { get; set; }
+        public FragShader Shader { get; set; }
 
         public Scene2d(double framerate, double duration, RGB? bgcolor = null, Texture? texture = null) // I think I did the texture part wrong
         {
