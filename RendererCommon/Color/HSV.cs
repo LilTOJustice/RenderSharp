@@ -66,7 +66,7 @@ namespace RenderSharp.RendererCommon
             return new RGB(R, G, B);
         }
 
-        public RGBFloat ToRGBFloat()
+        public FRGB ToRGBFloat()
         {
             return ToRGB();
         }
@@ -76,7 +76,7 @@ namespace RenderSharp.RendererCommon
             return ToRGB();
         }
 
-        public RGBAFloat ToRGBAFloat()
+        public FRGBA ToRGBAFloat()
         {
             return ToRGB();
         }
@@ -91,7 +91,7 @@ namespace RenderSharp.RendererCommon
             return hsv.ToRGB();
         }
 
-        public static implicit operator RGBFloat(HSV hsv)
+        public static implicit operator FRGB(HSV hsv)
         {
             return hsv.ToRGBFloat();
         }
@@ -101,7 +101,7 @@ namespace RenderSharp.RendererCommon
             return hsv.ToRGBA();
         }
 
-        public static implicit operator RGBAFloat(HSV hsv)
+        public static implicit operator FRGBA(HSV hsv)
         {
             return hsv.ToRGBAFloat();
         }
@@ -113,22 +113,22 @@ namespace RenderSharp.RendererCommon
 
         public HSV Cross(HSV rhs)
         {
-            return new HSV(Cross((Vector3<double>)this, (Vector3<double>)rhs).Components);
+            return new HSV(Cross(this, rhs).Components);
         }
 
         public static HSV operator +(HSV lhs, HSV rhs)
         {
-            return new HSV(((Vector3<double>)lhs + (Vector3<double>)rhs).Components);
+            return new HSV(((Vector3<double>)lhs + rhs).Components);
         }
 
         public static HSV operator -(HSV lhs, HSV rhs)
         {
-            return new HSV(((Vector3<double>)lhs + (Vector3<double>)rhs).Components);
+            return new HSV(((Vector3<double>)lhs + rhs).Components);
         }
 
         public static HSV operator *(HSV lhs, HSV rhs)
         {
-            return new RGBFloat(((Vector3<double>)lhs * (Vector3<double>)rhs).Components);
+            return new FRGB(((Vector3<double>)lhs * rhs).Components);
         }
 
         public static HSV operator *(HSV lhs, double scalar)
@@ -138,7 +138,7 @@ namespace RenderSharp.RendererCommon
 
         public static HSV operator /(HSV lhs, HSV rhs)
         {
-            return new HSV (((Vector3<double>)lhs / (Vector3<double>)rhs).Components);
+            return new HSV (((Vector3<double>)lhs / rhs).Components);
         }
 
         public static HSV operator /(HSV lhs, double scalar)

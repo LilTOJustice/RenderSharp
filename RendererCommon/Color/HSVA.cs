@@ -41,7 +41,7 @@ namespace RenderSharp.RendererCommon
             return new RGBA(HSV, (byte)(A * 255));
         }
 
-        public RGBAFloat ToRGBAFloat()
+        public FRGBA ToRGBAFloat()
         {
             return ToRGBA();
         }
@@ -51,7 +51,7 @@ namespace RenderSharp.RendererCommon
             return HSV;
         }
 
-        public RGBFloat ToRGBFloat()
+        public FRGB ToRGBFloat()
         {
             return HSV;
         }
@@ -66,7 +66,7 @@ namespace RenderSharp.RendererCommon
             return hsva.ToRGBA();
         }
 
-        public static implicit operator RGBAFloat(HSVA hsva)
+        public static implicit operator FRGBA(HSVA hsva)
         {
             return hsva.ToRGBAFloat();
         }
@@ -76,7 +76,7 @@ namespace RenderSharp.RendererCommon
             return hsva.ToRGB();
         }
 
-        public static explicit operator RGBFloat(HSVA hsva)
+        public static explicit operator FRGB(HSVA hsva)
         {
             return hsva.ToRGBFloat();
         }
@@ -88,17 +88,17 @@ namespace RenderSharp.RendererCommon
 
         public static HSVA operator +(HSVA lhs, HSVA rhs)
         {
-            return new HSVA(((Vector4<double>)lhs + (Vector4<double>)rhs).Components);
+            return new HSVA(((Vector4<double>)lhs + rhs).Components);
         }
 
         public static HSVA operator -(HSVA lhs, HSVA rhs)
         {
-            return new HSVA(((Vector4<double>)lhs + (Vector4<double>)rhs).Components);
+            return new HSVA(((Vector4<double>)lhs + rhs).Components);
         }
 
         public static HSVA operator *(HSVA lhs, HSVA rhs)
         {
-            return new HSVA(((Vector4<double>)lhs * (Vector4<double>)rhs).Components);
+            return new HSVA(((Vector4<double>)lhs * rhs).Components);
         }
 
         public static HSVA operator *(HSVA lhs, double scalar)
@@ -108,7 +108,7 @@ namespace RenderSharp.RendererCommon
 
         public static HSVA operator /(HSVA lhs, HSVA rhs)
         {
-            return new HSVA(((Vector4<double>)lhs / (Vector4<double>)rhs).Components);
+            return new HSVA(((Vector4<double>)lhs / rhs).Components);
         }
 
         public static HSVA operator /(HSVA lhs, double scalar)

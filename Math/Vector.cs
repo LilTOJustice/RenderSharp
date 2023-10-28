@@ -122,7 +122,6 @@ namespace RenderSharp.Math
             return result;
         }
 
-
         public double Length()
         {
             T len = default!;
@@ -151,6 +150,7 @@ namespace RenderSharp.Math
 
             return stringBuilder.ToString();
         }
+
         public static T Dot(Vector<T> lhs, Vector<T> rhs)
         {
             InitializeBinaryOperation(lhs, rhs);

@@ -70,7 +70,7 @@ namespace RenderSharp
 
         public static void Rainbow(FragShaderArgs args)
         {
-            args.fragOut = (RGBAFloat)args.fragIn * ((RGBAFloat)new HSV(180 * args.time % 360, 1d, 1d) / 255d);
+            args.fragOut = (FRGBA)args.fragIn * ((FRGBA)new HSV(180 * args.time % 360, 1d, 1d) / 255d);
         }
     }
 }
