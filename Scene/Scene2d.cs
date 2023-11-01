@@ -2,11 +2,9 @@
 using RenderSharp.Math;
 
 namespace RenderSharp.Scene
-
 {
     public class Scene2d
     {
-
         public class Camera
         {
             public Vec2 Center { get; set; }
@@ -19,23 +17,19 @@ namespace RenderSharp.Scene
                 Zoom = zoom;
                 Rotation = rotation;
             }
-
             public void Translate(Vec2 change)
             {
                 Center += change;
             }
-
             public void ScaleZoom(double zoom)
             {
                 Zoom += zoom;
             }
-
             public void Rotate(double radChange) 
             {
                 Rotation = radChange;
             }
         }
-
 
         public class Actor
         {
@@ -44,7 +38,6 @@ namespace RenderSharp.Scene
             public Vec2 Position { get; set; }
             public Vec2 Size { get; set; }
             public double Rotation { get; set; }
-
             public Texture Texture { get; set; }
             public FragShader Shader { get; set; }
 
@@ -73,7 +66,6 @@ namespace RenderSharp.Scene
             }
         }
 
-
         public double Framerate { get { return 1d/DeltaTime; } private set { DeltaTime = 1d/value; } }
         public Camera SceneCamera { get; set; }
         public List<double> TimeSeq { get; private set; }
@@ -90,14 +82,11 @@ namespace RenderSharp.Scene
             BgColor = bgcolor ?? new RGB();
             BgTexture = texture ?? new Texture(new Vec2(1, 1));
             Duration = duration;
-
             TimeSeq = new List<double>();
             for (int i = 0; i < framerate*duration; i++)
             {
                 TimeSeq.Add(i*DeltaTime);
             }
-
-
             Actors = new HashSet<Actor>();
             SceneCamera = new Camera(new Vec2(0, 0), 1, 0);
             Shader = (FragShaderArgs) => { };

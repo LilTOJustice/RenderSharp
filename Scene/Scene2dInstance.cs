@@ -3,11 +3,11 @@ using RenderSharp.RendererCommon;
 
 namespace RenderSharp.Scene
 {
-    internal class Scene2dInstance
+    public class Scene2dInstance
     {
-        public Scene2d.Camera Camera { get; set; } 
+        public Scene2d.Camera Camera { get; set; }
         public HashSet<Scene2d.Actor> Actors { get; set; }
-        public RGB BgColor { get; set; } 
+        public RGB BgColor { get; set; }
         public Texture BgTexture { get; set; }
         public FragShader Shader { get; set; }
 
