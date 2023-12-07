@@ -4,7 +4,7 @@ using RenderSharp.RendererCommon;
 
 
 
-namespace RendererCommon
+namespace RenderSharp.RendererCommon
 {
     public class Texture
     {
