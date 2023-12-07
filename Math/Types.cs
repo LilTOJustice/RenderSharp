@@ -386,6 +386,10 @@
         {
             return new FVec3(Cross(this, rhs).Components);
         }
+        public FVec2 Rotate(double radians)
+        {
+            return new FVec2(X * System.Math.Cos(radians) - Y * System.Math.Sin(radians), X * System.Math.Sin(radians) + Y * System.Math.Cos(radians));
+        }
 
         public static explicit operator Vec2(FVec2 vec)
         {

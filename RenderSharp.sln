@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cppsrc", "cppsrc", "{933610
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Renderer2d", "Renderer2d\Renderer2d.csproj", "{70CA3334-2822-4689-AFCD-D4D1CE3F91DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scene", "Scene\Scene.csproj", "{A5A3CCFD-84C5-4846-83B4-310A9ABB4EC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{70CA3334-2822-4689-AFCD-D4D1CE3F91DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70CA3334-2822-4689-AFCD-D4D1CE3F91DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70CA3334-2822-4689-AFCD-D4D1CE3F91DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5A3CCFD-84C5-4846-83B4-310A9ABB4EC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5A3CCFD-84C5-4846-83B4-310A9ABB4EC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5A3CCFD-84C5-4846-83B4-310A9ABB4EC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5A3CCFD-84C5-4846-83B4-310A9ABB4EC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
