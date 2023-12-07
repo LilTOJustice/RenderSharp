@@ -27,13 +27,13 @@ namespace RenderSharp.Scene
 
         public Vec2 ScreenToWorld(Vec2 screenSize, Vec2 screenCoords)
         {
-            return (Vec2) (new Vec2 (screenCoords.X - (screenSize.X / 2),
+            return (Vec2)(new Vec2(screenCoords.X - (screenSize.X / 2),
                      screenCoords.Y - (screenSize.Y / 2)) / Camera.Zoom + Camera.Center).Rotate(Camera.Rotation);
         }
 
         public static Vec2 WorldToActor(Scene2d.Actor actor, Vec2 worldCoord)
         {
-            return (Vec2) ((FVec2) (worldCoord - actor.Position)).Rotate(-actor.Rotation);
+            return (Vec2)((FVec2)(worldCoord - actor.Position)).Rotate(-actor.Rotation);
         }
 
         public Vec2 ScreenToActor(Vec2 screenSize, Scene2d.Actor actor, Vec2 screenCoord)
@@ -42,3 +42,5 @@ namespace RenderSharp.Scene
         }
     }
 }
+
+//Going to add a way to get Scene2d's newest properties

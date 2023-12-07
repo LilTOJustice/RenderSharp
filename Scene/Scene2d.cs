@@ -40,6 +40,7 @@ namespace RenderSharp.Scene
             public double Rotation { get; set; }
             public Texture Texture { get; set; }
             public FragShader Shader { get; set; }
+            public Scene2dThinkFunc ThinkFunc { get; set; }
 
             public Actor(Texture texture, Vec2? position = null, Vec2? size = null, double rotation = 0)
             {
@@ -48,6 +49,7 @@ namespace RenderSharp.Scene
                 Size = size ?? new Vec2();
                 Rotation = rotation;
                 Shader = (FragShaderArgs) => { };
+                ThinkFunc = (Scene2dThinkFuncArgs) => { };
             }
 
             public void Scale(FVec2 scale)
@@ -64,6 +66,11 @@ namespace RenderSharp.Scene
             {
                 Shader = (FragShaderArgs) => { }; 
             }
+
+            public void ClearThinkFunc()
+            {
+                ThinkFunc = (Scene2dThinkFuncArgs) => { };
+            }
         }
 
         public double Framerate { get { return 1d/DeltaTime; } private set { DeltaTime = 1d/value; } }
@@ -75,8 +82,9 @@ namespace RenderSharp.Scene
         public RGB BgColor { get; set; }
         public Texture BgTexture { get; set; }
         public FragShader Shader { get; set; }
+        public Scene2dThinkFunc ThinkFunc { get; set; } //Everthing I do with Shader I've gotta do with this
 
-        public Scene2d(double framerate, double duration, RGB? bgcolor = null, Texture? texture = null) // I think I did the texture part wrong
+        public Scene2d(double framerate, double duration, RGB? bgcolor = null, Texture? texture = null) 
         {
             Framerate = framerate;
             BgColor = bgcolor ?? new RGB();
@@ -90,6 +98,7 @@ namespace RenderSharp.Scene
             Actors = new HashSet<Actor>();
             SceneCamera = new Camera(new Vec2(0, 0), 1, 0);
             Shader = (FragShaderArgs) => { };
+            ThinkFunc = (Scene2dThinkFuncArgs) => { };
         }
 
         public Actor AddActor(Texture texture, Vec2 position, Vec2 size, double rotation)
@@ -107,6 +116,27 @@ namespace RenderSharp.Scene
         public void ClearShaders()
         {
             Shader = (FragShaderArgs) => { };
+        }
+
+        public void ClearThinkFunc()
+        {
+            ThinkFunc = (Scene2dThinkFuncArgs) => { };
+        }
+
+        public Vec2 ScreenToWorld(Vec2 screenSize, Vec2 screenCoords)
+        {
+            return (Vec2)(new Vec2(screenCoords.X - (screenSize.X / 2),
+                     screenCoords.Y - (screenSize.Y / 2)) / SceneCamera.Zoom + SceneCamera.Center).Rotate(SceneCamera.Rotation);
+        }
+
+        public static Vec2 WorldToActor(Actor actor, Vec2 worldCoord)
+        {
+            return (Vec2)((FVec2)(worldCoord - actor.Position)).Rotate(-actor.Rotation);
+        }
+
+        public Vec2 ScreenToActor(Vec2 screenSize, Actor actor, Vec2 screenCoord)
+        {
+            return WorldToActor(actor, ScreenToWorld(screenSize, screenCoord));
         }
     }
 }
