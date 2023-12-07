@@ -1,7 +1,4 @@
-﻿using RenderSharp.Math;
-using RenderSharp.RendererCommon;
-
-namespace RendererCommon.Color
+﻿namespace RenderSharp.RendererCommon
 {
     public class ColorFunctions
     {

@@ -1,6 +1,6 @@
-﻿using RendererCommon.Color;
+﻿using RenderSharp.RendererCommon;
 using RenderSharp.Math;
-using RenderSharp.RendererCommon;
+using RenderSharp.Scene;
 
 namespace RenderSharp.Render2d
 {
@@ -42,29 +42,29 @@ namespace RenderSharp.Render2d
 
         public Frame RenderFrame(int index = 0)
         {
-            if (index < 0 || index >= Scene.TimeSequence.Length)
+            if (index < 0 || index >= Scene.TimeSeq.Count)
             {
                 throw new ArgumentOutOfRangeException("Index argument should be >= 0 and <" +
                     " the length of the scene's time sequence.");
             }
 
-            SceneInstance instance = Scene.StartingInstance;
-
             for (int i = 0; i < index; i++)
             {
-                instance = instance.Think(Scene.GetTimeSequence[i], Scene.DeltaTime);
+                Scene.ThinkFunc(new Scene2dThinkFuncArgs(Scene.TimeSeq[i], Scene.DeltaTime));
             }
 
-            return Render(instance, Scene.TimeSequence[index], false);
+            return Render(Scene, Scene.TimeSeq[index], false);
+
         }
 
         public Movie RenderMovie()
         {
-            if (Scene.TimeSequence.Empty)
+            if (Scene.TimeSeq.Count == 0)
             {
                 throw new Exception("Attempted to render a movie on a static scene.");
             }
 
+            
         }
 
         static int loadSeqInd = 0;
@@ -90,41 +90,37 @@ namespace RenderSharp.Render2d
         }
 
 
-        Frame Render(SceneInstance sceneInstance, double time, bool verbose = false)
+        Frame Render(Scene2d scene, double time, bool verbose = false)
         {
             Frame output = new Frame(Resolution);
 
             if (verbose)
             {
-                Console.WriteLine($"\nBeginning actor render ({sceneInstance.Actors.Length} total)...");
+                Console.WriteLine($"\nBeginning actor render ({scene.Actors.Count} total)...");
             }
 
             var start = DateTime.Now;
             var end = start;
 
-            int bgSpriteLeft = -sceneInstance.BgTexture?.Width / 2 ?? 0;
-            int bgSpriteTop = sceneInstance.BgTexture?.Height / 2 ?? -0;
+            int bgSpriteLeft = -scene.BgTexture?.Width / 2 ?? 0;
+            int bgSpriteTop = scene.BgTexture?.Height / 2 ?? 0;
             
             for (int i = 0; i < ResY; i++)
             {
                 for (int j = 0; j < ResX; j++)
                 {
-                    Vec2 worldLoc = sceneInstance.ScreenToWorld(Resolution, new Vec2(j, i));
+                    Vec2 worldLoc = scene.ScreenToWorld(Resolution, new Vec2(j, i));
+                    RGBA outColor = scene.BgColor;
 
-                    RGBA outColor = sceneInstance.BgColor;
-
-                    if (sceneInstance.BgTexture != null)
+                    if (scene.BgTexture != null)
                     {
                         Vec2 ind = worldLoc - new Vec2(bgSpriteLeft, bgSpriteTop);
-                        Vec2 vInd = new Vec2(
-                            ind.X % sceneInstance.BgSprite.Width,
-                            -ind.Y % sceneInstance.BgSprite.Height);
-                        outColor = ColorFunctions.AlphaBlend(sceneInstance.BgTexture[vInd], outColor);
+                        outColor = ColorFunctions.AlphaBlend(scene.BgTexture[ind.X % scene.BgTexture.Width, -ind.Y % scene.BgTexture.Height], outColor);
                     }
 
-                    foreach (Actor actor in sceneInstance.Actors)
+                    foreach (var actor in scene.Actors)
                     {
-                        Vec2 actorLoc = sceneInstance.WorldToActor(actor, worldLoc);
+                        Vec2 actorLoc = Scene2d.WorldToActor(actor, worldLoc);
                         actorLoc -= new Vec2(-actor.Width / 2, actor.Height / 2);
                         Vec2 actorTlLoc = new Vec2(actorLoc.X, -actorLoc.Y);
 
@@ -133,13 +129,10 @@ namespace RenderSharp.Render2d
                             continue;
                         }
 
-                        Vec2 textureInd = ((FVec2)actorTlLoc) / actor.Size * actor.Texture.Size;
-                        RGBA textureSample = new RGBA(actor.Texture[textureInd].Components);
+                        Vec2 textureInd = (Vec2)(((FVec2)actorTlLoc) / actor.Size * actor.Texture.Size);
+                        RGBA textureSample = new RGBA(actor.Texture[textureInd.X, textureInd.Y].Components);
 
-                        foreach (FragShader frag in actor.Shaders)
-                        {
-                            frag(new FragShaderArgs(textureSample, textureSample, textureInd, actor.Texture.Size, time));
-                        }
+                        actor.Shader(new FragShaderArgs(textureSample, textureSample, textureInd, actor.Texture.Size, time));
 
                         outColor = ColorFunctions.AlphaBlend(textureSample, outColor);
                     }
