@@ -1,7 +1,6 @@
 ﻿using RenderSharp.Math;
 using RenderSharp.RendererCommon;
 using ImageMagick;
-using System.IO;
 using System.Diagnostics;
 
 namespace RendererCommon
@@ -92,7 +91,7 @@ namespace RendererCommon
             Duration = duration;
             Fps = fps;
             MovieID = _nextId++;
-            TempDir = $"temp_{MovieID}";   
+            TempDir = $"{Directory.GetCurrentDirectory()}\\temp_{MovieID}";
             Directory.CreateDirectory(TempDir);
         }
 
@@ -100,7 +99,7 @@ namespace RendererCommon
         {
             string fullname = filename + ".mp4";
             Console.WriteLine($"Exporting movie: {fullname}");
-            string cmd = ($"-y -v -8 -framerate {Fps} -f image2 -i temp + {MovieID}/%d.bmp -c h264 " +
+            string cmd = ($"-y -v -8 -framerate {Fps} -f image2 -i temp_{MovieID}/%d.bmp -c h264 " +
                 $"-pix_fmt yuv420p -b:v 32768k {fullname}");
             Console.WriteLine(cmd + "\n");
             
@@ -119,7 +118,8 @@ namespace RendererCommon
             {
                 throw new Exception("Invalid frame index received!");
             }
-            string filename = $"{TempDir}/{frameInd}";
+
+            string filename = $"{TempDir}\\{frameInd}";
             frame.Output(filename, "bmp");
         }
     }
