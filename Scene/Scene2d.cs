@@ -8,7 +8,9 @@ namespace RenderSharp.Scene
         public class Camera
         {
             public Vec2 Center { get; set; }
+
             public double Zoom { get; set; }
+
             public double Rotation { get; set; }
 
             public Camera(Vec2 center, double zoom, double rotation)
@@ -73,25 +75,34 @@ namespace RenderSharp.Scene
             }
         }
 
-        public double Framerate { get { return 1d/DeltaTime; } private set { DeltaTime = 1d/value; } }
+        public int Framerate { get { return (int)(1 / DeltaTime); } private set { DeltaTime = 1d / value; } }
+
         public Camera SceneCamera { get; set; }
+
         public List<double> TimeSeq { get; private set; }
+        
         public double Duration { get; private set; }
+        
         public double DeltaTime { get; private set; } 
+        
         public HashSet<Actor> Actors { get; set; }
+        
         public RGB BgColor { get; set; }
+        
         public Texture BgTexture { get; set; }
+        
         public FragShader Shader { get; set; }
+        
         public Scene2dThinkFunc ThinkFunc { get; set; } //Everthing I do with Shader I've gotta do with this
 
-        public Scene2d(double framerate, double duration, RGB? bgcolor = null, Texture? texture = null) 
+        public Scene2d(int framerate, double duration, RGB? bgcolor = null, Texture? texture = null) 
         {
             Framerate = framerate;
             BgColor = bgcolor ?? new RGB();
             BgTexture = texture ?? new Texture(new Vec2(1, 1));
             Duration = duration;
             TimeSeq = new List<double>();
-            for (int i = 0; i < framerate*duration; i++)
+            for (int i = 0; i < framerate * duration; i++)
             {
                 TimeSeq.Add(i*DeltaTime);
             }
