@@ -1,28 +1,23 @@
 ﻿using RenderSharp.Math;
-using RenderSharp.RendererCommon;
 
 namespace RenderSharp.Scene
 {
     public class Scene2dInstance
     {
-        public Scene2d.Camera Camera { get; set; }
-        public HashSet<Scene2d.Actor> Actors { get; set; }
-        public RGB BgColor { get; set; }
-        public Texture BgTexture { get; set; }
-        public FragShader Shader { get; set; }
+        public Scene2d.Camera Camera { get; }
 
-        public Scene2dInstance(Scene2d scene)
+        public HashSet<Scene2d.Actor> Actors { get; }
+
+        public double Time { get; }
+
+        public int Index { get; }
+
+        public Scene2dInstance(Scene2d scene, double time, int index)
         {
             Camera = scene.SceneCamera;
             Actors = scene.Actors;
-            BgColor = scene.BgColor;
-            BgTexture = scene.BgTexture;
-            Shader = scene.Shader;
-        }
-
-        public void ClearShaders()
-        {
-            Shader = (FragShaderArgs) => { };
+            Time = time;
+            Index = index;
         }
 
         public Vec2 ScreenToWorld(Vec2 screenSize, Vec2 screenCoords)
@@ -42,5 +37,3 @@ namespace RenderSharp.Scene
         }
     }
 }
-
-//Going to add a way to get Scene2d's newest properties

@@ -7,7 +7,6 @@ namespace RendererCommon
 {
     public class Frame
     {   
-        // properties
         public Vec2 Size { get; private set; }
 
         public int Height { get { return Size.Y; } private set { Size.Y = value; } }
@@ -54,11 +53,9 @@ namespace RendererCommon
             }
         }
 
-        // output
         public void Output(string filename, string ext = "png")
         {
             string fullname = filename + "." + ext;
-            Console.WriteLine("\nExporting frame as image: " + fullname + "...");
             var settings = new MagickReadSettings();
             settings.Format = MagickFormat.Rgba;
             settings.Width = Width;
@@ -80,19 +77,18 @@ namespace RendererCommon
 
         public double AspectRatio { get { return Width / Height; } }
 
-        public int Fps { get; private set; }
-        public int Duration {  get; private set; }
-        public int NumFrames { get { return Fps * Duration; } }
+        public int Framerate { get; private set; }
+        
         private int MovieID { get; set; }
+
         private string TempDir { get; set; }
 
         private static int _nextId = 0;
 
-        public Movie(int width, int height, int duration, int fps)
+        public Movie(int width, int height, int framerate)
         {
             Size = new Vec2(width, height);
-            Duration = duration;
-            Fps = fps;
+            Framerate = framerate;
             MovieID = _nextId++;
             TempDir = $"{Directory.GetCurrentDirectory()}\\temp_{MovieID}";
             Directory.CreateDirectory(TempDir);
@@ -102,7 +98,7 @@ namespace RendererCommon
         {
             string fullname = filename + ".mp4";
             Console.WriteLine($"Exporting movie: {fullname}");
-            string cmd = ($"-y -v -8 -framerate {Fps} -f image2 -i temp_{MovieID}/%d.bmp -c h264 " +
+            string cmd = ($"-y -v -8 -framerate {Framerate} -f image2 -i temp_{MovieID}/%d.bmp -c h264 " +
                 $"-pix_fmt yuv420p -b:v 32768k {fullname}");
             Console.WriteLine(cmd + "\n");
             
@@ -117,11 +113,6 @@ namespace RendererCommon
 
         public void WriteFrame(Frame frame, int frameInd)
         {
-            if (frameInd >= NumFrames)
-            {
-                throw new Exception("Invalid frame index received!");
-            }
-
             string filename = $"{TempDir}\\{frameInd}";
             frame.Output(filename, "bmp");
         }

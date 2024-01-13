@@ -1,6 +1,8 @@
 ﻿using RenderSharp.RendererCommon;
 using RenderSharp.Math;
 using RenderSharp.Scene;
+using RendererCommon;
+using System.Diagnostics;
 
 namespace RenderSharp.Render2d
 {
@@ -8,15 +10,13 @@ namespace RenderSharp.Render2d
     {
         public Vec2 Resolution { get; set; }
 
-        public int ResX { get { return Resolution.X; } set { Resolution.X = value; } }
+        public int Width { get { return Resolution.X; } set { Resolution.X = value; } }
 
-        public int ResY { get { return Resolution.Y; } set { Resolution.Y = value; } }
+        public int Height { get { return Resolution.Y; } set { Resolution.Y = value; } }
 
         public Scene2d Scene { get; set; }
 
-        public int NumThreads { get; set; }
-
-        public Renderer2d(int resX, int resY, Scene2d scene, int numThreads)
+        public Renderer2d(int resX, int resY, Scene2d scene)
         {
             if (resX < 1 || resY < 1)
             {
@@ -25,10 +25,9 @@ namespace RenderSharp.Render2d
 
             Resolution = new Vec2(resX, resY);
             Scene = scene;
-            NumThreads = numThreads;
         }
 
-        public Renderer2d(Vec2 resolution, Scene2d scene, int numThreads)
+        public Renderer2d(Vec2 resolution, Scene2d scene)
         {
             if (resolution.X < 1 || resolution.Y < 1)
             {
@@ -37,7 +36,6 @@ namespace RenderSharp.Render2d
 
             Resolution = new Vec2(resolution.Components);
             Scene = scene;
-            NumThreads = numThreads;
         }
 
         public Frame RenderFrame(int index = 0)
@@ -53,8 +51,7 @@ namespace RenderSharp.Render2d
                 Scene.ThinkFunc(new Scene2dThinkFuncArgs(Scene.TimeSeq[i], Scene.DeltaTime));
             }
 
-            return Render(Scene, Scene.TimeSeq[index], false);
-
+            return Render(new Scene2dInstance(Scene, Scene.TimeSeq[index], index), Scene.BgTexture, Scene.BgColor ?? (RGBA?)null, true);
         }
 
         public Movie RenderMovie()
@@ -64,12 +61,64 @@ namespace RenderSharp.Render2d
                 throw new Exception("Attempted to render a movie on a static scene.");
             }
 
-            
+            Movie movie = new(Width, Height, Scene.Framerate);
+            List<Scene2dInstance> instances = new(Scene.TimeSeq.Count);
+            for (int i = 0; i < Scene.TimeSeq.Count; i++)
+            {
+                double time = Scene.TimeSeq[i];
+                Scene.ThinkFunc(new Scene2dThinkFuncArgs(time, Scene.DeltaTime));
+                instances.Add(new Scene2dInstance(Scene, time, i));
+            }
+
+            int numThreads = Environment.ProcessorCount;
+            List<Thread> threads = new(numThreads);
+            int nextId = -1;
+            int doneCount = 0;
+            var threadRender = () =>
+            {
+                for (int i = Interlocked.Increment(ref nextId); i < instances.Count; i = Interlocked.Increment(ref nextId))
+                {
+                    var instance = instances[i];
+                    movie.WriteFrame(Render(instance, Scene.BgTexture, Scene.BgColor ?? (RGBA?)null), instance.Index);
+                    Interlocked.Increment(ref doneCount);
+                }
+            };
+
+            for (int i = 0; i < numThreads; i++)
+            {
+                Thread thread = new Thread(() => { threadRender(); });
+                threads.Add(thread);
+                thread.Start();
+            }
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            Console.WriteLine($"Waiting for {threads.Count} threads...");
+
+            while (doneCount <= instances.Count)
+            {
+                PrintBar(doneCount, instances.Count, timeElapsed: stopwatch.Elapsed.ToString());
+                if (doneCount == instances.Count)
+                {
+                    stopwatch.Stop();
+                    break;
+                }
+
+                Thread.Sleep(500);
+            }
+
+            foreach (Thread thread in threads)
+            {
+                thread.Join();
+            }
+
+            Console.WriteLine($"\nFinished in {stopwatch.Elapsed}");
+
+            return movie;
         }
 
         static int loadSeqInd = 0;
-        const string loadSeq = "|/-\\";
-        static void PrintBar(int frameIndex, int numFrames, int totalBars)
+        static string loadSeq = "|/-\\";
+        static void PrintBar(int frameIndex, int numFrames, int totalBars = 50, string timeElapsed = "")
         {
             int numBars = (int)(1d * frameIndex / numFrames * totalBars);
 
@@ -84,15 +133,15 @@ namespace RenderSharp.Render2d
                 Console.Write(' ');
             }
 
-            Console.Write($"] {frameIndex} / {numFrames} ({(100d * frameIndex / numFrames).ToString(".3f")}%)" +
-                $"{(frameIndex == numFrames ? ' ' : loadSeq[(loadSeqInd++) % loadSeq.Length])}";
+            Console.Write($"] {frameIndex} / {numFrames} ({string.Format("{0:0.00}", 100d * frameIndex / numFrames)}%)" +
+                $" {(frameIndex == numFrames ? ' ' : loadSeq[(loadSeqInd++) % loadSeq.Length])} " + timeElapsed);
             Console.Out.Flush();
         }
 
 
-        Frame Render(Scene2d scene, double time, bool verbose = false)
+        Frame Render(Scene2dInstance scene, Texture? bgTexture = null, RGBA? bgColor = null, bool verbose = false)
         {
-            Frame output = new Frame(Resolution);
+            Frame output = new(Resolution);
 
             if (verbose)
             {
@@ -102,25 +151,26 @@ namespace RenderSharp.Render2d
             var start = DateTime.Now;
             var end = start;
 
-            int bgSpriteLeft = -scene.BgTexture?.Width / 2 ?? 0;
-            int bgSpriteTop = scene.BgTexture?.Height / 2 ?? 0;
+            bgTexture ??= new Texture(Resolution);
+
+            int bgSpriteLeft = -bgTexture!.Width / 2;
+            int bgSpriteTop = bgTexture!.Height / 2;
             
-            for (int i = 0; i < ResY; i++)
+            for (int i = 0; i < Height; i++)
             {
-                for (int j = 0; j < ResX; j++)
+                for (int j = 0; j < Width; j++)
                 {
                     Vec2 worldLoc = scene.ScreenToWorld(Resolution, new Vec2(j, i));
-                    RGBA outColor = scene.BgColor;
+                    RGBA outColor = bgColor ?? new RGBA(0, 0, 0, 255);
 
-                    if (scene.BgTexture != null)
-                    {
-                        Vec2 ind = worldLoc - new Vec2(bgSpriteLeft, bgSpriteTop);
-                        outColor = ColorFunctions.AlphaBlend(scene.BgTexture[ind.X % scene.BgTexture.Width, -ind.Y % scene.BgTexture.Height], outColor);
-                    }
+                    Vec2 ind = worldLoc - new Vec2(bgSpriteLeft, bgSpriteTop);
+                    outColor = bgTexture[Util.Mod(ind.X, bgTexture.Width), Util.Mod(ind.Y, bgTexture.Height)];
+                    Scene.Shader(outColor, out outColor, ind, bgTexture.Size, scene.Time);
+                    outColor = ColorFunctions.AlphaBlend(outColor, outColor);
 
                     foreach (var actor in scene.Actors)
                     {
-                        Vec2 actorLoc = Scene2d.WorldToActor(actor, worldLoc);
+                        Vec2 actorLoc = Scene2dInstance.WorldToActor(actor, worldLoc);
                         actorLoc -= new Vec2(-actor.Width / 2, actor.Height / 2);
                         Vec2 actorTlLoc = new Vec2(actorLoc.X, -actorLoc.Y);
 
@@ -132,7 +182,7 @@ namespace RenderSharp.Render2d
                         Vec2 textureInd = (Vec2)(((FVec2)actorTlLoc) / actor.Size * actor.Texture.Size);
                         RGBA textureSample = new RGBA(actor.Texture[textureInd.X, textureInd.Y].Components);
 
-                        actor.Shader(new FragShaderArgs(textureSample, textureSample, textureInd, actor.Texture.Size, time));
+                        actor.Shader(textureSample, out textureSample, textureInd, actor.Texture.Size, scene.Time);
 
                         outColor = ColorFunctions.AlphaBlend(textureSample, outColor);
                     }
