@@ -11,10 +11,10 @@ namespace RenderSharp
         {
             int its = 0;
             Complex res = c;
-            double absolute = 0;
+            double absolute;
             while ((absolute = res.Magnitude) < 2 && its++ < MAXITS)
             {
-                res = res * res + c;
+                res = (res * res) + c;
             }
 
             return absolute;
@@ -33,44 +33,43 @@ namespace RenderSharp
             return absolute;
         }
 
-        public static void Mandelbrot(FragShaderArgs args)
+        public static void Mandelbrot(in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
-            FVec2 st = (FVec2)args.fragCoord / args.res;
-            st.X *= 1d * args.res.X / args.res.Y;
-            st = (st - new FVec2(1.25, .5)) / .2;
+            FVec2 st = (FVec2)fragCoord / res;
+            st.X *= 1d * res.X / res.Y;
+            st = (st - new FVec2(0.4, -0.5)) / .4;
             Complex c = new(st.X, st.Y);
             double mandelOut = Mandel(c);
             if (mandelOut < 2)
             {
-                args.fragOut = new RGBA(0, 0, 0, 255);
+                fragOut = new RGBA(0, 0, 0, 255);
             }
             else
             {
-                args.fragOut = new HSV(mandelOut * 5, 1, 1);
+                fragOut = new HSV(mandelOut * 5, 1, 1);
             }
         }
-
-        public static void Multibrot(FragShaderArgs args)
+        public static void Multibrot(in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
-            FVec2 st = (FVec2)args.fragCoord / args.res;
-            st.X *= 1d * args.res.X / args.res.Y;
-            st = (st - new FVec2(1.25, .5)) / .2;
+            FVec2 st = (FVec2)fragCoord / res;
+            st.X *= 1d * res.X / res.Y;
+            st = (st - new FVec2(0.4, -0.5)) / .2;
             Complex c = new(st.X, st.Y);
-            double exponent = 3 * System.Math.Cos(args.time) + 4;
+            double exponent = 3 * System.Math.Cos(time) + 4;
             double multiOut = Multi(c, exponent);
             if (multiOut < 2)
             {
-                args.fragOut = new RGBA(0, 0, 0, 255);
+                fragOut = new RGBA(0, 0, 0, 255);
             }
             else
             {
-                args.fragOut = new HSV(multiOut * 5, 1, 1);
+                fragOut = new HSV(multiOut * 5, 1, 1);
             }
         }
 
-        public static void Rainbow(FragShaderArgs args)
+        public static void Rainbow(in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
-            args.fragOut = (FRGBA)args.fragIn * ((FRGBA)new HSV(180 * args.time % 360, 1d, 1d) / 255d);
+            fragOut = (FRGBA)fragIn * ((FRGBA)new HSV(180 * time % 360, 1d, 1d) / 255d);
         }
     }
 }
