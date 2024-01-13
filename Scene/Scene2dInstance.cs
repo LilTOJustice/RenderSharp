@@ -15,7 +15,14 @@ namespace RenderSharp.Scene
         public Scene2dInstance(Scene2d scene, double time, int index)
         {
             Camera = scene.SceneCamera;
-            Actors = scene.Actors;
+            Actors = scene.Actors.Select(actor =>
+                new Scene2d.Actor(
+                    actor.Texture,
+                    new Vec2(actor.Position.Components),
+                    new Vec2(actor.Size.Components),
+                    actor.Rotation
+                )
+            ).ToHashSet();
             Time = time;
             Index = index;
         }

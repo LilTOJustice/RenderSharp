@@ -91,6 +91,7 @@ namespace RendererCommon
             Framerate = framerate;
             MovieID = _nextId++;
             TempDir = $"{Directory.GetCurrentDirectory()}\\temp_{MovieID}";
+            Directory.Delete(TempDir, true);
             Directory.CreateDirectory(TempDir);
         }
 
@@ -115,6 +116,10 @@ namespace RendererCommon
         {
             string filename = $"{TempDir}\\{frameInd}";
             frame.Output(filename, "bmp");
+        }
+
+        ~Movie() {
+            Directory.Delete(TempDir, true);
         }
     }
 }   

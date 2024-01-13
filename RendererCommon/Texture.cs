@@ -15,30 +15,18 @@ namespace RenderSharp.RendererCommon
 
         public int Width { get { return Size.X; } set { Size.X = value; } }
 
-        public Texture(Vec2 size)
-        {
-            Size = size;
-            _texture = new RGBA[Height, Width];
-        }
-
-        public Texture(int width, int height)
+        public Texture(int width, int height, RGBA? color = null)
         {
             Size = new Vec2(width, height);
             _texture = new RGBA[Height, Width];
+            Fill(color ?? new RGB(0, 0, 0));
         }
 
-        public Texture(Vec2 size, RGBA color)
+        public Texture(Vec2 size, RGBA? color = null)
         {
             Size = size;
             _texture = new RGBA[Height, Width];
-
-            for (int i = 0; i < Height; i++)
-            {
-                for (int j = 0; j < Width; j++)
-                {
-                    _texture[i, j] = color;
-                }
-            }
+            Fill(color ?? new RGB(0, 0, 0));
         }
 
         public Texture(string filename)
@@ -64,6 +52,17 @@ namespace RenderSharp.RendererCommon
                             bmp[widthStep + 2],
                             bmp[widthStep + 3]
                         );
+                }
+            }
+        }
+
+        public void Fill(RGBA color)
+        {
+            for (int i = 0; i < Height; i++)
+            {
+                for (int j = 0; j < Width; j++)
+                {
+                    _texture[i, j] = color;
                 }
             }
         }

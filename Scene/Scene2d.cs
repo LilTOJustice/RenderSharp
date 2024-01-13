@@ -36,22 +36,26 @@ namespace RenderSharp.Scene
         public class Actor
         {
             public int Width { get { return Size.X; } set { Size.X = value; } }
+
             public int Height { get { return Size.Y; } set { Size.Y = value; } }
+            
             public Vec2 Position { get; set; }
+            
             public Vec2 Size { get; set; }
+            
             public double Rotation { get; set; }
+            
             public Texture Texture { get; set; }
+            
             public FragShader Shader { get; set; }
-            public Scene2dThinkFunc ThinkFunc { get; set; }
 
             public Actor(Texture texture, Vec2? position = null, Vec2? size = null, double rotation = 0)
             {
                 Texture = texture;
                 Position = position ?? new Vec2();
-                Size = size ?? new Vec2();
+                Size = size ?? new Vec2(Texture.Size.X, Texture.Size.Y);
                 Rotation = rotation;
                 Shader = (in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
-                ThinkFunc = (Scene2dThinkFuncArgs) => { };
             }
 
             public void Scale(FVec2 scale)
@@ -67,11 +71,6 @@ namespace RenderSharp.Scene
             public void ClearShaders()
             {
                 Shader = (in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
-            }
-
-            public void ClearThinkFunc()
-            {
-                ThinkFunc = (Scene2dThinkFuncArgs) => { };
             }
         }
 
@@ -110,6 +109,11 @@ namespace RenderSharp.Scene
             SceneCamera = new Camera(new Vec2(0, 0), 1, 0);
             Shader = (in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
             ThinkFunc = (Scene2dThinkFuncArgs) => { };
+        }
+
+        public void AddActor(Actor actor)
+        {
+            Actors.Add(actor);
         }
 
         public Actor AddActor(Texture texture, Vec2 position, Vec2 size, double rotation)

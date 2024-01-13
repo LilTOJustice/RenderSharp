@@ -61,6 +61,9 @@ namespace RenderSharp.Render2d
                 throw new Exception("Attempted to render a movie on a static scene.");
             }
 
+            Console.WriteLine("Simulating...");
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
             Movie movie = new(Width, Height, Scene.Framerate);
             List<Scene2dInstance> instances = new(Scene.TimeSeq.Count);
             for (int i = 0; i < Scene.TimeSeq.Count; i++)
@@ -69,6 +72,9 @@ namespace RenderSharp.Render2d
                 Scene.ThinkFunc(new Scene2dThinkFuncArgs(time, Scene.DeltaTime));
                 instances.Add(new Scene2dInstance(Scene, time, i));
             }
+
+            stopwatch.Stop();
+            Console.WriteLine($"Finished in {stopwatch.Elapsed}");
 
             int numThreads = Environment.ProcessorCount;
             List<Thread> threads = new(numThreads);
@@ -91,7 +97,7 @@ namespace RenderSharp.Render2d
                 thread.Start();
             }
 
-            Stopwatch stopwatch = Stopwatch.StartNew();
+            stopwatch = Stopwatch.StartNew();
             Console.WriteLine($"Waiting for {threads.Count} threads...");
 
             while (doneCount <= instances.Count)
@@ -139,32 +145,30 @@ namespace RenderSharp.Render2d
         }
 
 
-        Frame Render(Scene2dInstance scene, Texture? bgTexture = null, RGBA? bgColor = null, bool verbose = false)
+        private Frame Render(Scene2dInstance scene, Texture? bgTexture = null, RGBA? bgColor = null, bool verbose = false)
         {
             Frame output = new(Resolution);
 
             if (verbose)
             {
-                Console.WriteLine($"\nBeginning actor render ({scene.Actors.Count} total)...");
+                Console.WriteLine($"Beginning actor render ({scene.Actors.Count} total)...");
             }
 
-            var start = DateTime.Now;
-            var end = start;
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
-            bgTexture ??= new Texture(Resolution);
+            bgTexture ??= new Texture(Resolution, bgColor ?? new RGB());
 
             int bgSpriteLeft = -bgTexture!.Width / 2;
             int bgSpriteTop = bgTexture!.Height / 2;
             
-            for (int i = 0; i < Height; i++)
+            for (int y = 0; y < Height; y++)
             {
-                for (int j = 0; j < Width; j++)
+                for (int x = 0; x < Width; x++)
                 {
-                    Vec2 worldLoc = scene.ScreenToWorld(Resolution, new Vec2(j, i));
-                    RGBA outColor = bgColor ?? new RGBA(0, 0, 0, 255);
+                    Vec2 worldLoc = scene.ScreenToWorld(Resolution, new Vec2(x, y));
 
                     Vec2 ind = worldLoc - new Vec2(bgSpriteLeft, bgSpriteTop);
-                    outColor = bgTexture[Util.Mod(ind.X, bgTexture.Width), Util.Mod(ind.Y, bgTexture.Height)];
+                    RGBA outColor = bgTexture[Util.Mod(ind.X, bgTexture.Width), Util.Mod(ind.Y, bgTexture.Height)];
                     Scene.Shader(outColor, out outColor, ind, bgTexture.Size, scene.Time);
                     outColor = ColorFunctions.AlphaBlend(outColor, outColor);
 
@@ -174,7 +178,7 @@ namespace RenderSharp.Render2d
                         actorLoc -= new Vec2(-actor.Width / 2, actor.Height / 2);
                         Vec2 actorTlLoc = new Vec2(actorLoc.X, -actorLoc.Y);
 
-                        if (actorTlLoc.X >= actor.Width || actorTlLoc.Y >= actor.Height)
+                        if (actorTlLoc.X < 0 || actorTlLoc.Y < 0 || actorTlLoc.X >= actor.Width || actorTlLoc.Y >= actor.Height)
                         {
                             continue;
                         }
@@ -187,14 +191,15 @@ namespace RenderSharp.Render2d
                         outColor = ColorFunctions.AlphaBlend(textureSample, outColor);
                     }
 
-                    output[j, i] = outColor;
+                    output[x, y] = outColor;
                 }
             }
 
+            stopwatch.Stop();
+
             if (verbose)
             {
-                end = DateTime.Now;
-                Console.WriteLine($"Done! ({(end - start).TotalSeconds}s)\n\nRender complete.");
+                Console.WriteLine($"Done! ({stopwatch.Elapsed})\n\nRender complete.");
             }
 
             return output;
