@@ -1,6 +1,5 @@
 ﻿using ImageMagick;
 using RenderSharp.Math;
-using RenderSharp.RendererCommon;
 
 
 
@@ -12,13 +11,19 @@ namespace RenderSharp.RendererCommon
 
         public Vec2 Size { get; set; } 
 
-        public int Height { get { return Size.Y; } }
+        public int Height { get { return Size.Y; } set { Size.Y = value; } }
 
-        public int Width { get { return Size.X; } }
+        public int Width { get { return Size.X; } set { Size.X = value; } }
 
         public Texture(Vec2 size)
         {
             Size = size;
+            _texture = new RGBA[Height, Width];
+        }
+
+        public Texture(int width, int height)
+        {
+            Size = new Vec2(width, height);
             _texture = new RGBA[Height, Width];
         }
 

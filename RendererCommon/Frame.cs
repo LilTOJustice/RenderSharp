@@ -1,6 +1,6 @@
-﻿using RenderSharp.Math;
+﻿using ImageMagick;
+using RenderSharp.Math;
 using RenderSharp.RendererCommon;
-using ImageMagick;
 using System.Diagnostics;
 
 namespace RendererCommon
@@ -18,14 +18,18 @@ namespace RendererCommon
 
         private byte[] Image { get; set; }
 
-        // constructor
+        public Frame(Vec2 size)
+        {
+            Size = size;
+            Image = new byte[Width * Height * 4];
+        }
+
         public Frame(int width, int height)
         {
             Size = new Vec2(width, height);
             Image = new byte[width * height * 4];
         }
 
-        // puts the R, G, B, and A into RGBA
         public RGBA this[int x, int y]
         {
             get
@@ -68,8 +72,8 @@ namespace RendererCommon
 
     public class Movie
     {
-        // properties
         public Vec2 Size { get; private set; }
+
         public int Height { get { return Size.Y; } private set { Size.Y = value; } }
 
         public int Width { get { return Size.X; } private set { Size.X = value; } }
@@ -84,7 +88,6 @@ namespace RendererCommon
 
         private static int _nextId = 0;
 
-        // constructor
         public Movie(int width, int height, int duration, int fps)
         {
             Size = new Vec2(width, height);
