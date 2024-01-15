@@ -3,6 +3,7 @@ using RenderSharp.Math;
 using RenderSharp.Scene;
 using RendererCommon;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace RenderSharp.Render2d
 {
@@ -15,8 +16,10 @@ namespace RenderSharp.Render2d
         public int Height { get { return Resolution.Y; } set { Resolution.Y = value; } }
 
         public Scene2d Scene { get; set; }
+        
+        public FragShader Shader { get; set; }
 
-        public Renderer2d(int resX, int resY, Scene2d scene)
+        public Renderer2d(int resX, int resY, Scene2d scene, FragShader? shader = null)
         {
             if (resX < 1 || resY < 1)
             {
@@ -25,9 +28,10 @@ namespace RenderSharp.Render2d
 
             Resolution = new Vec2(resX, resY);
             Scene = scene;
+            Shader = shader ?? ((in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
         }
 
-        public Renderer2d(Vec2 resolution, Scene2d scene)
+        public Renderer2d(Vec2 resolution, Scene2d scene, FragShader? shader = null)
         {
             if (resolution.X < 1 || resolution.Y < 1)
             {
@@ -36,6 +40,7 @@ namespace RenderSharp.Render2d
 
             Resolution = new Vec2(resolution.Components);
             Scene = scene;
+            Shader = shader ?? ((in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
         }
 
         public Frame RenderFrame(int index = 0)
@@ -61,7 +66,7 @@ namespace RenderSharp.Render2d
                 throw new Exception("Attempted to render a movie on a static scene.");
             }
 
-            Console.WriteLine("Simulating...");
+            Console.Write("Simulating... ");
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             Movie movie = new(Width, Height, Scene.Framerate);
@@ -175,21 +180,21 @@ namespace RenderSharp.Render2d
                     foreach (var actor in scene.Actors)
                     {
                         Vec2 actorLoc = Scene2dInstance.WorldToActor(actor, worldLoc);
-                        actorLoc -= new Vec2(-actor.Width / 2, actor.Height / 2);
-                        Vec2 actorTlLoc = new Vec2(actorLoc.X, -actorLoc.Y);
 
-                        if (actorTlLoc.X < 0 || actorTlLoc.Y < 0 || actorTlLoc.X >= actor.Width || actorTlLoc.Y >= actor.Height)
+                        if (actorLoc.X < -actor.Width / 2 || actorLoc.Y < -actor.Height / 2 || actorLoc.X >= actor.Width / 2 || actorLoc.Y >= actor.Height / 2)
                         {
                             continue;
                         }
 
-                        Vec2 textureInd = (Vec2)(((FVec2)actorTlLoc) / actor.Size * actor.Texture.Size);
-                        RGBA textureSample = new RGBA(actor.Texture[textureInd.X, textureInd.Y].Components);
+                        Vec2 textureInd = actor.ActorToTexture(actorLoc);
+                        RGBA textureSample = new (actor.Texture[textureInd.X, textureInd.Y].Components);
 
                         actor.Shader(textureSample, out textureSample, textureInd, actor.Texture.Size, scene.Time);
 
                         outColor = ColorFunctions.AlphaBlend(textureSample, outColor);
                     }
+
+                    Shader(outColor, out outColor, new Vec2(x, y), Resolution, scene.Time);
 
                     output[x, y] = outColor;
                 }
@@ -205,5 +210,9 @@ namespace RenderSharp.Render2d
             return output;
         }
 
+        public void ClearShaders()
+        {
+            Shader = (in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace RenderSharp.Math
 {
-    public class Vector<T>
+    public class Vector<T> : IEquatable<Vector<T>>
         where T : INumber<T>
     {
         protected T[] vec;
@@ -167,6 +167,44 @@ namespace RenderSharp.Math
         public T Dot(Vector<T> rhs)
         {
             return Dot(this, rhs);
+        }
+
+        public static bool operator ==(Vector<T> lhs, Vector<T> rhs)
+        {
+            return lhs.Equals(rhs);
+        }
+
+        public static bool operator !=(Vector<T> lhs, Vector<T> rhs)
+        {
+            return !lhs.Equals(rhs);
+        }
+
+        public bool Equals(Vector<T>? other)
+        {
+            if (other is null || Dimensions != other.Dimensions)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < Dimensions; i++)
+            {
+                if (this[i] != other[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return ((object)this).GetHashCode();
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Vector<T>);
         }
     }
 }

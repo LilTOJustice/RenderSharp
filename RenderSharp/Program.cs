@@ -9,15 +9,10 @@ namespace RenderSharp
     {
         static void Main(string[] args)
         {
-            Scene2d scene = new(10, 2, bgcolor: new RGB(255, 0, 0));
-            Renderer2d renderer = new(500, 500, scene);
-            Scene2d.Actor actor = new(new Texture(100, 100));
-            scene.AddActor(actor);
-            scene.ThinkFunc += (Scene2dThinkFuncArgs args) =>
-            {
-                actor.Position += new Vec2(10, 10);
-            };
+            Scene2d scene = new(60, 6, bgcolor: new RGB(0, 0, 255));
+            Renderer2d renderer = new(2560, 1440, scene);
             scene.Shader += ExampleShaders.Multibrot;
+            renderer.Shader += ExampleShaders.Psychedelic;
             renderer.RenderMovie().Output("test");
         }
     }

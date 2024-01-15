@@ -20,7 +20,8 @@ namespace RenderSharp.Scene
                     actor.Texture,
                     new Vec2(actor.Position.Components),
                     new Vec2(actor.Size.Components),
-                    actor.Rotation
+                    actor.Rotation,
+                    actor.Shader
                 )
             ).ToHashSet();
             Time = time;
@@ -35,7 +36,7 @@ namespace RenderSharp.Scene
 
         public static Vec2 WorldToActor(Scene2d.Actor actor, Vec2 worldCoord)
         {
-            return (Vec2)((FVec2)(worldCoord - actor.Position)).Rotate(-actor.Rotation);
+            return (Vec2)((FVec2)(worldCoord - actor.Position)).Rotate(actor.Rotation);
         }
 
         public Vec2 ScreenToActor(Vec2 screenSize, Scene2d.Actor actor, Vec2 screenCoord)
