@@ -4,7 +4,7 @@ namespace RenderSharp.RendererCommon
 {
     public class HSV : Vector3<double>
     {
-        public double H { get { return this[0]; } set { this[0] = value; } } 
+        public double H { get { return this[0]; } set { this[0] = value % 360; } } 
 
         public double S { get { return this[1]; } set { this[1] = value; } } 
         

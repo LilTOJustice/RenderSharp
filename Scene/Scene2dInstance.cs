@@ -15,7 +15,15 @@ namespace RenderSharp.Scene
         public Scene2dInstance(Scene2d scene, double time, int index)
         {
             Camera = scene.SceneCamera;
-            Actors = scene.Actors;
+            Actors = scene.Actors.Select(actor =>
+                new Scene2d.Actor(
+                    actor.Texture,
+                    new Vec2(actor.Position.Components),
+                    new Vec2(actor.Size.Components),
+                    actor.Rotation,
+                    actor.Shader
+                )
+            ).ToHashSet();
             Time = time;
             Index = index;
         }
@@ -28,7 +36,7 @@ namespace RenderSharp.Scene
 
         public static Vec2 WorldToActor(Scene2d.Actor actor, Vec2 worldCoord)
         {
-            return (Vec2)((FVec2)(worldCoord - actor.Position)).Rotate(-actor.Rotation);
+            return (Vec2)((FVec2)(worldCoord - actor.Position)).Rotate(actor.Rotation);
         }
 
         public Vec2 ScreenToActor(Vec2 screenSize, Scene2d.Actor actor, Vec2 screenCoord)

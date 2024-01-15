@@ -67,9 +67,23 @@ namespace RenderSharp
             }
         }
 
-        public static void Rainbow(in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void Psychedelic(in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
-            fragOut = (FRGBA)fragIn * ((FRGBA)new HSV(180 * time % 360, 1d, 1d) / 255d);
+            HSV hsv = (HSV)fragIn;
+            hsv.H += time * 360;
+            fragOut = hsv;
+        }
+
+        public static void TopLeftDebug(in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        {
+            if (fragCoord == res / 4)
+            {
+                fragOut = new RGB(255, 0, 0);
+            }
+            else
+            {
+                fragOut = fragIn;
+            }
         }
     }
 }

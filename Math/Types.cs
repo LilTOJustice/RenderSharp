@@ -18,11 +18,6 @@
             return new FVec2(vec.X, vec.Y);
         }
 
-        public static explicit operator UVec2(Vec2 vec)
-        {
-            return new UVec2((ulong)vec.X, (ulong)vec.Y);
-        }
-
         public static Vec2 operator +(Vec2 lhs, Vec2 rhs)
         {
             return new Vec2(((Vector2<int>)lhs + rhs).Components);
@@ -30,7 +25,7 @@
 
         public static Vec2 operator -(Vec2 lhs, Vec2 rhs)
         {
-            return new Vec2(((Vector2<int>)lhs + rhs).Components);
+            return new Vec2(((Vector2<int>)lhs - rhs).Components);
         }
 
         public static Vec2 operator *(Vec2 lhs, Vec2 rhs)
@@ -82,11 +77,6 @@
             return new FVec3(vec.X, vec.Y, vec.Z);
         }
 
-        public static explicit operator UVec3(Vec3 vec)
-        {
-            return new UVec3((ulong)vec.X, (ulong)vec.Y, (ulong)vec.Z);
-        }
-
         public static Vec3 operator +(Vec3 lhs, Vec3 rhs)
         {
             return new Vec3(((Vector3<int>)lhs + rhs).Components);
@@ -94,7 +84,7 @@
 
         public static Vec3 operator -(Vec3 lhs, Vec3 rhs)
         {
-            return new Vec3(((Vector3<int>)lhs + rhs).Components);
+            return new Vec3(((Vector3<int>)lhs - rhs).Components);
         }
 
         public static Vec3 operator *(Vec3 lhs, Vec3 rhs)
@@ -141,11 +131,6 @@
             return new FVec4(vec.X, vec.Y, vec.Z, vec.W);
         }
 
-        public static explicit operator UVec4(Vec4 vec)
-        {
-            return new UVec4((ulong)vec.X, (ulong)vec.Y, (ulong)vec.Z, (ulong)vec.W);
-        }
-
         public static Vec4 operator +(Vec4 lhs, Vec4 rhs)
         {
             return new Vec4(((Vector4<int>)lhs + rhs).Components);
@@ -153,7 +138,7 @@
 
         public static Vec4 operator -(Vec4 lhs, Vec4 rhs)
         {
-            return new Vec4(((Vector4<int>)lhs + rhs).Components);
+            return new Vec4(((Vector4<int>)lhs - rhs).Components);
         }
 
         public static Vec4 operator *(Vec4 lhs, Vec4 rhs)
@@ -187,193 +172,6 @@
         }
     }
     
-    public class UVec2 : Vector2<ulong>
-    {
-        public UVec2() : base() { }
-
-        public UVec2(ulong[] vec) : base(vec) { }
-        
-        public UVec2(ulong X, ulong Y) : base(X, Y) { }
-
-        public UVec3 Cross(UVec2 rhs)
-        {
-            return new UVec3(Cross((Vector2<ulong>)this, rhs).Components);
-        }
-
-        public static implicit operator FVec2(UVec2 vec)
-        {
-            return new FVec2(vec.X, vec.Y);
-        }
-
-        public static explicit operator Vec2(UVec2 vec)
-        {
-            return new Vec2((int)vec.X, (int)vec.Y);
-        }
-
-        public static UVec2 operator +(UVec2 lhs, UVec2 rhs)
-        {
-            return new UVec2(((Vector2<ulong>)lhs + rhs).Components);
-        }
-
-        public static UVec2 operator -(UVec2 lhs, UVec2 rhs)
-        {
-            return new UVec2(((Vector2<ulong>)lhs + rhs).Components);
-        }
-
-        public static UVec2 operator *(UVec2 lhs, UVec2 rhs)
-        {
-            return new UVec2(((Vector2<ulong>)lhs * rhs).Components);
-        }
-
-        public static UVec2 operator *(UVec2 lhs, ulong scalar)
-        {
-            return new UVec2(((Vector2<ulong>)lhs * scalar).Components);
-        }
-
-        public static FVec2 operator *(UVec2 lhs, double scalar)
-        {
-            return new FVec2((new Vector2<double>(lhs.X, lhs.Y) * scalar).Components);
-        }
-
-        public static UVec2 operator /(UVec2 lhs, UVec2 rhs)
-        {
-            return new UVec2(((Vector2<ulong>)lhs / rhs).Components);
-        }
-
-        public static UVec2 operator /(UVec2 lhs, ulong scalar)
-        {
-            return new UVec2(((Vector2<ulong>)lhs / scalar).Components);
-        }
-
-        public static FVec2 operator /(UVec2 lhs, double scalar)
-        {
-            return new FVec2((new Vector2<double>(lhs.X, lhs.Y) / scalar).Components);
-        }
-    }
-    
-    public class UVec3 : Vector3<ulong>
-    {
-        public UVec3() : base() { }
-
-        public UVec3(ulong[] vec) : base(vec) { }
-        
-        public UVec3(ulong X, ulong Y, ulong Z) : base(X, Y, Z) { }
-
-        public UVec3 Cross(UVec3 rhs)
-        {
-            return new UVec3(Cross(this, rhs).Components);
-        }
-
-        public static implicit operator FVec3(UVec3 vec)
-        {
-            return new FVec3(vec.X, vec.Y, vec.Z);
-        }
-
-        public static explicit operator Vec3(UVec3 vec)
-        {
-            return new Vec3((int)vec.X, (int)vec.Y, (int)vec.Z);
-        }
-
-        public static UVec3 operator +(UVec3 lhs, UVec3 rhs)
-        {
-            return new UVec3(((Vector3<ulong>)lhs + rhs).Components);
-        }
-
-        public static UVec3 operator -(UVec3 lhs, UVec3 rhs)
-        {
-            return new UVec3(((Vector3<ulong>)lhs + rhs).Components);
-        }
-
-        public static UVec3 operator *(UVec3 lhs, UVec3 rhs)
-        {
-            return new UVec3(((Vector3<ulong>)lhs * rhs).Components);
-        }
-
-        public static UVec3 operator *(UVec3 lhs, ulong scalar)
-        {
-            return new UVec3(((Vector3<ulong>)lhs * scalar).Components);
-        }
-
-        public static FVec3 operator *(UVec3 lhs, double scalar)
-        {
-            return new FVec3((new Vector3<double>(lhs.X, lhs.Y, lhs.Z) * scalar).Components);
-        }
-
-        public static UVec3 operator /(UVec3 lhs, UVec3 rhs)
-        {
-            return new UVec3(((Vector3<ulong>)lhs / rhs).Components);
-        }
-
-        public static UVec3 operator /(UVec3 lhs, ulong scalar)
-        {
-            return new UVec3(((Vector3<ulong>)lhs / scalar).Components);
-        }
-
-        public static FVec3 operator /(UVec3 lhs, double scalar)
-        {
-            return new FVec3((new Vector3<double>(lhs.X, lhs.Y, lhs.Z) / scalar).Components);
-        }
-    }
-    
-    public class UVec4 : Vector4<ulong>
-    {
-        public UVec4() : base() { }
-
-        public UVec4(ulong[] vec) : base(vec) { }
-        
-        public UVec4(ulong X, ulong Y, ulong Z, ulong W) : base(X, Y, Z, W) { }
-
-        public static implicit operator FVec4(UVec4 vec)
-        {
-            return new FVec4(vec.X, vec.Y, vec.Z, vec.W);
-        }
-
-        public static explicit operator Vec4(UVec4 vec)
-        {
-            return new Vec4((int)vec.X, (int)vec.Y, (int)vec.Z, (int)vec.W);
-        }
-
-        public static UVec4 operator +(UVec4 lhs, UVec4 rhs)
-        {
-            return new UVec4(((Vector4<ulong>)lhs + rhs).Components);
-        }
-
-        public static UVec4 operator -(UVec4 lhs, UVec4 rhs)
-        {
-            return new UVec4(((Vector4<ulong>)lhs + rhs).Components);
-        }
-
-        public static UVec4 operator *(UVec4 lhs, UVec4 rhs)
-        {
-            return new UVec4(((Vector4<ulong>)lhs * rhs).Components);
-        }
-
-        public static UVec4 operator *(UVec4 lhs, ulong scalar)
-        {
-            return new UVec4(((Vector4<ulong>)lhs * scalar).Components);
-        }
-
-        public static FVec4 operator *(UVec4 lhs, double scalar)
-        {
-            return new FVec4((new Vector4<double>(lhs.X, lhs.Y, lhs.Z, lhs.W) * scalar).Components);
-        }
-
-        public static UVec4 operator /(UVec4 lhs, UVec4 rhs)
-        {
-            return new UVec4(((Vector4<ulong>)lhs / rhs).Components);
-        }
-
-        public static UVec4 operator /(UVec4 lhs, ulong scalar)
-        {
-            return new UVec4(((Vector4<ulong>)lhs / scalar).Components);
-        }
-
-        public static FVec4 operator /(UVec4 lhs, double scalar)
-        {
-            return new FVec4((new Vector4<double>(lhs.X, lhs.Y, lhs.Z, lhs.W) / scalar).Components);
-        }
-    }
-    
     public class FVec2 : Vector2<double>
     {
         public FVec2() : base() { }
@@ -396,11 +194,6 @@
             return new Vec2((int)vec.X, (int)vec.Y);
         }
 
-        public static explicit operator UVec2(FVec2 vec)
-        {
-            return new UVec2((ulong)vec.X, (ulong)vec.Y);
-        }
-
         public static FVec2 operator +(FVec2 lhs, FVec2 rhs)
         {
             return new FVec2(((Vector2<double>)lhs + rhs).Components);
@@ -408,7 +201,7 @@
 
         public static FVec2 operator -(FVec2 lhs, FVec2 rhs)
         {
-            return new FVec2(((Vector2<double>)lhs + rhs).Components);
+            return new FVec2(((Vector2<double>)lhs - rhs).Components);
         }
 
         public static FVec2 operator *(FVec2 lhs, FVec2 rhs)
@@ -450,11 +243,6 @@
             return new Vec3((int)vec.X, (int)vec.Y, (int)vec.Z);
         }
 
-        public static explicit operator UVec3(FVec3 vec)
-        {
-            return new UVec3((ulong)vec.X, (ulong)vec.Y, (ulong)vec.Z);
-        }
-
         public static FVec3 operator +(FVec3 lhs, FVec3 rhs)
         {
             return new FVec3(((Vector3<double>)lhs + rhs).Components);
@@ -462,7 +250,7 @@
 
         public static FVec3 operator -(FVec3 lhs, FVec3 rhs)
         {
-            return new FVec3(((Vector3<double>)lhs + rhs).Components);
+            return new FVec3(((Vector3<double>)lhs - rhs).Components);
         }
 
         public static FVec3 operator *(FVec3 lhs, FVec3 rhs)
@@ -499,11 +287,6 @@
             return new Vec4((int)vec.X, (int)vec.Y, (int)vec.Z, (int)vec.W);
         }
 
-        public static explicit operator UVec4(FVec4 vec)
-        {
-            return new UVec4((ulong)vec.X, (ulong)vec.Y, (ulong)vec.Z, (ulong)vec.W);
-        }
-
         public static FVec4 operator +(FVec4 lhs, FVec4 rhs)
         {
             return new FVec4(((Vector4<double>)lhs + rhs).Components);
@@ -511,7 +294,7 @@
 
         public static FVec4 operator -(FVec4 lhs, FVec4 rhs)
         {
-            return new FVec4(((Vector4<double>)lhs + rhs).Components);
+            return new FVec4(((Vector4<double>)lhs - rhs).Components);
         }
 
         public static FVec4 operator *(FVec4 lhs, FVec4 rhs)
