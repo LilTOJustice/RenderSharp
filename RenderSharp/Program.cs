@@ -13,7 +13,12 @@ namespace RenderSharp
             Scene2d.Actor actor = new(new Texture(100, 100));
             scene.AddActor(actor);
             actor.Shader += ExampleShaders.Ghostly;
+            scene.ThinkFunc += (Scene2dInstance scene, double time, double dt) =>
+            {
+                scene.Actors.First().Position.X += 10 * dt;
+            };
             renderer.RenderMovie().Output("test");
+            Console.WriteLine(scene.Actors.First().Position);
         }
     }
 }

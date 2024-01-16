@@ -23,13 +23,13 @@ namespace RenderSharp.Scene
 
         public class Actor
         {
-            public int Width { get { return Size.X; } set { Size.X = value; } }
+            public double Width { get { return Size.X; } set { Size.X = value; } }
 
-            public int Height { get { return Size.Y; } set { Size.Y = value; } }
+            public double Height { get { return Size.Y; } set { Size.Y = value; } }
             
-            public Vec2 Position { get; set; }
+            public FVec2 Position { get; set; }
             
-            public Vec2 Size { get; set; }
+            public FVec2 Size { get; set; }
             
             public double Rotation { get; set; }
             
@@ -37,19 +37,13 @@ namespace RenderSharp.Scene
             
             public FragShader Shader { get; set; }
 
-            public Actor(Texture texture, Vec2? position = null, Vec2? size = null, double rotation = 0, FragShader? shader = null)
+            public Actor(Texture texture, FVec2? position = null, FVec2? size = null, double rotation = 0, FragShader? shader = null)
             {
                 Texture = texture;
-                Position = position ?? new Vec2();
-                Size = size ?? new Vec2(Texture.Size.X, Texture.Size.Y);
+                Position = position ?? new FVec2();
+                Size = size ?? new FVec2(Texture.Size.X, Texture.Size.Y);
                 Rotation = rotation;
                 Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            }
-
-            public Vec2 ActorToTexture(Vec2 actorCoords)
-            {
-                Vec2 actorTl = actorCoords + new Vec2(Width / 2, Height / 2);
-                return (Vec2)(((FVec2)actorTl) / Size * Texture.Size);
             }
 
             public void ClearShaders()
@@ -120,6 +114,22 @@ namespace RenderSharp.Scene
         public void ClearThinkFunc()
         {
             ThinkFunc = (Scene2dThinkFuncArgs) => { };
+        }
+
+        public List<Scene2dInstance> Simulate(int? simulateToIndex = null)
+        {
+            simulateToIndex ??= TimeSeq.Count - 1;
+            List<Scene2dInstance> instances = new List<Scene2dInstance>((int)simulateToIndex! + 1);
+            Scene2dInstance current = new Scene2dInstance(this, TimeSeq[0], 0);
+            instances.Add(current);
+            for (int i = 1; i <= simulateToIndex; i++)
+            {
+                current = new Scene2dInstance(current, TimeSeq[i], i);
+                current.ThinkFunc(new Scene2dThinkFuncArgs(current, TimeSeq[i], DeltaTime));
+                instances.Add(current);
+            }
+
+            return instances;
         }
     }
 }
