@@ -170,7 +170,7 @@ namespace RenderSharp.Render2d
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    Vec2 worldLoc = scene.ScreenToWorld(Resolution, new Vec2(x, y));
+                    Vec2 worldLoc = Util.Transforms.ScreenToWorld2(Resolution, new Vec2(x, y), scene.Camera.Center, scene.Camera.Zoom, scene.Camera.Rotation);
 
                     Vec2 ind = worldLoc - new Vec2(bgSpriteLeft, bgSpriteTop);
                     RGBA outColor = bgTexture[Util.Mod(ind.X, bgTexture.Width), Util.Mod(ind.Y, bgTexture.Height)];
@@ -179,7 +179,7 @@ namespace RenderSharp.Render2d
 
                     foreach (var actor in scene.Actors)
                     {
-                        Vec2 actorLoc = Scene2dInstance.WorldToActor(actor, worldLoc);
+                        Vec2 actorLoc = Util.Transforms.WorldToActor2(worldLoc, actor.Position, actor.Rotation);
 
                         if (actorLoc.X < -actor.Width / 2 || actorLoc.Y < -actor.Height / 2 || actorLoc.X >= actor.Width / 2 || actorLoc.Y >= actor.Height / 2)
                         {
