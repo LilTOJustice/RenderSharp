@@ -25,7 +25,7 @@ namespace RenderSharp.Math
         public Vector(Vector<T> other)
         {
             vec = new T[other.Dimensions];
-            vec.CopyTo(vec, 0);
+            other.Components.CopyTo(vec, 0);
         }
 
         public Vector(Vector<T> other, int dimensions)
