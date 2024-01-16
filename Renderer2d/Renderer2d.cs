@@ -51,12 +51,12 @@ namespace RenderSharp.Render2d
                     " the length of the scene's time sequence.");
             }
 
-            for (int i = 0; i < index; i++)
-            {
-                Scene.ThinkFunc(new Scene2dThinkFuncArgs(Scene.TimeSeq[i], Scene.DeltaTime));
-            }
-
-            return Render(new Scene2dInstance(Scene, Scene.TimeSeq[index], index), Scene.BgTexture, Scene.BgColor ?? (RGBA?)null, true);
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            Console.Write($"Simulating to frame index {index}...");
+            Scene2dInstance sceneInstance = Scene.Simulate(index).Last();
+            stopwatch.Stop();
+            Console.WriteLine($"Finished in {stopwatch.Elapsed}");
+            return Render(sceneInstance, Scene.BgTexture, Scene.BgColor ?? (RGBA?)null, true);
         }
 
         public Movie RenderMovie()
@@ -70,13 +70,7 @@ namespace RenderSharp.Render2d
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             Movie movie = new(Width, Height, Scene.Framerate);
-            List<Scene2dInstance> instances = new(Scene.TimeSeq.Count);
-            for (int i = 0; i < Scene.TimeSeq.Count; i++)
-            {
-                double time = Scene.TimeSeq[i];
-                Scene.ThinkFunc(new Scene2dThinkFuncArgs(time, Scene.DeltaTime));
-                instances.Add(new Scene2dInstance(Scene, time, i));
-            }
+            List<Scene2dInstance> instances = Scene.Simulate();
 
             stopwatch.Stop();
             Console.WriteLine($"Finished in {stopwatch.Elapsed}");
@@ -170,24 +164,28 @@ namespace RenderSharp.Render2d
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    Vec2 worldLoc = Util.Transforms.ScreenToWorld2(Resolution, new Vec2(x, y), scene.Camera.Center, scene.Camera.Zoom, scene.Camera.Rotation);
-
-                    Vec2 ind = worldLoc - new Vec2(bgSpriteLeft, bgSpriteTop);
+                    FVec2 worldLoc = Util.Transforms.ScreenToWorld2(Resolution, new Vec2(x, y), scene.Camera.Center, scene.Camera.Zoom, scene.Camera.Rotation);
+                    Vec2 ind = (Vec2)worldLoc - new Vec2(bgSpriteLeft, bgSpriteTop);
                     RGBA outColor = bgTexture[Util.Mod(ind.X, bgTexture.Width), Util.Mod(ind.Y, bgTexture.Height)];
+
                     FRGBA fOut = outColor;
                     Scene.Shader(fOut, out fOut, ind, bgTexture.Size, scene.Time);
                     outColor = fOut;
 
                     foreach (var actor in scene.Actors)
                     {
-                        Vec2 actorLoc = Util.Transforms.WorldToActor2(worldLoc, actor.Position, actor.Rotation);
-
-                        if (actorLoc.X < -actor.Width / 2 || actorLoc.Y < -actor.Height / 2 || actorLoc.X >= actor.Width / 2 || actorLoc.Y >= actor.Height / 2)
+                        FVec2? actorLoc = Util.Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation);
+                        if (actorLoc is null)
                         {
                             continue;
                         }
 
-                        Vec2 textureInd = actor.ActorToTexture(actorLoc);
+                        Vec2? textureInd = Util.Transforms.ActorToTexture2(actorLoc, actor.Size, actor.Texture.Size);
+                        if (textureInd is null)
+                        {
+                            continue;
+                        }
+
                         RGBA textureSample = new (actor.Texture[textureInd.X, textureInd.Y].Components);
 
                         fOut = textureSample;

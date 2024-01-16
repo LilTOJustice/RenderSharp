@@ -6,6 +6,8 @@
 
         public Vec2(int[] vec) : base(vec) { }
 
+        public Vec2(Vec2 vec) : base(vec) { }
+
         public Vec2(int X, int Y) : base(X, Y) { }
 
         public Vec3 Cross(Vec2 rhs)
@@ -64,6 +66,8 @@
         public Vec3() : base() { }
 
         public Vec3(int[] vec) : base(vec) { }
+
+        public Vec3(Vec3 vec) : base(vec) { }
         
         public Vec3(int X, int Y, int Z) : base(X, Y, Z) { }
 
@@ -124,6 +128,8 @@
 
         public Vec4(int[] vec) : base(vec) { }
         
+        public Vec4(Vec4 vec) : base(vec) { }
+
         public Vec4(int X, int Y, int Z, int W) : base(X, Y, Z, W) { }
 
         public static implicit operator FVec4(Vec4 vec)
@@ -177,6 +183,8 @@
         public FVec2() : base() { }
 
         public FVec2(double[] vec) : base(vec) { }
+
+        public FVec2(FVec2 vec) : base(vec) { }
         
         public FVec2(double X, double Y) : base(X, Y) { }
 
@@ -231,6 +239,8 @@
         
         public FVec3(double[] vec) : base(vec) { }
 
+        public FVec3(FVec3 vec) : base(vec) { }
+
         public FVec3(double X, double Y, double Z) : base(X, Y, Z) { }
 
         public FVec3 Cross(FVec3 rhs)
@@ -279,6 +289,8 @@
         public FVec4() : base() { }
 
         public FVec4(double[] vec) : base(vec) { }
+
+        public FVec4(FVec4 vec) : base(vec) { }
         
         public FVec4(double X, double Y, double Z, double W) : base(X, Y, Z, W) { }
 
