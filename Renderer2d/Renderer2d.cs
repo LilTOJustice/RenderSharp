@@ -28,7 +28,7 @@ namespace RenderSharp.Render2d
 
             Resolution = new Vec2(resX, resY);
             Scene = scene;
-            Shader = shader ?? ((in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+            Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
         }
 
         public Renderer2d(Vec2 resolution, Scene2d scene, FragShader? shader = null)
@@ -40,7 +40,7 @@ namespace RenderSharp.Render2d
 
             Resolution = new Vec2(resolution.Components);
             Scene = scene;
-            Shader = shader ?? ((in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+            Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
         }
 
         public Frame RenderFrame(int index = 0)
@@ -174,8 +174,9 @@ namespace RenderSharp.Render2d
 
                     Vec2 ind = worldLoc - new Vec2(bgSpriteLeft, bgSpriteTop);
                     RGBA outColor = bgTexture[Util.Mod(ind.X, bgTexture.Width), Util.Mod(ind.Y, bgTexture.Height)];
-                    Scene.Shader(outColor, out outColor, ind, bgTexture.Size, scene.Time);
-                    outColor = ColorFunctions.AlphaBlend(outColor, outColor);
+                    FRGBA fOut = outColor;
+                    Scene.Shader(fOut, out fOut, ind, bgTexture.Size, scene.Time);
+                    outColor = fOut;
 
                     foreach (var actor in scene.Actors)
                     {
@@ -189,14 +190,18 @@ namespace RenderSharp.Render2d
                         Vec2 textureInd = actor.ActorToTexture(actorLoc);
                         RGBA textureSample = new (actor.Texture[textureInd.X, textureInd.Y].Components);
 
-                        actor.Shader(textureSample, out textureSample, textureInd, actor.Texture.Size, scene.Time);
+                        fOut = textureSample;
+                        actor.Shader(fOut, out fOut, textureInd, actor.Texture.Size, scene.Time);
+                        textureSample = fOut;
 
                         outColor = ColorFunctions.AlphaBlend(textureSample, outColor);
                     }
 
-                    Shader(outColor, out outColor, new Vec2(x, y), Resolution, scene.Time);
+                    fOut = outColor;
+                    Shader(fOut, out fOut, new Vec2(x, y), Resolution, scene.Time);
+                    outColor = fOut;
 
-                    output[x, y] = outColor;
+                    output[x, y] = (RGB)outColor;
                 }
             }
 
@@ -212,7 +217,7 @@ namespace RenderSharp.Render2d
 
         public void ClearShaders()
         {
-            Shader = (in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
+            Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
         }
     }
 }

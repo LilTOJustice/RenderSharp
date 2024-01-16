@@ -33,7 +33,7 @@ namespace RenderSharp
             return absolute;
         }
 
-        public static void Mandelbrot(in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void Mandelbrot(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             FVec2 st = (FVec2)fragCoord / res;
             st.X *= 1d * res.X / res.Y;
@@ -42,14 +42,14 @@ namespace RenderSharp
             double mandelOut = Mandel(c);
             if (mandelOut < 2)
             {
-                fragOut = new RGBA(0, 0, 0, 255);
+                fragOut = new FRGBA(0, 0, 0, 255);
             }
             else
             {
                 fragOut = new HSV(mandelOut * 5, 1, 1);
             }
         }
-        public static void Multibrot(in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void Multibrot(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             FVec2 st = (FVec2)fragCoord / res;
             st.X *= 1d * res.X / res.Y;
@@ -67,14 +67,14 @@ namespace RenderSharp
             }
         }
 
-        public static void Psychedelic(in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void Psychedelic(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             HSV hsv = (HSV)fragIn;
             hsv.H += time * 360;
             fragOut = hsv;
         }
 
-        public static void TopLeftDebug(in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void TopLeftDebug(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             if (fragCoord == res / 4)
             {
@@ -84,6 +84,12 @@ namespace RenderSharp
             {
                 fragOut = fragIn;
             }
+        }
+
+        public static void Ghostly(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        {
+            fragOut = fragIn;
+            fragOut.A = 0.5 + System.Math.Sin(time * 2) * 0.5;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace RenderSharp.Scene
                 Position = position ?? new Vec2();
                 Size = size ?? new Vec2(Texture.Size.X, Texture.Size.Y);
                 Rotation = rotation;
-                Shader = shader ?? ((in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+                Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             }
 
             public Vec2 ActorToTexture(Vec2 actorCoords)
@@ -54,7 +54,7 @@ namespace RenderSharp.Scene
 
             public void ClearShaders()
             {
-                Shader = (in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
+                Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
             }
         }
 
@@ -91,7 +91,7 @@ namespace RenderSharp.Scene
             }
             Actors = new HashSet<Actor>();
             SceneCamera = new Camera(new Vec2(0, 0), 1, 0);
-            Shader = shader ?? ((in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+            Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             ThinkFunc = (Scene2dThinkFuncArgs) => { };
         }
 
@@ -114,7 +114,7 @@ namespace RenderSharp.Scene
 
         public void ClearShaders()
         {
-            Shader = (in RGBA fragIn, out RGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
         }
 
         public void ClearThinkFunc()
