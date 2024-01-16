@@ -89,7 +89,12 @@ namespace RendererCommon
             Framerate = framerate;
             MovieID = _nextId++;
             TempDir = $"{Directory.GetCurrentDirectory()}\\temp_{MovieID}";
-            Directory.Delete(TempDir, true);
+            try
+            {
+                Directory.Delete(TempDir, true);
+            }
+            catch
+            { }
             Directory.CreateDirectory(TempDir);
         }
 
