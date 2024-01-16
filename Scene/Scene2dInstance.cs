@@ -12,16 +12,16 @@ namespace RenderSharp.Scene
 
         public int Index { get; }
 
-        public Scene2dThinkFunc ThinkFunc { get; private set; }
+        public Scene2d.Scene2dThinkFunc ThinkFunc { get; private set; }
 
         public Scene2dInstance(Scene2d scene, double time, int index)
         {
-            Camera = new Scene2d.Camera(new Vec2(scene.SceneCamera.Center.Components), scene.SceneCamera.Zoom, scene.SceneCamera.Rotation);
+            Camera = new Scene2d.Camera(new Vec2(scene.SceneCamera.Center), scene.SceneCamera.Zoom, scene.SceneCamera.Rotation);
             Actors = scene.Actors.Select(actor =>
                 new Scene2d.Actor(
                     actor.Texture,
-                    new FVec2(actor.Position.Components),
-                    new FVec2(actor.Size.Components),
+                    new FVec2(actor.Position),
+                    new FVec2(actor.Size),
                     actor.Rotation,
                     actor.Shader
                 )
@@ -33,12 +33,12 @@ namespace RenderSharp.Scene
 
         public Scene2dInstance(Scene2dInstance scene, double time, int index)
         {
-            Camera = new Scene2d.Camera(new Vec2(scene.Camera.Center.Components), scene.Camera.Zoom, scene.Camera.Rotation);
+            Camera = new Scene2d.Camera(new Vec2(scene.Camera.Center), scene.Camera.Zoom, scene.Camera.Rotation);
             Actors = scene.Actors.Select(actor =>
                 new Scene2d.Actor(
                     actor.Texture,
-                    new FVec2(actor.Position.Components),
-                    new FVec2(actor.Size.Components),
+                    new FVec2(actor.Position),
+                    new FVec2(actor.Size),
                     actor.Rotation,
                     actor.Shader
                 )

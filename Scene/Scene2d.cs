@@ -5,6 +5,8 @@ namespace RenderSharp.Scene
 {
     public class Scene2d
     {
+        public delegate void Scene2dThinkFunc(Scene2dInstance scene, double time, double dt);
+
         public class Camera
         {
             public Vec2 Center { get; set; }
@@ -86,7 +88,7 @@ namespace RenderSharp.Scene
             Actors = new HashSet<Actor>();
             SceneCamera = new Camera(new Vec2(0, 0), 1, 0);
             Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            ThinkFunc = (Scene2dThinkFuncArgs) => { };
+            ThinkFunc = (Scene2dInstance scene, double time, double dt) => { };
         }
 
         public void AddActor(Actor actor)
@@ -113,7 +115,7 @@ namespace RenderSharp.Scene
 
         public void ClearThinkFunc()
         {
-            ThinkFunc = (Scene2dThinkFuncArgs) => { };
+            ThinkFunc = (Scene2dInstance scene, double time, double dt) => { };
         }
 
         public List<Scene2dInstance> Simulate(int? simulateToIndex = null)
@@ -125,7 +127,7 @@ namespace RenderSharp.Scene
             for (int i = 1; i <= simulateToIndex; i++)
             {
                 current = new Scene2dInstance(current, TimeSeq[i], i);
-                current.ThinkFunc(new Scene2dThinkFuncArgs(current, TimeSeq[i], DeltaTime));
+                current.ThinkFunc(current, TimeSeq[i], DeltaTime);
                 instances.Add(current);
             }
 

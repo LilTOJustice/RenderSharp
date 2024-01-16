@@ -15,15 +15,25 @@
                          screenCoords.Y - (screenSize.Y / 2)) / cameraZoom + cameraCenter).Rotate(cameraRotation);
             }
 
-            public static FVec2 WorldToActor2(FVec2 worldCoord, FVec2 actorPosition, double actorRotation)
+            public static FVec2? WorldToActor2(FVec2 worldCoord, FVec2 actorPosition, FVec2 actorSize, double actorRotation)
             {
-                return (worldCoord - actorPosition).Rotate(actorRotation);
+                FVec2 result = (worldCoord - actorPosition).Rotate(actorRotation);
+                return (result.X < -actorSize.X / 2
+                    || result.Y < -actorSize.Y / 2
+                    || result.X > actorSize.X / 2
+                    || result.Y > actorSize.Y / 2)
+                    ? null : result;
             }
 
-            public static Vec2 ActorToTexture2(FVec2 actorCoords, FVec2 actorSize, Vec2 textureSize)
+            public static Vec2? ActorToTexture2(FVec2 actorCoords, FVec2 actorSize, Vec2 textureSize)
             {
-                FVec2 actorTl = actorCoords + new FVec2(actorSize.X / 2, actorSize.Y / 2);
-                return (Vec2)(actorTl / actorSize * textureSize);
+                FVec2 fromTl = actorCoords + new FVec2(actorSize.X / 2, actorSize.Y / 2);
+                Vec2 result = (Vec2)(fromTl / actorSize * textureSize);
+                return (result.X < 0
+                    || result.Y < 0
+                    || result.X >= textureSize.X
+                    || result.Y >= textureSize.Y)
+                    ? null : result;
             }
         }
     }
