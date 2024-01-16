@@ -172,7 +172,7 @@ namespace RenderSharp.Render2d
                     Scene.Shader(fOut, out fOut, ind, bgTexture.Size, scene.Time);
                     outColor = fOut;
 
-                    foreach (var actor in scene.Actors)
+                    foreach (var actor in scene.Actors.Values)
                     {
                         FVec2? actorLoc = Util.Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation);
                         if (actorLoc is null)

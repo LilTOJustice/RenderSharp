@@ -6,7 +6,7 @@ namespace RenderSharp.Scene
     {
         public Scene2d.Camera Camera { get; }
 
-        public HashSet<Scene2d.Actor> Actors { get; }
+        public Dictionary<string, Scene2d.Actor> Actors { get; }
 
         public double Time { get; }
 
@@ -17,15 +17,16 @@ namespace RenderSharp.Scene
         public Scene2dInstance(Scene2d scene, double time, int index)
         {
             Camera = new Scene2d.Camera(new Vec2(scene.SceneCamera.Center), scene.SceneCamera.Zoom, scene.SceneCamera.Rotation);
-            Actors = scene.Actors.Select(actor =>
+            Actors = new Dictionary<string, Scene2d.Actor>(scene.Actors.Select(keyValue =>
+            new KeyValuePair<string, Scene2d.Actor>(keyValue.Key,
                 new Scene2d.Actor(
-                    actor.Texture,
-                    new FVec2(actor.Position),
-                    new FVec2(actor.Size),
-                    actor.Rotation,
-                    actor.Shader
+                    keyValue.Value.Texture,
+                    new FVec2(keyValue.Value.Position),
+                    new FVec2(keyValue.Value.Size),
+                    keyValue.Value.Rotation,
+                    keyValue.Value.Shader
                 )
-            ).ToHashSet();
+            )));
             Time = time;
             Index = index;
             ThinkFunc = scene.ThinkFunc;
@@ -34,15 +35,16 @@ namespace RenderSharp.Scene
         public Scene2dInstance(Scene2dInstance scene, double time, int index)
         {
             Camera = new Scene2d.Camera(new Vec2(scene.Camera.Center), scene.Camera.Zoom, scene.Camera.Rotation);
-            Actors = scene.Actors.Select(actor =>
+            Actors = new Dictionary<string, Scene2d.Actor>(scene.Actors.Select(keyValue =>
+            new KeyValuePair<string, Scene2d.Actor>(keyValue.Key,
                 new Scene2d.Actor(
-                    actor.Texture,
-                    new FVec2(actor.Position),
-                    new FVec2(actor.Size),
-                    actor.Rotation,
-                    actor.Shader
+                    keyValue.Value.Texture,
+                    new FVec2(keyValue.Value.Position),
+                    new FVec2(keyValue.Value.Size),
+                    keyValue.Value.Rotation,
+                    keyValue.Value.Shader
                 )
-            ).ToHashSet();
+            )));
             Time = time;
             Index = index;
             ThinkFunc = scene.ThinkFunc;
