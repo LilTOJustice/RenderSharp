@@ -16,7 +16,6 @@ namespace RenderSharp
             scene.ThinkFunc += (Scene2dInstance scene, double time, double dt) =>
             {
                 scene.Actors.First().Position.X += 50 * dt;
-                Console.WriteLine(scene.Actors.First().Position.X);
             };
             renderer.RenderMovie().Output("test");
             Console.WriteLine(scene.Actors.First().Position);
