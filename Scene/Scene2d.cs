@@ -64,7 +64,7 @@ namespace RenderSharp.Scene
         
         public double DeltaTime { get; private set; } 
         
-        public HashSet<Actor> Actors { get; set; }
+        public Dictionary<string, Actor> Actors { get; set; }
         
         public RGB? BgColor { get; set; }
         
@@ -85,27 +85,27 @@ namespace RenderSharp.Scene
             {
                 TimeSeq.Add(i * DeltaTime);
             }
-            Actors = new HashSet<Actor>();
+            Actors = new Dictionary<string, Actor>();
             SceneCamera = new Camera(new Vec2(0, 0), 1, 0);
             Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             ThinkFunc = (Scene2dInstance scene, double time, double dt) => { };
         }
 
-        public void AddActor(Actor actor)
+        public void AddActor(Actor actor, string actorId)
         {
-            Actors.Add(actor);
+            Actors.Add(actorId, actor);
         }
 
-        public Actor AddActor(Texture texture, Vec2 position, Vec2 size, double rotation)
+        public Actor AddActor(Texture texture, Vec2 position, Vec2 size, double rotation, string actorId)
         {
             Actor holderActor = new Actor(texture, position, size, rotation);
-            Actors.Add(holderActor);
+            Actors.Add(actorId, holderActor);
             return holderActor;
         }
 
-        public bool RemoveActor(Actor actor) 
+        public bool RemoveActor(string actorId)
         {
-            return Actors.Remove(actor);
+            return Actors.Remove(actorId);
         }
 
         public void ClearShaders()
