@@ -20,35 +20,33 @@ namespace RendererCommon
         public Frame(Vec2 size)
         {
             Size = size;
-            Image = new byte[Width * Height * 4];
+            Image = new byte[Width * Height * 3];
         }
 
         public Frame(int width, int height)
         {
             Size = new Vec2(width, height);
-            Image = new byte[width * height * 4];
+            Image = new byte[width * height * 3];
         }
 
-        public RGBA this[int x, int y]
+        public RGB this[int x, int y]
         {
             get
             {
-                int index = (y * Width + x) * 4;
-                return new RGBA
+                int index = (y * Width + x) * 3;
+                return new RGB
                     (
                         Image[index],
                         Image[index + 1],
-                        Image[index + 2],
-                        Image[index + 3]
+                        Image[index + 2]
                     );
             }
             set
             {
-                int index = (y * Width + x) * 4;
+                int index = (y * Width + x) * 3;
                 Image[index] = value.R;
                 Image[index + 1] = value.G;
                 Image[index + 2] = value.B;
-                Image[index + 3] = value.A;
                     
             }
         }
@@ -57,7 +55,7 @@ namespace RendererCommon
         {
             string fullname = filename + "." + ext;
             var settings = new MagickReadSettings();
-            settings.Format = MagickFormat.Rgba;
+            settings.Format = MagickFormat.Rgb;
             settings.Width = Width;
             settings.Height = Height;
             settings.Depth = 8;

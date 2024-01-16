@@ -177,7 +177,6 @@ namespace RenderSharp.Render2d
                     FRGBA fOut = outColor;
                     Scene.Shader(fOut, out fOut, ind, bgTexture.Size, scene.Time);
                     outColor = fOut;
-                    outColor = ColorFunctions.AlphaBlend(outColor, outColor);
 
                     foreach (var actor in scene.Actors)
                     {
@@ -202,7 +201,7 @@ namespace RenderSharp.Render2d
                     Shader(fOut, out fOut, new Vec2(x, y), Resolution, scene.Time);
                     outColor = fOut;
 
-                    output[x, y] = outColor;
+                    output[x, y] = (RGB)outColor;
                 }
             }
 

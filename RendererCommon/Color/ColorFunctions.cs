@@ -1,12 +1,14 @@
-﻿namespace RenderSharp.RendererCommon
+﻿using RenderSharp.Math;
+
+namespace RenderSharp.RendererCommon
 {
     public class ColorFunctions
     {
-        public static RGBA AlphaBlend(RGBA top, RGBA bottom)
+        public static RGBA AlphaBlend(FRGBA top, FRGBA bottom)
         {
-            //double alpha = top.A;
-            //FVec3 blended = (top.RGB * alpha + bottom.RGB * (1d - alpha));
-            return top; // TODO: FIX this function
+            double alpha = top.A;
+            FRGB blended = top.RGB * alpha + bottom.RGB * (1d - alpha);
+            return new FRGBA(blended, alpha);
         }
     }
 }
