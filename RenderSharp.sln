@@ -8,7 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp", "RenderSharp\RenderSharp.csproj", "{2C3519CD-7FF1-4164-8834-12A34474D745}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharpExample", "RenderSharp\RenderSharpExample.csproj", "{2C3519CD-7FF1-4164-8834-12A34474D745}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RendererCommon", "RendererCommon\RendererCommon.csproj", "{7DB2BA01-2256-41B7-A068-C43C8ED6A4DC}"
 EndProject
