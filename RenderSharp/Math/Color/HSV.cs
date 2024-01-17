@@ -1,6 +1,4 @@
-﻿using RenderSharp.Math;
-
-namespace RenderSharp.RendererCommon
+﻿namespace RenderSharp.Math
 {
     public class HSV : Vector3<double>
     {

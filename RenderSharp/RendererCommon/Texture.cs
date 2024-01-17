@@ -1,8 +1,6 @@
 ﻿using ImageMagick;
 using RenderSharp.Math;
 
-
-
 namespace RenderSharp.RendererCommon
 {
     public class Texture

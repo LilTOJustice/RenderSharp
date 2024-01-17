@@ -1,9 +1,8 @@
 ﻿using ImageMagick;
 using RenderSharp.Math;
-using RenderSharp.RendererCommon;
 using System.Diagnostics;
 
-namespace RendererCommon
+namespace RenderSharp.RendererCommon
 {
     public class Frame
     {   
