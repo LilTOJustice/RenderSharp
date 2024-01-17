@@ -1,5 +1,5 @@
-﻿using RenderSharp.RendererCommon;
-using RenderSharp.Math;
+﻿using RenderSharp.Math;
+using RenderSharp.RendererCommon;
 
 namespace RenderSharp.Scene
 {

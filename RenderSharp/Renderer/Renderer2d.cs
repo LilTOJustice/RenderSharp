@@ -1,11 +1,9 @@
-﻿using RenderSharp.RendererCommon;
-using RenderSharp.Math;
+﻿using RenderSharp.Math;
+using RenderSharp.RendererCommon;
 using RenderSharp.Scene;
-using RendererCommon;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
-namespace RenderSharp.Render2d
+namespace RenderSharp.Renderer
 {
     public class Renderer2d
     {

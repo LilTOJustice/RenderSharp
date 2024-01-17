@@ -1,4 +1,5 @@
-﻿using RenderSharp.Render2d;
+﻿using RenderSharp.Math;
+using RenderSharp.Renderer;
 using RenderSharp.RendererCommon;
 using RenderSharp.Scene;
 
