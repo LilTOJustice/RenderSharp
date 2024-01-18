@@ -5,18 +5,37 @@ using System.Diagnostics;
 
 namespace RenderSharp.Renderer
 {
+    /// <summary>
+    /// Renderer for 2d scenes (<see cref="Scene2d"/>). Used for rendering scenes into <see cref="Frame"/>s or <see cref="Movie"/>s.
+    /// </summary>
     public class Renderer2d
     {
+        /// <summary>
+        /// Target resolution for the renderer.
+        /// </summary>
         public Vec2 Resolution { get; set; }
 
+        /// <summary>
+        /// Width from the renderer's target resolution (<see cref="Resolution"/>).
+        /// </summary>
         public int Width { get { return Resolution.X; } set { Resolution.X = value; } }
 
+        /// <summary>
+        /// Height from the renderer's target resolution (<see cref="Resolution"/>).
+        /// </summary>
         public int Height { get { return Resolution.Y; } set { Resolution.Y = value; } }
 
+        /// <summary>
+        /// Target scene for the render.
+        /// </summary>
         public Scene2d Scene { get; set; }
         
+        /// <summary>
+        /// Final shader delegate run on every pixel of every frame of the render.
+        /// </summary>
         public FragShader Shader { get; set; }
 
+        /// <inheritdoc cref="Renderer2d"/>
         public Renderer2d(int resX, int resY, Scene2d scene, FragShader? shader = null)
         {
             if (resX < 1 || resY < 1)
@@ -29,6 +48,7 @@ namespace RenderSharp.Renderer
             Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
         }
 
+        /// <inheritdoc cref="Renderer2d"/>
         public Renderer2d(Vec2 resolution, Scene2d scene, FragShader? shader = null)
         {
             if (resolution.X < 1 || resolution.Y < 1)
@@ -41,6 +61,13 @@ namespace RenderSharp.Renderer
             Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
         }
 
+        /// <summary>
+        /// Renders a single frame given the index, or the only frame for a static scene. If the scene is dynamic,
+        /// the scene will simulate up to the given frame index and the final frame will be rendered and returned.
+        /// </summary>
+        /// <param name="index">Which frame to render.</param>
+        /// <returns>The desired rendered frame, based on the index.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if the index is negative or too large for the scene's duration.</exception>
         public Frame RenderFrame(int index = 0)
         {
             if (index < 0 || index >= Scene.TimeSeq.Count)
@@ -57,6 +84,11 @@ namespace RenderSharp.Renderer
             return Render(sceneInstance, Scene.BgTexture, Scene.BgColor ?? (RGBA?)null, true);
         }
 
+        /// <summary>
+        /// Renders all frames from the <see cref="Scene"/>, and produces a <see cref="Movie"/> that can be exported.
+        /// </summary>
+        /// <returns>The rendered movie.</returns>
+        /// <exception cref="Exception">Thrown if this method is called when the <see cref="Scene"/> is static (has a <see cref="Scene2d.TimeSeq"/> of length 0)</exception>
         public Movie RenderMovie()
         {
             if (Scene.TimeSeq.Count == 0)
@@ -121,6 +153,14 @@ namespace RenderSharp.Renderer
 
         static int loadSeqInd = 0;
         static string loadSeq = "|/-\\";
+
+        /// <summary>
+        /// Prints a loading bar to the screen given the progress and settings.
+        /// </summary>
+        /// <param name="frameIndex">Current progress.</param>
+        /// <param name="numFrames">Target progress.</param>
+        /// <param name="totalBars">Loading bar length in characters.</param>
+        /// <param name="timeElapsed">Optional time to show next to the bar.</param>
         static void PrintBar(int frameIndex, int numFrames, int totalBars = 50, string timeElapsed = "")
         {
             int numBars = (int)(1d * frameIndex / numFrames * totalBars);
@@ -141,7 +181,14 @@ namespace RenderSharp.Renderer
             Console.Out.Flush();
         }
 
-
+        /// <summary>
+        /// Rendering pipeline for a single frame.
+        /// </summary>
+        /// <param name="scene">Scene instance to render.</param>
+        /// <param name="bgTexture">Optional background texture to render if no actors are intersected.</param>
+        /// <param name="bgColor">Optional color to render if no actors are rendered and no background texture exists.</param>
+        /// <param name="verbose">Whether to print status updates and time info.</param>
+        /// <returns>The rendered frame.</returns>
         private Frame Render(Scene2dInstance scene, Texture? bgTexture = null, RGBA? bgColor = null, bool verbose = false)
         {
             Frame output = new(Resolution);
@@ -211,6 +258,9 @@ namespace RenderSharp.Renderer
             return output;
         }
 
+        /// <summary>
+        /// Clears all <see cref="Shader"/>s for the renderer.
+        /// </summary>
         public void ClearShaders()
         {
             Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
