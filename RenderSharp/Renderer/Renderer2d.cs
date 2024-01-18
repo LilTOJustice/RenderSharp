@@ -231,7 +231,7 @@ namespace RenderSharp.Renderer
                             continue;
                         }
 
-                        RGBA textureSample = new (actor.Texture[textureInd.X, textureInd.Y].Components);
+                        RGBA textureSample = actor.Texture[textureInd.X, textureInd.Y];
 
                         fOut = textureSample;
                         actor.Shader(fOut, out fOut, textureInd, actor.Texture.Size, scene.Time);
