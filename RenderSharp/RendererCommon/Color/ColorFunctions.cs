@@ -1,4 +1,4 @@
-﻿namespace RenderSharp.Math
+﻿namespace RenderSharp.RendererCommon
 {
     /// <summary>
     /// Contains miscellaneous functions that interact with color objects.

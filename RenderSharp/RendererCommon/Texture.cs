@@ -1,5 +1,5 @@
 ﻿using ImageMagick;
-using RenderSharp.Math;
+using MathSharp;
 
 namespace RenderSharp.RendererCommon
 {

@@ -1,5 +1,5 @@
 ﻿using ImageMagick;
-using RenderSharp.Math;
+using MathSharp;
 using System.Diagnostics;
 
 namespace RenderSharp.RendererCommon
@@ -193,6 +193,9 @@ namespace RenderSharp.RendererCommon
             frame.Output(filename, "bmp");
         }
 
+        /// <summary>
+        /// Destructs the movie by deleting the <see cref="TempDir"/>
+        /// </summary>
         ~Movie() {
             Directory.Delete(TempDir, true);
         }

@@ -1,4 +1,5 @@
-﻿using RenderSharp.Math;
+﻿using MathSharp;
+using RenderSharp.RendererCommon;
 using System.Numerics;
 
 namespace RenderSharp

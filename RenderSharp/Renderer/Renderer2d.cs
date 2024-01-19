@@ -1,4 +1,4 @@
-﻿using RenderSharp.Math;
+﻿using MathSharp;
 using RenderSharp.RendererCommon;
 using RenderSharp.Scene;
 using System.Diagnostics;
