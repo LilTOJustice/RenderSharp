@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LilTOJustice.MathSharp" Version="1.0.0" />
+    <PackageReference Include="LilTOJustice.MathSharp" Version="1.0.1" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
   </ItemGroup>
 
