@@ -1,4 +1,4 @@
-﻿using RenderSharp.Math;
+﻿using MathSharp;
 
 namespace RenderSharp.Scene
 {

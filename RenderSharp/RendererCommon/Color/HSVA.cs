@@ -1,4 +1,6 @@
-﻿namespace RenderSharp.Math
+﻿using MathSharp;
+
+namespace RenderSharp.RendererCommon
 {
     /// <summary>
     /// A <see cref="Vector4{T}"/> of type double. Values <see cref="H"/> intended
@@ -36,13 +38,13 @@
             }
         }
 
-        /// <inheritdoc cref="FRGB())"/>
+        /// <inheritdoc cref="FRGB()"/>
         public HSVA() { }
 
-        /// <inheritdoc cref="FRGB(double[]))"/>
+        /// <inheritdoc cref="FRGB(double[])"/>
         public HSVA(double[] vec) : base(vec) { }
 
-        /// <inheritdoc cref="FRGB(FRGB))"/>
+        /// <inheritdoc cref="FRGB(FRGB)"/>
         public HSVA(HSVA hsva) : base(hsva) { }
 
         /// <summary>
@@ -106,26 +108,31 @@
             return new HSV(H, S, V);
         }
 
+        /// <inheritdoc cref="ToRGBA"/>
         public static implicit operator RGBA(HSVA hsva)
         {
             return hsva.ToRGBA();
         }
 
+        /// <inheritdoc cref="ToFRGBA"/>
         public static implicit operator FRGBA(HSVA hsva)
         {
             return hsva.ToFRGBA();
         }
 
+        /// <inheritdoc cref="ToRGB"/>
         public static explicit operator RGB(HSVA hsva)
         {
             return hsva.ToRGB();
         }
 
+        /// <inheritdoc cref="ToFRGB"/>
         public static explicit operator FRGB(HSVA hsva)
         {
             return hsva.ToFRGB();
         }
 
+        /// <inheritdoc cref="ToHSV"/>
         public static explicit operator HSV(HSVA hsva)
         {
             return hsva.ToHSV();
