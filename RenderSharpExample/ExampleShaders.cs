@@ -55,7 +55,7 @@ namespace RenderSharp
             st.X *= 1d * res.X / res.Y;
             st = (st - new FVec2(0.4, -0.5)) / .2;
             Complex c = new(st.X, st.Y);
-            double exponent = 3 * System.Math.Cos(time) + 4;
+            double exponent = 3 * Math.Cos(time) + 4;
             double multiOut = Multi(c, exponent);
             if (multiOut < 2)
             {
@@ -89,7 +89,7 @@ namespace RenderSharp
         public static void Ghostly(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             fragOut = fragIn;
-            fragOut.A = 0.5 + System.Math.Sin(time * 2) * 0.5;
+            fragOut.A = 0.5 + Math.Sin(time * 2) * 0.5;
         }
     }
 }

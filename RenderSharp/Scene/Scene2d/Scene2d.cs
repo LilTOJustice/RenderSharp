@@ -98,11 +98,11 @@ namespace RenderSharp.Scene
             /// <param name="size">World space size of the actor.</param>
             /// <param name="rotation">Rotation of the actor about its center.</param>
             /// <param name="shader">Shader to be applied to the actor's texture.</param>
-            public Actor(Texture texture, FVec2? position = null, FVec2? size = null, double rotation = 0, FragShader? shader = null)
+            public Actor(FVec2 size, FVec2? position = null, Texture? texture = null, double rotation = 0, FragShader? shader = null)
             {
-                Texture = texture;
+                Texture = texture ?? new Texture((Vec2)size);
                 Position = position ?? new FVec2();
-                Size = size ?? new FVec2(Texture.Size.X, Texture.Size.Y);
+                Size = size;
                 Rotation = rotation;
                 Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             }
@@ -147,15 +147,10 @@ namespace RenderSharp.Scene
         public Dictionary<string, Actor> Actors { get; set; }
         
         /// <summary>
-        /// Background color to use if a <see cref="BgTexture"/> is not provided.
-        /// </summary>
-        public RGB? BgColor { get; set; }
-        
-        /// <summary>
         /// Background texture to use if an actor is not intersected by the renderer.
         /// If none is provided <see cref="BgColor"/> will be used.
         /// </summary>
-        public Texture? BgTexture { get; set; }
+        public Texture BgTexture { get; set; }
         
         /// <summary>
         /// Shader to be run each frame on the background if no actor is intersected by the renderer.
@@ -172,15 +167,13 @@ namespace RenderSharp.Scene
         /// </summary>
         /// <param name="framerate">The framerate of the simulation. If 0 or negative, the scene will be considered static.</param>
         /// <param name="duration">The duration of the simulation. If 0 or negative, the scene will be considered static.</param>
-        /// <param name="bgcolor">The background color to be used if no actor is interesected
+        /// <param name="bgColor">The background color to be used if no actor is interesected
         /// by the renderer and no background texture is provided.</param>
         /// <param name="bgTexture">The background texture to be used if no actor is intersected.</param>
-        /// <param name="shader">Shader to be run each frame on the background.</param>
-        public Scene2d(int framerate = 0, double duration = 0, RGB? bgcolor = null, Texture? bgTexture = null, FragShader? shader = null) 
+        public Scene2d(int framerate = 0, double duration = 0, Texture? bgTexture = null, RGB? bgColor = null) 
         {
             Framerate = framerate;
-            BgColor = bgcolor;
-            BgTexture = bgTexture;
+            BgTexture = bgTexture ?? new Texture(1, 1, bgColor ?? new RGB());
             Duration = duration;
             TimeSeq = new List<double>();
             for (int i = 0; i < framerate * duration; i++)
@@ -189,7 +182,7 @@ namespace RenderSharp.Scene
             }
             Actors = new Dictionary<string, Actor>();
             SceneCamera = new Camera(new Vec2(0, 0), 1, 0);
-            Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+            Shader = ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             ThinkFunc = (Scene2dInstance scene, double time, double dt) => { };
         }
 
@@ -201,22 +194,6 @@ namespace RenderSharp.Scene
         public void AddActor(Actor actor, string actorId)
         {
             Actors.Add(actorId, actor);
-        }
-
-        /// <summary>
-        /// Constructs a new actor and places it in the dictionary, with the given actorId.
-        /// </summary>
-        /// <param name="texture">Texture for the actor.</param>
-        /// <param name="position">World space position of the actor.</param>
-        /// <param name="size">World space size of the actor.</param>
-        /// <param name="rotation">Rotation of the actor about its center.</param>
-        /// <param name="actorId">Lookup id for the actor into <see cref="Actors"/>.</param>
-        /// <returns></returns>
-        public Actor AddActor(Texture texture, Vec2 position, Vec2 size, double rotation, string actorId)
-        {
-            Actor holderActor = new Actor(texture, position, size, rotation);
-            Actors.Add(actorId, holderActor);
-            return holderActor;
         }
 
         /// <summary>

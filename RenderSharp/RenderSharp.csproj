@@ -15,13 +15,25 @@
 
   <ItemGroup>
     <None Include="..\..\MathSharp\README.md">
+    <Version>1.0.1</Version>
+    <PackageId>LilTOJustice.$(AssemblyName)</PackageId>
+    <Title>RenderSharp</Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>LilTOJustice</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/LilTOJustice/RenderSharp</RepositoryUrl>
+    <Description>Renderer for the *Sharp project.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\SimulSharp\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LilTOJustice.MathSharp" Version="1.0.1" />
+    <PackageReference Include="LilTOJustice.MathSharp" Version="1.0.2" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
   </ItemGroup>
 
