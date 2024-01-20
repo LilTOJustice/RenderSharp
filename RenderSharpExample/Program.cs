@@ -1,6 +1,6 @@
 ﻿using MathSharp;
 using RenderSharp.Renderer;
-using RenderSharp.RendererCommon;
+using RenderSharp.Common;
 using RenderSharp.Scene;
 
 namespace RenderSharp

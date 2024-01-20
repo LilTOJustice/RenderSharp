@@ -2,7 +2,7 @@
 using MathSharp;
 using System.Diagnostics;
 
-namespace RenderSharp.RendererCommon
+namespace RenderSharp.Common
 {
     /// <summary>
     /// Represents a single frame of a render that can be exported as an image.

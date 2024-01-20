@@ -1,5 +1,5 @@
 ﻿using MathSharp;
-using RenderSharp.RendererCommon;
+using RenderSharp.Common;
 
 namespace RenderSharp.Scene
 {
@@ -148,7 +148,6 @@ namespace RenderSharp.Scene
         
         /// <summary>
         /// Background texture to use if an actor is not intersected by the renderer.
-        /// If none is provided <see cref="BgColor"/> will be used.
         /// </summary>
         public Texture BgTexture { get; set; }
         
