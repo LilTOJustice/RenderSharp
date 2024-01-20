@@ -1,6 +1,6 @@
 ﻿using MathSharp;
 
-namespace RenderSharp.Renderer
+namespace RenderSharp
 {
     /// <summary>
     /// Contains Renderer-related utility classes and functions.

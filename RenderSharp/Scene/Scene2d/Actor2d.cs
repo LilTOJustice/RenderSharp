@@ -1,7 +1,6 @@
 ﻿using MathSharp;
-using RenderSharp.Common;
 
-namespace RenderSharp.Scene
+namespace RenderSharp.Render2d
 {
     /// <summary>
     /// An object to be rendered from within a scene.

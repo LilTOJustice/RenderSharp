@@ -1,7 +1,7 @@
 ﻿using ImageMagick;
 using MathSharp;
 
-namespace RenderSharp.Common
+namespace RenderSharp
 {
     /// <summary>
     /// Represents a single frame of a render that can be exported as an image.

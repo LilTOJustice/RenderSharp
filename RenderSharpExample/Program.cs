@@ -1,9 +1,8 @@
 ﻿using MathSharp;
-using RenderSharp.Renderer;
-using RenderSharp.Common;
-using RenderSharp.Scene;
+using RenderSharp;
+using RenderSharp.Render2d;
 
-namespace RenderSharp
+namespace RenderSharpExample
 {
     internal class Program
     {

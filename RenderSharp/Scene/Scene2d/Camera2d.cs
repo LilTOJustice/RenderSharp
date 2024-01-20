@@ -1,6 +1,6 @@
 ﻿using MathSharp;
 
-namespace RenderSharp.Scene
+namespace RenderSharp.Render2d
 {
     /// <summary>
     /// Virtual camera for viewing the scene.

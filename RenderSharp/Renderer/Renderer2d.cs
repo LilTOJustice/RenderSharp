@@ -1,9 +1,7 @@
 ﻿using MathSharp;
-using RenderSharp.Common;
-using RenderSharp.Scene;
 using System.Diagnostics;
 
-namespace RenderSharp.Renderer
+namespace RenderSharp.Render2d
 {
     /// <summary>
     /// Renderer for 2d scenes (<see cref="Scene2d"/>). Used for rendering scenes into <see cref="Frame"/>s or <see cref="Movie"/>s.

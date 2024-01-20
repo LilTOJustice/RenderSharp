@@ -1,6 +1,6 @@
 ﻿using MathSharp;
 
-namespace RenderSharp.Common
+namespace RenderSharp
 {
     /// <summary>
     /// Delegate type for fragment shaders.
