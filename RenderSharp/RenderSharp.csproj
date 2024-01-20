@@ -5,6 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>1.0.1</Version>
+    <PackageId>LilTOJustice.$(AssemblyName)</PackageId>
+    <Title>RenderSharp</Title>
   </PropertyGroup>
 
   <ItemGroup>
