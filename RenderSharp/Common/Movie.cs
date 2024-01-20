@@ -76,7 +76,6 @@ namespace RenderSharp
         {
             string fullName = filename + ".mp4";
 
-            FFmpeg.SetExecutablesPath(".");
             if (!File.Exists("ffmpeg.exe"))
             {
                 Console.Write("FFmpeg not found, downloading... ");
@@ -85,17 +84,15 @@ namespace RenderSharp
             }
 
             Console.Write("Exporting... ");
-            List<FileInfo> files = new DirectoryInfo(TempDir).GetFiles().ToList();
-            files.Sort((x, y) => int.Parse(x.Name.Split('.')[0]) - int.Parse(y.Name.Split('.')[0]));
-            FFmpeg.Conversions
-                .New()
-                .BuildVideoFromImages(files.Select(x => x.FullName))
-                .SetPixelFormat("yuv420p")
-                .SetOutputFormat(Format.mp4)
-                .SetOutput(fullName)
-                .SetFrameRate(Framerate)
-                .SetOverwriteOutput(true)
-                .Start().Wait();
+
+            string cmd = ($"-y -v -8 -framerate {Framerate} -f image2 -i temp_{MovieID}/%d.bmp -c h264 " +
+                $"-pix_fmt yuv420p -b:v 32768k {fullName}");
+
+            if (Process.Start(".\\ffmpeg", cmd) == null)
+            {
+                Console.WriteLine("Error outputting file!");
+                return;
+            }
 
             Console.WriteLine("Done.");
         }
