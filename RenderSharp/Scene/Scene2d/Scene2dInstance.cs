@@ -40,9 +40,9 @@ namespace RenderSharp.Scene
             Actors = new Dictionary<string, Scene2d.Actor>(scene.Actors.Select(keyValue =>
             new KeyValuePair<string, Scene2d.Actor>(keyValue.Key,
                 new Scene2d.Actor(
-                    keyValue.Value.Texture,
-                    new FVec2(keyValue.Value.Position),
                     new FVec2(keyValue.Value.Size),
+                    new FVec2(keyValue.Value.Position),
+                    keyValue.Value.Texture,
                     keyValue.Value.Rotation,
                     keyValue.Value.Shader
                 )
@@ -64,9 +64,9 @@ namespace RenderSharp.Scene
             Actors = new Dictionary<string, Scene2d.Actor>(scene.Actors.Select(keyValue =>
             new KeyValuePair<string, Scene2d.Actor>(keyValue.Key,
                 new Scene2d.Actor(
-                    keyValue.Value.Texture,
-                    new FVec2(keyValue.Value.Position),
                     new FVec2(keyValue.Value.Size),
+                    new FVec2(keyValue.Value.Position),
+                    keyValue.Value.Texture,
                     keyValue.Value.Rotation,
                     keyValue.Value.Shader
                 )

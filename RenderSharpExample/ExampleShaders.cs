@@ -76,10 +76,6 @@ namespace RenderSharp
 
         public static void TopLeftDebug(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
-            if (res == new Vec2(20, 20))
-            {
-                //Console.WriteLine($"{fragCoord} {res/4}");
-            }
             if (fragCoord == res / 4)
             {
                 fragOut = new RGB(255, 0, 0);

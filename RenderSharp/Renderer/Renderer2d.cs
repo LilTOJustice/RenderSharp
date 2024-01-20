@@ -81,7 +81,7 @@ namespace RenderSharp.Renderer
             Scene2dInstance sceneInstance = Scene.Simulate(index).Last();
             stopwatch.Stop();
             Console.WriteLine($"Finished in {stopwatch.Elapsed}");
-            return Render(sceneInstance, Scene.BgTexture, Scene.BgColor ?? (RGBA?)null, true);
+            return Render(sceneInstance, Scene.BgTexture, true);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace RenderSharp.Renderer
                 for (int i = Interlocked.Increment(ref nextId); i < instances.Count; i = Interlocked.Increment(ref nextId))
                 {
                     var instance = instances[i];
-                    movie.WriteFrame(Render(instance, Scene.BgTexture, Scene.BgColor ?? (RGBA?)null), instance.Index);
+                    movie.WriteFrame(Render(instance, Scene.BgTexture), instance.Index);
                     Interlocked.Increment(ref doneCount);
                 }
             };
@@ -186,10 +186,9 @@ namespace RenderSharp.Renderer
         /// </summary>
         /// <param name="scene">Scene instance to render.</param>
         /// <param name="bgTexture">Optional background texture to render if no actors are intersected.</param>
-        /// <param name="bgColor">Optional color to render if no actors are rendered and no background texture exists.</param>
         /// <param name="verbose">Whether to print status updates and time info.</param>
         /// <returns>The rendered frame.</returns>
-        private Frame Render(Scene2dInstance scene, Texture? bgTexture = null, RGBA? bgColor = null, bool verbose = false)
+        private Frame Render(Scene2dInstance scene, Texture bgTexture, bool verbose = false)
         {
             Frame output = new(Resolution);
 
@@ -199,8 +198,6 @@ namespace RenderSharp.Renderer
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
-
-            bgTexture ??= new Texture(Resolution, bgColor ?? new RGB());
 
             for (int y = 0; y < Height; y++)
             {
