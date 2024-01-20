@@ -51,7 +51,7 @@ namespace RenderSharp.Renderer
             /// <returns>The actor coordinates corresponding to the world coordinates, or null if the actor is not intersected.</returns>
             public static FVec2? WorldToActor2(FVec2 worldCoord, FVec2 actorPosition, FVec2 actorSize, double actorRotation)
             {
-                FVec2 result = (worldCoord - actorPosition).Rotate(actorRotation);
+                FVec2 result = (actorPosition - worldCoord).Rotate(-actorRotation);
                 return (result.X < -actorSize.X / 2
                     || result.Y < -actorSize.Y / 2
                     || result.X > actorSize.X / 2

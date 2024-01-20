@@ -33,7 +33,7 @@ namespace RenderSharp.Scene
         public List<double> TimeSeq { get; private set; }
         
         /// <summary>
-        /// Total duration of the simulation for the scene. 0 when the scene is static.
+        /// Total duration of the simulation for the scene in seconds. 0 when the scene is static.
         /// </summary>
         public double Duration { get; private set; }
         
@@ -66,7 +66,7 @@ namespace RenderSharp.Scene
         /// Constructs a scene.
         /// </summary>
         /// <param name="framerate">The framerate of the simulation. If 0 or negative, the scene will be considered static.</param>
-        /// <param name="duration">The duration of the simulation. If 0 or negative, the scene will be considered static.</param>
+        /// <param name="duration">The duration of the simulation in seconds. If 0 or negative, the scene will be considered static.</param>
         /// <param name="bgColor">The background color to be used if no actor is interesected
         /// by the renderer and no background texture is provided.</param>
         /// <param name="bgTexture">The background texture to be used if no actor is intersected.</param>
