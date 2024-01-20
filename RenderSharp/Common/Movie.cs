@@ -1,5 +1,7 @@
 ﻿using MathSharp;
 using System.Diagnostics;
+using Xabe.FFmpeg;
+using Xabe.FFmpeg.Downloader;
 
 namespace RenderSharp.Common
 {
@@ -72,17 +74,28 @@ namespace RenderSharp.Common
         /// <param name="filename">Path to the exported video.</param>
         public void Output(string filename)
         {
-            string fullname = filename + ".mp4";
-            Console.WriteLine($"Exporting movie: {fullname}");
-            string cmd = ($"-y -v -8 -framerate {Framerate} -f image2 -i temp_{MovieID}/%d.bmp -c h264 " +
-                $"-pix_fmt yuv420p -b:v 32768k {fullname}");
-            Console.WriteLine(cmd + "\n");
-            
-            if (Process.Start("ffmpeg", cmd) == null)
+            string fullName = filename + ".mp4";
+
+            FFmpeg.SetExecutablesPath(".");
+            if (!File.Exists("ffmpeg.exe"))
             {
-                Console.WriteLine("Error outputting file!");
-                return;
+                Console.Write("FFmpeg not found, downloading... ");
+                FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official).Wait();
+                Console.WriteLine("Done.");
             }
+
+            Console.Write("Exporting... ");
+            List<FileInfo> files = new DirectoryInfo(TempDir).GetFiles().ToList();
+            files.Sort((x, y) => int.Parse(x.Name.Split('.')[0]) - int.Parse(y.Name.Split('.')[0]));
+            FFmpeg.Conversions
+                .New()
+                .BuildVideoFromImages(files.Select(x => x.FullName))
+                .SetPixelFormat("yuv420p")
+                .SetOutputFormat(Format.mp4)
+                .SetOutput(fullName)
+                .SetFrameRate(Framerate)
+                .SetOverwriteOutput(true)
+                .Start().Wait();
 
             Console.WriteLine("Done.");
         }
