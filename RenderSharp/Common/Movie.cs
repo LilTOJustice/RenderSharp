@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
 
-namespace RenderSharp.Common
+namespace RenderSharp
 {
     /// <summary>
     /// A logical collection of frames that can be exported as a video.

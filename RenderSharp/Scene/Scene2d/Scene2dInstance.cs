@@ -1,7 +1,6 @@
 ﻿using MathSharp;
-using System.Runtime.CompilerServices;
 
-namespace RenderSharp.Scene
+namespace RenderSharp.Render2d
 {
     /// <summary>
     /// A single instance of a <see cref="Scene2d"/>. It stores deep copies of

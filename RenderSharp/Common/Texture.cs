@@ -1,7 +1,7 @@
 ﻿using ImageMagick;
 using MathSharp;
 
-namespace RenderSharp.Common
+namespace RenderSharp
 {
     /// <summary>
     /// A texture that can be assigned to objects within a scene.

@@ -1,6 +1,6 @@
 ﻿using MathSharp;
 
-namespace RenderSharp.Common
+namespace RenderSharp
 {
     /// <summary>
     /// A <see cref="Vector3{T}"/> of type double. Values <see cref="H"/> intended
