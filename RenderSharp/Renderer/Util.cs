@@ -29,6 +29,19 @@ namespace RenderSharp.Renderer
             }
 
             /// <summary>
+            /// Transforms world-space coordinates to edge-wrapped background texture space.
+            /// </summary>
+            /// <param name="worldCoord">Position within the world.</param>
+            /// <param name="bgTextureSize">Size of the background texture.</param>
+            /// <returns></returns>
+            public static Vec2 WorldToBgTexture2(FVec2 worldCoord, Vec2 bgTextureSize)
+            {
+                Vec2 ind = (Vec2)worldCoord + new Vec2(bgTextureSize.X / 2, bgTextureSize.Y / 2);
+                ind = new Vec2(Mod(ind.X, bgTextureSize.X), bgTextureSize.Y - Mod(ind.Y, bgTextureSize.Y) - 1);
+                return ind;
+            }
+
+            /// <summary>
             /// Transforms world-space coordinates to 2d actor-space coordinates.
             /// </summary>
             /// <param name="worldCoord">Position within the world.</param>
@@ -55,7 +68,10 @@ namespace RenderSharp.Renderer
             /// <returns>The texture coordinates corresponding to the actor coordinates, or null if the coordinates are not within the texture.</returns>
             public static Vec2? ActorToTexture2(FVec2 actorCoords, FVec2 actorSize, Vec2 textureSize)
             {
-                FVec2 fromTl = actorCoords + new FVec2(actorSize.X / 2, actorSize.Y / 2);
+                FVec2 fromTl = new FVec2(
+                    actorCoords.X + actorSize.X / 2,
+                    actorSize.Y - (actorCoords.Y + actorSize.Y / 2)
+                    );
                 Vec2 result = (Vec2)(fromTl / actorSize * textureSize);
                 return (result.X < 0
                     || result.Y < 0

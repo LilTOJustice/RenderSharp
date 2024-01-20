@@ -9,8 +9,8 @@ namespace RenderSharp
         static void Main(string[] args)
         {
             Scene2d scene = new(60, 6, bgcolor: new RGB(0, 0, 255));
-            Renderer2d renderer = new(500, 500, scene);
-            Scene2d.Actor actor = new(new Texture(100, 100));
+            Renderer2d renderer = new(400, 400, scene);
+            Scene2d.Actor actor = new(new Texture(20, 20));
             scene.AddActor(actor, "Box");
             actor.Shader += ExampleShaders.TopLeftDebug;
             scene.ThinkFunc += (Scene2dInstance scene, double time, double dt) =>
@@ -18,7 +18,7 @@ namespace RenderSharp
                 scene.Actors["Box"].Position.X += 50 * dt;
                 scene.Actors["Box"].Position.Y += 50 * dt;
             };
-            renderer.RenderMovie().Output("test");
+            renderer.RenderFrame().Output("test");
         }
     }
 }

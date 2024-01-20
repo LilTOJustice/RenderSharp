@@ -202,19 +202,16 @@ namespace RenderSharp.Renderer
 
             bgTexture ??= new Texture(Resolution, bgColor ?? new RGB());
 
-            int bgSpriteLeft = -bgTexture!.Width / 2;
-            int bgSpriteTop = bgTexture!.Height / 2;
-            
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {
                     FVec2 worldLoc = Util.Transforms.ScreenToWorld2(Resolution, new Vec2(x, y), scene.Camera.Center, scene.Camera.Zoom, scene.Camera.Rotation);
-                    Vec2 ind = (Vec2)worldLoc - new Vec2(bgSpriteLeft, bgSpriteTop);
-                    RGBA outColor = bgTexture[Util.Mod(ind.X, bgTexture.Width), Util.Mod(ind.Y, bgTexture.Height)];
+                    Vec2 bgTextureInd = Util.Transforms.WorldToBgTexture2(worldLoc, bgTexture.Size);
+                    RGBA outColor = bgTexture[bgTextureInd.X, bgTextureInd.Y];
 
                     FRGBA fOut = outColor;
-                    Scene.Shader(fOut, out fOut, ind, bgTexture.Size, scene.Time);
+                    Scene.Shader(fOut, out fOut, bgTextureInd, bgTexture.Size, scene.Time);
                     outColor = fOut;
 
                     foreach (var actor in scene.Actors.Values)
