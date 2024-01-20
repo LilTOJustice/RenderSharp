@@ -74,13 +74,13 @@ namespace RenderSharp.RendererCommon
         public HSV ToHSV()
         {
             double R = this.R, G = this.G, B = this.B;
-            double M = System.Math.Max(System.Math.Max(R, G), B);
-            double m = System.Math.Min(System.Math.Min(R, G), B);
+            double M = Math.Max(System.Math.Max(R, G), B);
+            double m = Math.Min(System.Math.Min(R, G), B);
             double V = M / 255;
             double S = (M > 0 ? 1 - m / M : 0);
-            double H = System.Math.Acos(
+            double H = Math.Acos(
                 (R - .5 * G - .5 * B) / System.Math.Sqrt(R * R + G * G + B * B - R * G - R * B - G * B)
-            ) * Util.Constants.DEGPERPI;
+            ) * 180 / Math.PI;
 
             if (B > G)
             {

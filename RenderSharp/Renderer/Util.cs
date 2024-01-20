@@ -3,21 +3,10 @@
 namespace RenderSharp.Renderer
 {
     /// <summary>
-    /// Contains math-related utility classes and functions.
+    /// Contains Renderer-related utility classes and functions.
     /// </summary>
     public class Util
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public class Constants
-        {
-            /// <summary>
-            /// Constant 180 / PI.
-            /// </summary>
-            public const double DEGPERPI = 180 / Math.PI;
-        }
-
         /// <summary>
         /// Contains various vector transformation functions.
         /// </summary>
