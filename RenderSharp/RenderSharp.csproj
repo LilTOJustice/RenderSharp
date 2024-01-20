@@ -8,6 +8,7 @@
     <Version>1.0.1</Version>
     <PackageId>LilTOJustice.$(AssemblyName)</PackageId>
     <Title>RenderSharp</Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
