@@ -16,105 +16,6 @@ namespace RenderSharp.Scene
         /// <param name="dt">Time between each frame of the simulation.</param>
         public delegate void Scene2dThinkFunc(Scene2dInstance scene, double time, double dt);
 
-        /// <summary>
-        /// Virtual camera for viewing the scene.
-        /// </summary>
-        public class Camera
-        {
-            /// <summary>
-            /// World location of the camera.
-            /// </summary>
-            public Vec2 Center { get; set; }
-
-            /// <summary>
-            /// Zoom of the camera.
-            /// </summary>
-            public double Zoom { get; set; }
-
-            /// <summary>
-            /// Rotation of the camera in radians.
-            /// </summary>
-            public double Rotation { get; set; }
-
-            /// <summary>
-            /// Constructs a camera.
-            /// </summary>
-            /// <param name="center">Center of the camera in world space.</param>
-            /// <param name="zoom">Zoom of the camera.</param>
-            /// <param name="rotation">Rotation of the camera in radians.</param>
-            public Camera(Vec2 center, double zoom, double rotation)
-            {
-                Center = center;
-                Zoom = zoom;
-                Rotation = rotation;
-            }
-        }
-
-        /// <summary>
-        /// An object to be rendered from within a scene.
-        /// </summary>
-        public class Actor
-        {
-            /// <summary>
-            /// World space size of the actor.
-            /// </summary>
-            public FVec2 Size { get; set; }
-            
-            /// <summary>
-            /// World space width of the actor.
-            /// </summary>
-            public double Width { get { return Size.X; } set { Size.X = value; } }
-
-            /// <summary>
-            /// World space height of the actor.
-            /// </summary>
-            public double Height { get { return Size.Y; } set { Size.Y = value; } }
-            
-            /// <summary>
-            /// World space position of the actor.
-            /// </summary>
-            public FVec2 Position { get; set; }
-            
-            /// <summary>
-            /// Rotation of the actor about its center.
-            /// </summary>
-            public double Rotation { get; set; }
-            
-            /// <summary>
-            /// Texture to render on the actor.
-            /// </summary>
-            public Texture Texture { get; set; }
-            
-            /// <summary>
-            /// Shader to be applied to the actor's texture.
-            /// </summary>
-            public FragShader Shader { get; set; }
-
-            /// <summary>
-            /// Constructs an actor.
-            /// </summary>
-            /// <param name="texture">Texture to be rendered on the actor.</param>
-            /// <param name="position">World space position of the actor.</param>
-            /// <param name="size">World space size of the actor.</param>
-            /// <param name="rotation">Rotation of the actor about its center.</param>
-            /// <param name="shader">Shader to be applied to the actor's texture.</param>
-            public Actor(FVec2 size, FVec2? position = null, Texture? texture = null, double rotation = 0, FragShader? shader = null)
-            {
-                Texture = texture ?? new Texture((Vec2)size);
-                Position = position ?? new FVec2();
-                Size = size;
-                Rotation = rotation;
-                Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            }
-
-            /// <summary>
-            /// Clears any active shaders on the actor.
-            /// </summary>
-            public void ClearShaders()
-            {
-                Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
-            }
-        }
 
         /// <summary>
         /// Framerate of the scene.
@@ -124,7 +25,7 @@ namespace RenderSharp.Scene
         /// <summary>
         /// Camera within the scene.
         /// </summary>
-        public Camera SceneCamera { get; set; }
+        public Camera2d Camera { get; set; }
 
         /// <summary>
         /// List of times that each frame of simulation occurs at.
@@ -132,7 +33,7 @@ namespace RenderSharp.Scene
         public List<double> TimeSeq { get; private set; }
         
         /// <summary>
-        /// Total duration of the simulation for the scene. 0 when the scene is static.
+        /// Total duration of the simulation for the scene in seconds. 0 when the scene is static.
         /// </summary>
         public double Duration { get; private set; }
         
@@ -144,7 +45,7 @@ namespace RenderSharp.Scene
         /// <summary>
         /// Dictionary of actors indexed by their actorId.
         /// </summary>
-        public Dictionary<string, Actor> Actors { get; set; }
+        public Dictionary<string, Actor2d> Actors { get; set; }
         
         /// <summary>
         /// Background texture to use if an actor is not intersected by the renderer.
@@ -165,7 +66,7 @@ namespace RenderSharp.Scene
         /// Constructs a scene.
         /// </summary>
         /// <param name="framerate">The framerate of the simulation. If 0 or negative, the scene will be considered static.</param>
-        /// <param name="duration">The duration of the simulation. If 0 or negative, the scene will be considered static.</param>
+        /// <param name="duration">The duration of the simulation in seconds. If 0 or negative, the scene will be considered static.</param>
         /// <param name="bgColor">The background color to be used if no actor is interesected
         /// by the renderer and no background texture is provided.</param>
         /// <param name="bgTexture">The background texture to be used if no actor is intersected.</param>
@@ -179,9 +80,10 @@ namespace RenderSharp.Scene
             {
                 TimeSeq.Add(i * DeltaTime);
             }
-            Actors = new Dictionary<string, Actor>();
-            SceneCamera = new Camera(new Vec2(0, 0), 1, 0);
-            Shader = ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+
+            Actors = new Dictionary<string, Actor2d>();
+            Camera = new Camera2d(new Vec2(0, 0), 1, 0);
+            Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
             ThinkFunc = (Scene2dInstance scene, double time, double dt) => { };
         }
 
@@ -190,7 +92,7 @@ namespace RenderSharp.Scene
         /// </summary>
         /// <param name="actor">Actor object to store.</param>
         /// <param name="actorId">Lookup id for the actor into <see cref="Actors"/>.</param>
-        public void AddActor(Actor actor, string actorId)
+        public void AddActor(Actor2d actor, string actorId)
         {
             Actors.Add(actorId, actor);
         }
