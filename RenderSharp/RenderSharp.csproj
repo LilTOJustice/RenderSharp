@@ -9,7 +9,18 @@
     <PackageId>LilTOJustice.$(AssemblyName)</PackageId>
     <Title>RenderSharp</Title>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>LilTOJustice</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/LilTOJustice/RenderSharp</RepositoryUrl>
+    <Description>Renderer for the *Sharp project.</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\SimulSharp\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LilTOJustice.MathSharp" Version="1.0.2" />
