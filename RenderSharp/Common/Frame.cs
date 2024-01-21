@@ -8,6 +8,8 @@ namespace RenderSharp
     /// </summary>
     public class Frame
     {   
+        private static readonly int channels = 4;
+
         /// <summary>
         /// Size of the frame.
         /// </summary>
@@ -40,14 +42,14 @@ namespace RenderSharp
         public Frame(Vec2 size)
         {
             Size = size;
-            Image = new byte[Width * Height * 3];
+            Image = new byte[Width * Height * channels];
         }
 
         /// <inheritdoc cref="Frame(Vec2)"/>
         public Frame(int width, int height)
         {
             Size = new Vec2(width, height);
-            Image = new byte[width * height * 3];
+            Image = new byte[width * height * channels];
         }
 
         /// <summary>
@@ -56,25 +58,26 @@ namespace RenderSharp
         /// <param name="x">Position relative to the <see cref="Width"/> of the frame.</param>
         /// <param name="y">Position relative to the <see cref="Height"/> of the frame.</param>
         /// <returns>The pixel at the desired location.</returns>
-        public RGB this[int x, int y]
+        public RGBA this[int x, int y]
         {
             get
             {
-                int index = (y * Width + x) * 3;
-                return new RGB
+                int index = (y * Width + x) * channels;
+                return new RGBA
                     (
                         Image[index],
                         Image[index + 1],
-                        Image[index + 2]
+                        Image[index + 2],
+                        Image[index + 3]
                     );
             }
             set
             {
-                int index = (y * Width + x) * 3;
+                int index = (y * Width + x) * channels;
                 Image[index] = value.R;
                 Image[index + 1] = value.G;
                 Image[index + 2] = value.B;
-                    
+                Image[index + 3] = value.A;
             }
         }
 
@@ -87,7 +90,7 @@ namespace RenderSharp
         {
             string fullname = filename + "." + ext;
             var settings = new MagickReadSettings();
-            settings.Format = MagickFormat.Rgb;
+            settings.Format = MagickFormat.Rgba;
             settings.Width = Width;
             settings.Height = Height;
             settings.Depth = 8;

@@ -1,6 +1,5 @@
 ﻿using MathSharp;
 using System.Diagnostics;
-using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
 
 namespace RenderSharp
@@ -72,11 +71,11 @@ namespace RenderSharp
         /// Exports the movie as an mp4 using ffmpeg.
         /// </summary>
         /// <param name="filename">Path to the exported video.</param>
-        public void Output(string filename)
+        /// <param name="transparency">Whether to export with transparency. Will export in webm if true, otherwise mp4.</param>
+        public void Output(string filename, bool transparency = false)
         {
-            string fullName = filename + ".mp4";
+            string fullName = filename;
 
-            FFmpeg.SetExecutablesPath(".");
             if (!File.Exists("ffmpeg.exe"))
             {
                 Console.Write("FFmpeg not found, downloading... ");
@@ -84,18 +83,20 @@ namespace RenderSharp
                 Console.WriteLine("Done.");
             }
 
-            Console.Write("Exporting... ");
-            List<FileInfo> files = new DirectoryInfo(TempDir).GetFiles().ToList();
-            files.Sort((x, y) => int.Parse(x.Name.Split('.')[0]) - int.Parse(y.Name.Split('.')[0]));
-            FFmpeg.Conversions
-                .New()
-                .BuildVideoFromImages(files.Select(x => x.FullName))
-                .SetPixelFormat("yuv420p")
-                .SetOutputFormat(Format.mp4)
-                .SetOutput(fullName)
-                .SetFrameRate(Framerate)
-                .SetOverwriteOutput(true)
-                .Start().Wait();
+            Console.WriteLine($"Exporting as {fullName}...");
+
+            string cmd = $"-y -v -8 -framerate {Framerate} -f image2 -i temp_{MovieID}/%d.bmp "
+                + (transparency ?
+                $"-c:v vp9 -pix_fmt yuva420p -b:v 32768k {fullName}.webm" :
+                $"-c:v h264 -pix_fmt yuv420p -b:v 32768k {fullName}.mp4");
+
+            Console.WriteLine(cmd);
+
+            if (Process.Start(".\\ffmpeg", cmd) == null)
+            {
+                Console.WriteLine("Error outputting file!");
+                return;
+            }
 
             Console.WriteLine("Done.");
         }

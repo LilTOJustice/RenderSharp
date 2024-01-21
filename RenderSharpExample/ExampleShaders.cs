@@ -90,5 +90,15 @@ namespace RenderSharp
             fragOut = fragIn;
             fragOut.A = 0.5 + Math.Sin(time * 2) * 0.5;
         }
+
+        public static void CircleCut(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        {
+            fragOut = fragIn;
+            FVec2 st = (((FVec2)fragCoord) / res) - new FVec2(0.5, 0.5);
+            if (st.Length() > 0.5)
+            {
+                fragOut.A = 0;
+            }
+        }
     }
 }
