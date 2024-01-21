@@ -236,7 +236,7 @@ namespace RenderSharp.Render2d
                     Shader(fOut, out fOut, new Vec2(x, y), Resolution, scene.Time);
                     outColor = fOut;
 
-                    output[x, y] = (RGB)outColor;
+                    output[x, y] = outColor;
                 }
             }
 

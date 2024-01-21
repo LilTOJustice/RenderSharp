@@ -6,7 +6,7 @@ namespace RenderSharpExample
 {
     internal class Program
     {
-        static int framerate = 30;
+        static int framerate = 60;
         static int duration = 3;
         static int resX = 1000;
         static int resY = 1000;
