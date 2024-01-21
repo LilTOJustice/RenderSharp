@@ -58,7 +58,7 @@ namespace RenderSharp.Render2d
         /// <inheritdoc cref="Scene.Camera"/>
         public OptionalsStep WithCamera(FVec2 center, double zoom = 1, double rotation = 1)
         {
-            camera = new Camera(center, zoom, rotation);
+            camera = new Camera(new FVec2(center), zoom, rotation);
             return this;
         }
 
@@ -69,7 +69,7 @@ namespace RenderSharp.Render2d
         /// <returns></returns>
         public OptionalsStep WithBgColor(RGBA bgColor)
         {
-            this.bgColor = bgColor;
+            this.bgColor = new RGBA(bgColor);
             return this;
         }
 
@@ -83,7 +83,7 @@ namespace RenderSharp.Render2d
         /// <inheritdoc cref="Scene.BgShader"/>
         public OptionalsStep WithBgShader(FragShader bgShader)
         {
-            this.bgShader = bgShader;
+            this.bgShader += bgShader;
             return this;
         }
 
@@ -98,9 +98,13 @@ namespace RenderSharp.Render2d
         /// Create an <see cref="ActorBuilder"/> and add properties to the actor here.
         /// </summary>
         /// <param name="actorBuilder">Builder to modify and pass.</param>
+        /// <param name="actorId">Id of the actor for accessing it by <see cref="SceneInstance.this[string]"/>.</param>
+        /// <param name="plane">Plane in the scene to place the actor in.</param>
         /// <returns></returns>
-        public OptionalsStep WithActor(ActorBuilder actorBuilder)
+        public OptionalsStep WithActor(ActorBuilder actorBuilder, string actorId, int plane = 0)
         {
+            actorIndex.EnsurePlaneExists(plane);
+            actorIndex[plane].Add(actorId, actorBuilder.Build());
             return this;
         }
 
@@ -108,9 +112,13 @@ namespace RenderSharp.Render2d
         /// Create a <see cref="LineBuilder"/> and add properties to the line here.
         /// </summary>
         /// <param name="lineBuilder">Builder to modify and pass.</param>
+        /// <param name="actorId">Id of the actor for accessing it by <see cref="SceneInstance.this[string]"/>.</param>
+        /// <param name="plane">Plane in the scene to place the line in.</param>
         /// <returns></returns>
-        public OptionalsStep WithActor(LineBuilder lineBuilder)
+        public OptionalsStep WithActor(LineBuilder lineBuilder, string actorId, int plane = 0)
         {
+            actorIndex.EnsurePlaneExists(plane);
+            actorIndex[plane].Add(actorId, lineBuilder.Build());
             return this;
         }
 

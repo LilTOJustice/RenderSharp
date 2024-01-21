@@ -88,7 +88,7 @@ namespace RenderSharp
         /// Fills the texture with the given color.
         /// </summary>
         /// <param name="color">Color to fill the texture with.</param>
-        public void Fill(RGBA color)
+        private void Fill(RGBA color)
         {
             for (int i = 0; i < Height; i++)
             {
@@ -105,7 +105,7 @@ namespace RenderSharp
         /// <param name="x">Position within the texture relative to the width.</param>
         /// <param name="y">Position within the texture relative to the height.</param>
         /// <returns>A pixel in the texture.</returns>
-        public RGBA this[int x, int y]
+        internal RGBA this[int x, int y]
         {
             get { return _texture[y, x]; }
         }

@@ -30,7 +30,7 @@ namespace RenderSharp.Render2d
         /// <param name="rotation">Rotation of the camera in radians.</param>
         internal Camera(FVec2 center, double zoom, double rotation)
         {
-            Center = new FVec2(center);
+            Center = center;
             Zoom = zoom;
             Rotation = rotation;
         }

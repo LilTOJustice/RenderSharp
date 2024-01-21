@@ -4,7 +4,7 @@ namespace RenderSharp.Render2d
 {
     /// <summary>
     /// Builder for the <see cref="Line"/> class.
-    /// Used for <see cref="OptionalsStep.WithActor(LineBuilder)"/> within <see cref="SceneBuilder"/>.
+    /// Used for <see cref="OptionalsStep.WithActor(LineBuilder, string, int)"/> within <see cref="SceneBuilder"/>.
     /// </summary>
     public class LineBuilder
     {
@@ -24,14 +24,14 @@ namespace RenderSharp.Render2d
         /// <inheritdoc cref="Line.Start"/>
         public LineBuilder WithStart(FVec2 start)
         {
-            this.start = start;
+            this.start = new FVec2(start);
             return this;
         }
 
         /// <inheritdoc cref="Line.End"/>
         public LineBuilder WithEnd(FVec2 end)
         {
-            this.end = end;
+            this.end = new FVec2(end);
             return this;
         }
 
@@ -40,9 +40,9 @@ namespace RenderSharp.Render2d
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        public LineBuilder WithColor(RGBA? color)
+        public LineBuilder WithColor(RGBA color)
         {
-            this.color = color;
+            this.color = new RGBA(color);
             return this;
         }
         
@@ -55,7 +55,7 @@ namespace RenderSharp.Render2d
 
         internal Line Build()
         {
-            return new Line(thickness, start, end, color);
+            return new Line(thickness, start, end, color, shader);
         }
     }
 }

@@ -32,21 +32,20 @@
             }
         }
 
-        public new Dictionary<string, Actor> this[int plane]
+        internal void EnsurePlaneExists(int plane)
         {
-            get { return ((List<Dictionary<string, Actor>>)this)[plane]; }
+            int count = Count;
+            for (int i = 0; i <= plane - count; i++)
+            {
+                Add(new Dictionary<string, Actor>());
+            }
         }
 
-        public Actor this[int plane, string actorId]
+        internal Actor this[int plane, string actorId]
         {
             set
             {
-                int count = Count;
-                for (int i = 0; i < plane - count; i++)
-                {
-                    Add(new Dictionary<string, Actor>());
-                }
-
+                EnsurePlaneExists(plane);
                 this[plane].Add(actorId, value);
             }
         }

@@ -4,7 +4,7 @@ namespace RenderSharp.Render2d
 {
     /// <summary>
     /// Builder for the <see cref="Actor"/> class.
-    /// Used for <see cref="OptionalsStep.WithActor(ActorBuilder)"/> within <see cref="SceneBuilder"/>.
+    /// Used for <see cref="OptionalsStep.WithActor(ActorBuilder, string, int)"/> within <see cref="SceneBuilder"/>.
     /// </summary>
     public class ActorBuilder
     {
@@ -17,7 +17,7 @@ namespace RenderSharp.Render2d
         /// <inheritdoc cref="Actor.Size"/>
         public ActorBuilder WithSize(FVec2 size)
         {
-            this.size = size;
+            this.size = new FVec2(size);
             return this;
         }
 
@@ -31,7 +31,7 @@ namespace RenderSharp.Render2d
         /// <inheritdoc cref="Actor.Position"/>
         public ActorBuilder WithPosition(FVec2 position)
         {
-            this.position = position;
+            this.position = new FVec2(position);
             return this;
         
         }
