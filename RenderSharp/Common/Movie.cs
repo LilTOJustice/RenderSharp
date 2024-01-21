@@ -1,6 +1,5 @@
 ﻿using MathSharp;
 using System.Diagnostics;
-using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
 
 namespace RenderSharp
@@ -72,9 +71,10 @@ namespace RenderSharp
         /// Exports the movie as an mp4 using ffmpeg.
         /// </summary>
         /// <param name="filename">Path to the exported video.</param>
-        public void Output(string filename)
+        /// <param name="transparency">Whether to export with transparency. Will export in webm if true, otherwise mp4.</param>
+        public void Output(string filename, bool transparency = false)
         {
-            string fullName = filename + ".mp4";
+            string fullName = filename;
 
             if (!File.Exists("ffmpeg.exe"))
             {
@@ -83,10 +83,14 @@ namespace RenderSharp
                 Console.WriteLine("Done.");
             }
 
-            Console.Write("Exporting... ");
+            Console.WriteLine($"Exporting as {fullName}...");
 
-            string cmd = ($"-y -v -8 -framerate {Framerate} -f image2 -i temp_{MovieID}/%d.bmp -c h264 " +
-                $"-pix_fmt yuv420p -b:v 32768k {fullName}");
+            string cmd = $"-y -v -8 -framerate {Framerate} -f image2 -i temp_{MovieID}/%d.bmp "
+                + (transparency ?
+                $"-c:v vp9 -pix_fmt yuva420p -b:v 32768k {fullName}.webm" :
+                $"-c:v h264 -pix_fmt yuv420p -b:v 32768k {fullName}.mp4");
+
+            Console.WriteLine(cmd);
 
             if (Process.Start(".\\ffmpeg", cmd) == null)
             {
