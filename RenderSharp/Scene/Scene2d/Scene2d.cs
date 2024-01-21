@@ -96,7 +96,8 @@ namespace RenderSharp.Render2d
         {
             if (plane >= ActorIndex.Count)
             {
-                for (int i = 0; i <= plane - ActorIndex.Count; i++)
+                int size = ActorIndex.Count;
+                for (int i = 0; i <= plane - size; i++)
                 {
                     ActorIndex.Add(new Dictionary<string, Actor2d>());
                 }

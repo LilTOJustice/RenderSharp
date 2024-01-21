@@ -209,7 +209,7 @@ namespace RenderSharp.Render2d
                     Scene.Shader(fOut, out fOut, bgTextureInd, bgTexture.Size, scene.Time);
                     outColor = fOut;
 
-                    for (int i = scene.ActorIndex.Count - 1; i >= 0; i++)
+                    for (int i = scene.ActorIndex.Count - 1; i >= 0; i--)
                     {
                         foreach (var actor in scene.ActorIndex[i].Values)
                         {
