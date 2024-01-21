@@ -206,7 +206,7 @@ namespace RenderSharp.Render2d
                     RGBA outColor = bgTexture[bgTextureInd.X, bgTextureInd.Y];
 
                     FRGBA fOut = outColor;
-                    Scene.Shader(fOut, out fOut, bgTextureInd, bgTexture.Size, scene.Time);
+                    Scene.BgShader(fOut, out fOut, bgTextureInd, bgTexture.Size, scene.Time);
                     outColor = fOut;
 
                     for (int i = scene.ActorIndex.Count - 1; i >= 0; i--)

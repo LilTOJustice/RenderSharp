@@ -11,11 +11,6 @@ namespace RenderSharp.Render2d
     /// </summary>
     public class Scene2dInstance
     {
-        /// <inheritdoc cref="Scene2d.Camera"/>
-        public Camera2d Camera { get; }
-
-        /// <inheritdoc cref="Scene2d.ActorIndex"/>
-        public List<Dictionary<string, Actor2d>> ActorIndex { get; }
 
         /// <summary>
         /// Current simulation time for this instance.
@@ -26,6 +21,18 @@ namespace RenderSharp.Render2d
         /// Index into the scene this instance was constructed from.
         /// </summary>
         public int Index { get; }
+
+        /// <inheritdoc cref="Scene2d.Camera"/>
+        public Camera2d Camera { get; }
+
+        /// <inheritdoc cref="Scene2d.ActorIndex"/>
+        public List<Dictionary<string, Actor2d>> ActorIndex { get; }
+
+        /// <inheritdoc cref="Scene2d.BgTexture"/>
+        public Texture BgTexture { get; set; }
+        
+        /// <inheritdoc cref="Scene2d.BgShader"/>
+        public FragShader BgShader { get; set; }
 
         /// <summary>
         /// Think function to be run for the next instance.
@@ -47,6 +54,8 @@ namespace RenderSharp.Render2d
             Time = 0;
             Index = 0;
             ThinkFunc = scene.ThinkFunc;
+            BgTexture = scene.BgTexture;
+            BgShader = scene.BgShader;
         }
 
         /// <summary>
@@ -66,6 +75,8 @@ namespace RenderSharp.Render2d
             Time = time;
             Index = index;
             ThinkFunc = scene.ThinkFunc;
+            BgTexture = scene.BgTexture;
+            BgShader = scene.BgShader;
         }
 
         /// <summary>
