@@ -54,7 +54,7 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// Shader to be run each frame on the background if no actor is intersected by the renderer.
         /// </summary>
-        public FragShader Shader { get; set; }
+        public FragShader BgShader { get; set; }
         
         /// <summary>
         /// Think function to be run each frame of the simulation of a dynamic scene.
@@ -69,7 +69,7 @@ namespace RenderSharp.Render2d
         /// <param name="bgColor">The background color to be used if no actor is interesected
         /// by the renderer and no background texture is provided.</param>
         /// <param name="bgTexture">The background texture to be used if no actor is intersected.</param>
-        public Scene2d(int framerate = 0, double duration = 0, Texture? bgTexture = null, RGB? bgColor = null) 
+        public Scene2d(int framerate = 0, double duration = 0, RGB? bgColor = null, Texture? bgTexture = null) 
         {
             Framerate = framerate;
             BgTexture = bgTexture ?? new Texture(1, 1, bgColor ?? new RGB());
@@ -82,7 +82,7 @@ namespace RenderSharp.Render2d
 
             ActorIndex = new List<Dictionary<string, Actor2d>>();
             Camera = new Camera2d(new Vec2(0, 0), 1, 0);
-            Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            BgShader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
             ThinkFunc = (Scene2dInstance scene, double time, double dt) => { };
         }
 
@@ -129,7 +129,7 @@ namespace RenderSharp.Render2d
         /// </summary>
         public void ClearShaders()
         {
-            Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            BgShader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
         }
 
         /// <summary>
