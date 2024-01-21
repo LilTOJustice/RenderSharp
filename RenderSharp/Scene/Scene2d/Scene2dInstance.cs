@@ -1,6 +1,4 @@
 ﻿using MathSharp;
-using System.ComponentModel;
-using System.Numerics;
 
 namespace RenderSharp.Render2d
 {
