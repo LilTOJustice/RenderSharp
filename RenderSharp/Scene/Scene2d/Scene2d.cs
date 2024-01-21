@@ -44,7 +44,7 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// Collection of planes containing dictionaries of actors indexed by their actorId.
         /// </summary>
-        private List<Dictionary<string, Actor2d>> ActorIndex { get; set; }
+        public List<Dictionary<string, Actor2d>> ActorIndex { get; set; }
         
         /// <summary>
         /// Background texture to use if an actor is not intersected by the renderer.
@@ -91,7 +91,7 @@ namespace RenderSharp.Render2d
         /// </summary>
         /// <param name="actor">Actor object to store.</param>
         /// <param name="actorId">Lookup id for the actor into <see cref="ActorIndex"/>.</param>
-        /// <param name="plane">Virtual plane for the actor to reside in.</param>
+        /// <param name="plane">Virtual plane for the actor to reside in. Lower is closer to camera.</param>
         public void AddActor(Actor2d actor, string actorId, int plane = 0)
         {
             if (plane >= ActorIndex.Count)
