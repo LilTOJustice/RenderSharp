@@ -192,7 +192,7 @@ namespace RenderSharp.Render2d
 
             if (verbose)
             {
-                Console.WriteLine($"Beginning actor render ({scene.Actors.Count} total)...");
+                Console.WriteLine($"Beginning actor render...");
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -209,27 +209,30 @@ namespace RenderSharp.Render2d
                     Scene.Shader(fOut, out fOut, bgTextureInd, bgTexture.Size, scene.Time);
                     outColor = fOut;
 
-                    foreach (var actor in scene.Actors.Values)
+                    for (int i = scene.ActorIndex.Count - 1; i >= 0; i--)
                     {
-                        FVec2? actorLoc = Util.Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation);
-                        if (actorLoc is null)
+                        foreach (var actor in scene.ActorIndex[i].Values)
                         {
-                            continue;
+                            FVec2? actorLoc = Util.Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation);
+                            if (actorLoc is null)
+                            {
+                                continue;
+                            }
+
+                            Vec2? textureInd = Util.Transforms.ActorToTexture2(actorLoc, actor.Size, actor.Texture.Size);
+                            if (textureInd is null)
+                            {
+                                continue;
+                            }
+
+                            RGBA textureSample = actor.Texture[textureInd.X, textureInd.Y];
+
+                            fOut = textureSample;
+                            actor.Shader(fOut, out fOut, textureInd, actor.Texture.Size, scene.Time);
+                            textureSample = fOut;
+
+                            outColor = ColorFunctions.AlphaBlend(textureSample, outColor);
                         }
-
-                        Vec2? textureInd = Util.Transforms.ActorToTexture2(actorLoc, actor.Size, actor.Texture.Size);
-                        if (textureInd is null)
-                        {
-                            continue;
-                        }
-
-                        RGBA textureSample = actor.Texture[textureInd.X, textureInd.Y];
-
-                        fOut = textureSample;
-                        actor.Shader(fOut, out fOut, textureInd, actor.Texture.Size, scene.Time);
-                        textureSample = fOut;
-
-                        outColor = ColorFunctions.AlphaBlend(textureSample, outColor);
                     }
 
                     fOut = outColor;

@@ -1,4 +1,6 @@
 ﻿using MathSharp;
+using System.ComponentModel;
+using System.Numerics;
 
 namespace RenderSharp.Render2d
 {
@@ -12,8 +14,8 @@ namespace RenderSharp.Render2d
         /// <inheritdoc cref="Scene2d.Camera"/>
         public Camera2d Camera { get; }
 
-        /// <inheritdoc cref="Scene2d.Actors"/>
-        public Dictionary<string, Actor2d> Actors { get; }
+        /// <inheritdoc cref="Scene2d.ActorIndex"/>
+        public List<Dictionary<string, Actor2d>> ActorIndex { get; }
 
         /// <summary>
         /// Current simulation time for this instance.
@@ -37,22 +39,15 @@ namespace RenderSharp.Render2d
         public Scene2dInstance(Scene2d scene)
         {
             Camera = new Camera2d(new Vec2(scene.Camera.Center), scene.Camera.Zoom, scene.Camera.Rotation);
-            Actors = new Dictionary<string, Actor2d>(
-                scene.Actors.Select(keyValue =>
+            ActorIndex = scene.ActorIndex.Select(plane => new Dictionary<string, Actor2d>(
+                plane.Select(keyValue =>
                     new KeyValuePair<string, Actor2d>(keyValue.Key, keyValue.Value.Reconstruct())
                     )
-                );
+                )).ToList();
             Time = 0;
             Index = 0;
             ThinkFunc = scene.ThinkFunc;
         }
-
-        /// <summary>
-        /// Retrieves an actor from the scene.
-        /// </summary>
-        /// <param name="actorId">Id of the actor to retrieve.</param>
-        /// <returns></returns>
-        public Actor2d this[string actorId] => Actors[actorId];
 
         /// <summary>
         /// Constructs a scene for intermediate frames of the simulation.
@@ -63,14 +58,35 @@ namespace RenderSharp.Render2d
         public Scene2dInstance(Scene2dInstance scene, double time, int index)
         {
             Camera = new Camera2d(new Vec2(scene.Camera.Center), scene.Camera.Zoom, scene.Camera.Rotation);
-            Actors = new Dictionary<string, Actor2d>(
-                scene.Actors.Select(keyValue =>
+            ActorIndex = scene.ActorIndex.Select(plane => new Dictionary<string, Actor2d>(
+                plane.Select(keyValue =>
                     new KeyValuePair<string, Actor2d>(keyValue.Key, keyValue.Value.Reconstruct())
                     )
-                );
+                )).ToList();
             Time = time;
             Index = index;
             ThinkFunc = scene.ThinkFunc;
+        }
+
+        /// <summary>
+        /// Retrieves an actor from the scene.
+        /// </summary>
+        /// <param name="actorId">Id of the actor to retrieve.</param>
+        /// <returns></returns>
+        public Actor2d this[string actorId]
+        {
+            get
+            {
+                foreach (Dictionary<string, Actor2d> plane in ActorIndex)
+                {
+                    if (plane.ContainsKey(actorId))
+                    {
+                        return plane[actorId];
+                    }
+                }
+
+                throw new KeyNotFoundException("Actor not found in index.");
+            }
         }
     }
 }

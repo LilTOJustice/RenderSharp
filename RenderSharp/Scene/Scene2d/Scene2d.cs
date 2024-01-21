@@ -42,9 +42,9 @@ namespace RenderSharp.Render2d
         public double DeltaTime { get; private set; } 
         
         /// <summary>
-        /// Dictionary of actors indexed by their actorId.
+        /// Collection of planes containing dictionaries of actors indexed by their actorId.
         /// </summary>
-        public Dictionary<string, Actor2d> Actors { get; set; }
+        public List<Dictionary<string, Actor2d>> ActorIndex { get; set; }
         
         /// <summary>
         /// Background texture to use if an actor is not intersected by the renderer.
@@ -80,7 +80,7 @@ namespace RenderSharp.Render2d
                 TimeSeq.Add(i * DeltaTime);
             }
 
-            Actors = new Dictionary<string, Actor2d>();
+            ActorIndex = new List<Dictionary<string, Actor2d>>();
             Camera = new Camera2d(new Vec2(0, 0), 1, 0);
             Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
             ThinkFunc = (Scene2dInstance scene, double time, double dt) => { };
@@ -90,20 +90,38 @@ namespace RenderSharp.Render2d
         /// Registers a new actor in the dictionary with the given actorId.
         /// </summary>
         /// <param name="actor">Actor object to store.</param>
-        /// <param name="actorId">Lookup id for the actor into <see cref="Actors"/>.</param>
-        public void AddActor(Actor2d actor, string actorId)
+        /// <param name="actorId">Lookup id for the actor into <see cref="ActorIndex"/>.</param>
+        /// <param name="plane">Virtual plane for the actor to reside in. Lower is closer to camera.</param>
+        public void AddActor(Actor2d actor, string actorId, int plane = 0)
         {
-            Actors.Add(actorId, actor);
+            if (plane >= ActorIndex.Count)
+            {
+                int size = ActorIndex.Count;
+                for (int i = 0; i <= plane - size; i++)
+                {
+                    ActorIndex.Add(new Dictionary<string, Actor2d>());
+                }
+            }
+
+            ActorIndex[plane].Add(actorId, actor);
         }
 
         /// <summary>
-        /// Removes the actor from <see cref="Actors"/>.
+        /// Removes the actor from all planes that have it in <see cref="ActorIndex"/>.
         /// </summary>
         /// <param name="actorId">Id for looking up the actor.</param>
         /// <returns></returns>
         public bool RemoveActor(string actorId)
         {
-            return Actors.Remove(actorId);
+            foreach (Dictionary<string, Actor2d> plane in ActorIndex)
+            {
+                if (plane.ContainsKey(actorId))
+                {
+                    plane.Remove(actorId);
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
