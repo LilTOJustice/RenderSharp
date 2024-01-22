@@ -5,7 +5,7 @@ namespace RenderSharp.Render2d
     /// <summary>
     /// An object to be rendered from within a scene.
     /// </summary>
-    public class Actor2d
+    public class Actor
     {
         /// <summary>
         /// World space size of the actor.
@@ -50,11 +50,16 @@ namespace RenderSharp.Render2d
         /// <param name="size">World space size of the actor.</param>
         /// <param name="rotation">Rotation of the actor about its center (radians).</param>
         /// <param name="shader">Shader to be applied to the actor's texture.</param>
-        public Actor2d(FVec2 size, FVec2? position = null, Texture? texture = null, double rotation = 0, FragShader? shader = null)
+        internal Actor(
+            FVec2? size = null,
+            double rotation = 0,
+            FVec2? position = null,
+            Texture? texture = null,
+            FragShader? shader = null)
         {
-            Texture = texture ?? new Texture((Vec2)size);
+            Texture = texture ?? new Texture((Vec2)(size ?? new Vec2()));
             Position = position ?? new FVec2();
-            Size = size;
+            Size = size ?? new FVec2();
             Rotation = rotation;
             Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
         }
@@ -67,13 +72,13 @@ namespace RenderSharp.Render2d
             Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
         }
 
-        internal virtual Actor2d Reconstruct()
+        internal virtual Actor Reconstruct()
         {
-            return new Actor2d(
+            return new Actor(
                     new FVec2(Size),
+                    Rotation,
                     new FVec2(Position),
                     Texture,
-                    Rotation,
                     Shader
                 );
         }

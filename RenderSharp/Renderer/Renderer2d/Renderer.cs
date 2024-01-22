@@ -4,9 +4,9 @@ using System.Diagnostics;
 namespace RenderSharp.Render2d
 {
     /// <summary>
-    /// Renderer for 2d scenes (<see cref="Scene2d"/>). Used for rendering scenes into <see cref="Frame"/>s or <see cref="Movie"/>s.
+    /// Renderer for 2d scenes (<see cref="Scene"/>). Used for rendering scenes into <see cref="Frame"/>s or <see cref="Movie"/>s.
     /// </summary>
-    public class Renderer2d
+    public class Renderer
     {
         /// <summary>
         /// Target resolution for the renderer.
@@ -26,15 +26,15 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// Target scene for the render.
         /// </summary>
-        public Scene2d Scene { get; set; }
+        public Scene Scene { get; set; }
         
         /// <summary>
         /// Final shader delegate run on every pixel of every frame of the render.
         /// </summary>
         public FragShader Shader { get; set; }
 
-        /// <inheritdoc cref="Renderer2d"/>
-        public Renderer2d(int resX, int resY, Scene2d scene, FragShader? shader = null)
+        /// <inheritdoc cref="Renderer"/>
+        public Renderer(int resX, int resY, Scene scene, FragShader? shader = null)
         {
             if (resX < 1 || resY < 1)
             {
@@ -46,8 +46,8 @@ namespace RenderSharp.Render2d
             Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
         }
 
-        /// <inheritdoc cref="Renderer2d"/>
-        public Renderer2d(Vec2 resolution, Scene2d scene, FragShader? shader = null)
+        /// <inheritdoc cref="Renderer"/>
+        public Renderer(Vec2 resolution, Scene scene, FragShader? shader = null)
         {
             if (resolution.X < 1 || resolution.Y < 1)
             {
@@ -76,7 +76,7 @@ namespace RenderSharp.Render2d
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             Console.Write($"Simulating to frame index {index}...");
-            Scene2dInstance sceneInstance = Scene.Simulate(index).Last();
+            SceneInstance sceneInstance = Scene.Simulate(index).Last();
             stopwatch.Stop();
             Console.WriteLine($"Finished in {stopwatch.Elapsed}");
             return Render(sceneInstance, Scene.BgTexture, true);
@@ -86,7 +86,7 @@ namespace RenderSharp.Render2d
         /// Renders all frames from the <see cref="Scene"/>, and produces a <see cref="Movie"/> that can be exported.
         /// </summary>
         /// <returns>The rendered movie.</returns>
-        /// <exception cref="Exception">Thrown if this method is called when the <see cref="Scene"/> is static (has a <see cref="Scene2d.TimeSeq"/> of length 0)</exception>
+        /// <exception cref="Exception">Thrown if this method is called when the <see cref="Scene"/> is static (has a <see cref="Scene.TimeSeq"/> of length 0)</exception>
         public Movie RenderMovie()
         {
             if (Scene.TimeSeq.Count == 0)
@@ -98,7 +98,7 @@ namespace RenderSharp.Render2d
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             Movie movie = new(Width, Height, Scene.Framerate);
-            List<Scene2dInstance> instances = Scene.Simulate();
+            List<SceneInstance> instances = Scene.Simulate();
 
             stopwatch.Stop();
             Console.WriteLine($"Finished in {stopwatch.Elapsed}");
@@ -159,7 +159,7 @@ namespace RenderSharp.Render2d
         /// <param name="numFrames">Target progress.</param>
         /// <param name="totalBars">Loading bar length in characters.</param>
         /// <param name="timeElapsed">Optional time to show next to the bar.</param>
-        static void PrintBar(int frameIndex, int numFrames, int totalBars = 50, string timeElapsed = "")
+        internal static void PrintBar(int frameIndex, int numFrames, int totalBars = 50, string timeElapsed = "")
         {
             int numBars = (int)(1d * frameIndex / numFrames * totalBars);
 
@@ -186,7 +186,7 @@ namespace RenderSharp.Render2d
         /// <param name="bgTexture">Optional background texture to render if no actors are intersected.</param>
         /// <param name="verbose">Whether to print status updates and time info.</param>
         /// <returns>The rendered frame.</returns>
-        private Frame Render(Scene2dInstance scene, Texture bgTexture, bool verbose = false)
+        private Frame Render(SceneInstance scene, Texture bgTexture, bool verbose = false)
         {
             Frame output = new(Resolution);
 

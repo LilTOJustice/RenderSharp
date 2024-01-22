@@ -5,7 +5,7 @@ namespace RenderSharp.Render2d
     /// <summary>
     /// A 2d line.
     /// </summary>
-    public class Line2d : Actor2d
+    public class Line : Actor
     {
         private FVec2 _start;
         private FVec2 _end;
@@ -43,7 +43,7 @@ namespace RenderSharp.Render2d
         {
             get
             {
-                return ((Actor2d)this).Position;
+                return ((Actor)this).Position;
             }
             set
             {
@@ -74,7 +74,7 @@ namespace RenderSharp.Render2d
         /// </summary>
         public new FVec2 Size
         {
-            get { return ((Actor2d)this).Size; }
+            get { return ((Actor)this).Size; }
             set { }
         }
 
@@ -88,10 +88,10 @@ namespace RenderSharp.Render2d
         /// </summary>
         public new double Rotation
         {
-            get { return ((Actor2d)this).Rotation; }
+            get { return ((Actor)this).Rotation; }
             set
             {
-                ((Actor2d)this).Rotation = value;
+                ((Actor)this).Rotation = value;
                 _start = new FVec2(Math.Cos(value) * Length / 2, Math.Sin(value) * Length / 2);
                 _end = _start * -1;
                 _start += Position;
@@ -107,48 +107,32 @@ namespace RenderSharp.Render2d
         /// <param name="end">Location of the end of the line in world space.</param>
         /// <param name="color">Color of the line.</param>
         /// <param name="shader">Shader run on the single pixel representing the line.</param>
-        public Line2d(double thickness, FVec2 start, FVec2 end, RGBA? color = null, FragShader? shader = null) : base(new FVec2())
+        internal Line(
+            double thickness = 0,
+            FVec2? start = null,
+            FVec2? end = null,
+            RGBA? color = null,
+            FragShader? shader = null) : base()
         {
             Texture = new Texture(1, 1, color);
-            ((Actor2d)this).Size = new FVec2(0, thickness);
-            _start = start;
-            _end = end;
+            ((Actor)this).Size = new FVec2(0, thickness);
+            _start = start ?? new FVec2();
+            _end = end ?? new FVec2();
             Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             Recompute();
-        }
-
-        /// <summary>
-        /// Constructs a 2d line based on length, position and rotation.
-        /// </summary>
-        /// <param name="thickness">Thickness of the line in world space.</param>
-        /// <param name="length">Length of the line in world space.</param>
-        /// <param name="position">Location of the center of the line in world space.</param>
-        /// <param name="rotation">Rotation (radians) of the line in world space.</param>
-        /// <param name="color">Color of the line's texture.</param>
-        /// <param name="shader">Shader run on the single pixel representing the line.</param>
-        public Line2d(double thickness, int length, FVec2 position, double rotation = 0, RGBA? color = null, FragShader? shader = null) : base(new FVec2())
-        {
-            Texture = new Texture(1, 1, color);
-            ((Actor2d)this).Size = new FVec2(0, thickness);
-            Length = length;
-            ((Actor2d)this).Rotation = rotation;
-            Position = position;
-            Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            _end ??= new FVec2();
-            _start ??= new FVec2();
         }
 
         private void Recompute()
         {
             FVec2 disp = _end - _start;
             Size.X = disp.Length();
-            ((Actor2d)this).Position = _start + (disp / 2);
-            ((Actor2d)this).Rotation = Math.Atan2(disp.Y, disp.X);
+            ((Actor)this).Position = _start + (disp / 2);
+            ((Actor)this).Rotation = Math.Atan2(disp.Y, disp.X);
         }
 
-        internal override Actor2d Reconstruct()
+        internal override Actor Reconstruct()
         {
-            return new Line2d(Thickness, _start, _end, Texture[0, 0], Shader);
+            return new Line(Thickness, _start, _end, Texture[0, 0], Shader);
         }
     }
 }

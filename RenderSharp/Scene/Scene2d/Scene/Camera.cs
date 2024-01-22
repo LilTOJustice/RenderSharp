@@ -5,12 +5,12 @@ namespace RenderSharp.Render2d
     /// <summary>
     /// Virtual camera for viewing the scene.
     /// </summary>
-    public class Camera2d
+    public class Camera
     {
         /// <summary>
         /// World location of the camera.
         /// </summary>
-        public Vec2 Center { get; set; }
+        public FVec2 Center { get; set; }
 
         /// <summary>
         /// Zoom of the camera.
@@ -28,7 +28,7 @@ namespace RenderSharp.Render2d
         /// <param name="center">Center of the camera in world space.</param>
         /// <param name="zoom">Zoom of the camera.</param>
         /// <param name="rotation">Rotation of the camera in radians.</param>
-        public Camera2d(Vec2 center, double zoom, double rotation)
+        internal Camera(FVec2 center, double zoom, double rotation)
         {
             Center = center;
             Zoom = zoom;

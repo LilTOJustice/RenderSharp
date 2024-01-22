@@ -5,7 +5,7 @@ namespace RenderSharp
     /// <summary>
     /// Contains Renderer-related utility classes and functions.
     /// </summary>
-    public class Util
+    internal class Util
     {
         /// <summary>
         /// Contains various vector transformation functions.
@@ -21,11 +21,10 @@ namespace RenderSharp
             /// <param name="cameraZoom">Zoom of the camera.</param>
             /// <param name="cameraRotation">Rotation of the camera.</param>
             /// <returns>The world coordinates corresponding to the screen coordinates.</returns>
-            public static FVec2 ScreenToWorld2(Vec2 screenSize, Vec2 screenCoords, Vec2 cameraCenter, double cameraZoom, double cameraRotation)
+            public static FVec2 ScreenToWorld2(Vec2 screenSize, Vec2 screenCoords, FVec2 cameraCenter, double cameraZoom, double cameraRotation)
             {
-                FVec2 coords = (new Vec2(screenCoords.X - (screenSize.X / 2),
+                return (new Vec2(screenCoords.X - (screenSize.X / 2),
                          (screenSize.Y / 2) - screenCoords.Y) / cameraZoom + cameraCenter).Rotate(cameraRotation);
-                return coords;
             }
 
             /// <summary>

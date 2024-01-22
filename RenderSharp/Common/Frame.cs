@@ -13,22 +13,22 @@ namespace RenderSharp
         /// <summary>
         /// Size of the frame.
         /// </summary>
-        public Vec2 Size { get; private set; }
+        internal Vec2 Size { get; private set; }
 
         /// <summary>
         /// Height component of the <see cref="Size"/>.
         /// </summary>
-        public int Height { get { return Size.Y; } private set { Size.Y = value; } }
+        internal int Height { get { return Size.Y; } private set { Size.Y = value; } }
 
         /// <summary>
         /// Width component of the <see cref="Size"/>.
         /// </summary>
-        public int Width { get { return Size.X; } private set { Size.X = value; } }
+        internal int Width { get { return Size.X; } private set { Size.X = value; } }
 
         /// <summary>
         /// Aspect ratio of the frame (Width / Height).
         /// </summary>
-        public double AspectRatio { get { return Width / Height; } }
+        internal double AspectRatio { get { return Width / Height; } }
 
         /// <summary>
         /// Internal frame buffer.
@@ -39,17 +39,10 @@ namespace RenderSharp
         /// Creates an empty black frame.
         /// </summary>
         /// <param name="size"></param>
-        public Frame(Vec2 size)
+        internal Frame(Vec2 size)
         {
             Size = size;
             Image = new byte[Width * Height * channels];
-        }
-
-        /// <inheritdoc cref="Frame(Vec2)"/>
-        public Frame(int width, int height)
-        {
-            Size = new Vec2(width, height);
-            Image = new byte[width * height * channels];
         }
 
         /// <summary>
@@ -58,7 +51,7 @@ namespace RenderSharp
         /// <param name="x">Position relative to the <see cref="Width"/> of the frame.</param>
         /// <param name="y">Position relative to the <see cref="Height"/> of the frame.</param>
         /// <returns>The pixel at the desired location.</returns>
-        public RGBA this[int x, int y]
+        internal RGBA this[int x, int y]
         {
             get
             {

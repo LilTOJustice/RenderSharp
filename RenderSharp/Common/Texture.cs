@@ -16,17 +16,17 @@ namespace RenderSharp
         /// <summary>
         /// Dimensions of the texture.
         /// </summary>
-        public Vec2 Size { get; set; } 
+        internal Vec2 Size { get; set; } 
 
         /// <summary>
         /// Height component of the <see cref="Size"/>.
         /// </summary>
-        public int Height { get { return Size.Y; } set { Size.Y = value; } }
+        internal int Height { get { return Size.Y; } set { Size.Y = value; } }
 
         /// <summary>
         /// Width component of the <see cref="Size"/>.
         /// </summary>
-        public int Width { get { return Size.X; } set { Size.X = value; } }
+        internal int Width { get { return Size.X; } set { Size.X = value; } }
 
         /// <summary>
         /// Constructs an alpha opaque texture with the given dimensions and color.
@@ -88,7 +88,7 @@ namespace RenderSharp
         /// Fills the texture with the given color.
         /// </summary>
         /// <param name="color">Color to fill the texture with.</param>
-        public void Fill(RGBA color)
+        private void Fill(RGBA color)
         {
             for (int i = 0; i < Height; i++)
             {
@@ -105,7 +105,7 @@ namespace RenderSharp
         /// <param name="x">Position within the texture relative to the width.</param>
         /// <param name="y">Position within the texture relative to the height.</param>
         /// <returns>A pixel in the texture.</returns>
-        public RGBA this[int x, int y]
+        internal RGBA this[int x, int y]
         {
             get { return _texture[y, x]; }
         }
