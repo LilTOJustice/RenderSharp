@@ -1,16 +1,15 @@
 ﻿using MathSharp;
 using RenderSharp;
 using RenderSharp.Render2d;
-using System.Collections.Specialized;
 
 namespace RenderSharpExample
 {
     internal class Program
     {
-        static int framerate = 60;
-        static int duration = 3;
-        static int resX = 300;
-        static int resY = 300;
+        static readonly int framerate = 60;
+        static readonly int duration = 3;
+        static readonly int resX = 300;
+        static readonly int resY = 300;
 
         static void Main(string[] args)
         {
