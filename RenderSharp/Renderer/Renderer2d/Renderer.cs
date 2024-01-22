@@ -159,7 +159,7 @@ namespace RenderSharp.Render2d
         /// <param name="numFrames">Target progress.</param>
         /// <param name="totalBars">Loading bar length in characters.</param>
         /// <param name="timeElapsed">Optional time to show next to the bar.</param>
-        static void PrintBar(int frameIndex, int numFrames, int totalBars = 50, string timeElapsed = "")
+        internal static void PrintBar(int frameIndex, int numFrames, int totalBars = 50, string timeElapsed = "")
         {
             int numBars = (int)(1d * frameIndex / numFrames * totalBars);
 

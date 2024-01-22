@@ -8,11 +8,11 @@ namespace RenderSharp.Render2d
     /// </summary>
     public class ActorBuilder
     {
-        FVec2? size = null;
-        double rotation = 0;
-        FVec2? position = null;
-        Texture? texture = null;
-        FragShader shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+        private FVec2? size = null;
+        private double rotation = 0;
+        private FVec2? position = null;
+        private Texture? texture = null;
+        private FragShader shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
 
         /// <inheritdoc cref="Actor.Size"/>
         public ActorBuilder WithSize(FVec2 size)

@@ -135,13 +135,13 @@ namespace RenderSharp.Render2d
     /// <summary>
     /// Builder for the <see cref="Scene"/> class. Use this to create a scene.
     /// </summary>
-    public class SceneBuilder
+    public abstract class SceneBuilder
     {
         /// <summary>
         /// Pick this if you want a dynamic scene (capable of video rendering).
         /// </summary>
         /// <returns></returns>
-        public DynamicStep AsDynamic()
+        static public DynamicStep AsDynamic()
         {
             return new DynamicStep();
         }
@@ -150,7 +150,7 @@ namespace RenderSharp.Render2d
         /// Pick this if you want a static scene (only renders an image).
         /// </summary>
         /// <returns></returns>
-        public OptionalsStep AsStatic()
+        static public OptionalsStep AsStatic()
         {
             return new OptionalsStep(0, 0);
         }

@@ -16,17 +16,17 @@ namespace RenderSharp
         /// <summary>
         /// Dimensions of the texture.
         /// </summary>
-        public Vec2 Size { get; set; } 
+        internal Vec2 Size { get; set; } 
 
         /// <summary>
         /// Height component of the <see cref="Size"/>.
         /// </summary>
-        public int Height { get { return Size.Y; } set { Size.Y = value; } }
+        internal int Height { get { return Size.Y; } set { Size.Y = value; } }
 
         /// <summary>
         /// Width component of the <see cref="Size"/>.
         /// </summary>
-        public int Width { get { return Size.X; } set { Size.X = value; } }
+        internal int Width { get { return Size.X; } set { Size.X = value; } }
 
         /// <summary>
         /// Constructs an alpha opaque texture with the given dimensions and color.

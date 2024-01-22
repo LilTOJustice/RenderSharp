@@ -1,6 +1,6 @@
 ﻿namespace RenderSharp.Render2d
 {
-    class ActorIndex : List<Dictionary<string, Actor>>
+    internal class ActorIndex : List<Dictionary<string, Actor>>
     {
         public ActorIndex() : base() { }
 

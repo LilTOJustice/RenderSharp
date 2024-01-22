@@ -8,11 +8,11 @@ namespace RenderSharp.Render2d
     /// </summary>
     public class LineBuilder
     {
-        double thickness = 0;
-        FVec2? start = null;
-        FVec2? end = null;
-        RGBA? color = null;
-        FragShader shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+        private double thickness = 0;
+        private FVec2? start = null;
+        private FVec2? end = null;
+        private RGBA? color = null;
+        private FragShader shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
 
         /// <inheritdoc cref="Line.Thickness"/>
         public LineBuilder WithThickness(double thickness)

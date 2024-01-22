@@ -35,7 +35,7 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// Texture to render on the actor.
         /// </summary>
-        public Texture Texture { get; protected set; }
+        public Texture Texture { get; set; }
         
         /// <summary>
         /// Shader to be applied to the actor's texture.

@@ -5,7 +5,7 @@ namespace RenderSharp
     /// <summary>
     /// Contains Renderer-related utility classes and functions.
     /// </summary>
-    public class Util
+    internal class Util
     {
         /// <summary>
         /// Contains various vector transformation functions.

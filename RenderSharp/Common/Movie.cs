@@ -12,27 +12,27 @@ namespace RenderSharp
         /// <summary>
         /// Size of the individual frames of the movie.
         /// </summary>
-        public Vec2 Size { get; private set; }
+        internal Vec2 Size { get; private set; }
 
         /// <summary>
         /// Height component of the <see cref="Size"/>.
         /// </summary>
-        public int Height { get { return Size.Y; } private set { Size.Y = value; } }
+        internal int Height { get { return Size.Y; } private set { Size.Y = value; } }
 
         /// <summary>
         /// Width component of the <see cref="Size"/>.
         /// </summary>
-        public int Width { get { return Size.X; } private set { Size.X = value; } }
+        internal int Width { get { return Size.X; } private set { Size.X = value; } }
 
         /// <summary>
         /// Aspect ratio of the movie (Width / Height).
         /// </summary>
-        public double AspectRatio { get { return Width / Height; } }
+        internal double AspectRatio { get { return Width / Height; } }
 
         /// <summary>
         /// Framerate of the movie.
         /// </summary>
-        public int Framerate { get; private set; }
+        internal int Framerate { get; private set; }
         
         /// <summary>
         /// Index of the movie. Acts as a unique identifier for the movie if multiple renders occur in one run.
@@ -52,7 +52,7 @@ namespace RenderSharp
         /// <param name="width">Width of each frame.</param>
         /// <param name="height">Height of each frame.</param>
         /// <param name="framerate">Framerate of the movie.</param>
-        public Movie(int width, int height, int framerate)
+        internal Movie(int width, int height, int framerate)
         {
             Size = new Vec2(width, height);
             Framerate = framerate;
@@ -106,7 +106,7 @@ namespace RenderSharp
         /// </summary>
         /// <param name="frame"></param>
         /// <param name="frameInd"></param>
-        public void WriteFrame(Frame frame, int frameInd)
+        internal void WriteFrame(Frame frame, int frameInd)
         {
             string filename = $"{TempDir}\\{frameInd}";
             frame.Output(filename, "bmp");

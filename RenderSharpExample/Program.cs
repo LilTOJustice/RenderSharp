@@ -1,6 +1,7 @@
 ﻿using MathSharp;
 using RenderSharp;
 using RenderSharp.Render2d;
+using System.Collections.Specialized;
 
 namespace RenderSharpExample
 {
@@ -14,7 +15,7 @@ namespace RenderSharpExample
         static void Main(string[] args)
         {
             // Create scene
-            Scene scene = new SceneBuilder()
+            Scene scene = SceneBuilder
                 .AsDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
