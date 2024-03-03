@@ -21,9 +21,9 @@ namespace RenderSharp.Render2d
         internal int Framerate { get { return (int)(1 / DeltaTime); } set { DeltaTime = 1d / value; } }
 
         /// <summary>
-        /// Camera within the scene.
+        /// All cameras within the scene. First added is the starting primary.
         /// </summary>
-        internal Camera Camera { get; set; }
+        internal Dictionary<string, Camera> Cameras { get; set; }
 
         /// <summary>
         /// List of times that each frame of simulation occurs at.
@@ -65,9 +65,7 @@ namespace RenderSharp.Render2d
         /// </summary>
         /// <param name="framerate">The framerate of the simulation. If 0 or negative, the scene will be considered static.</param>
         /// <param name="duration">The duration of the simulation in seconds. If 0 or negative, the scene will be considered static.</param>
-        /// <param name="camera"></param>
-        /// <param name="bgColor">The background color to be used if no actor is interesected
-        /// by the renderer and no background texture is provided.</param>
+        /// <param name="cameras">List of cameras in the scene.</param>
         /// <param name="bgTexture">The background texture to be used if no actor is intersected.</param>
         /// <param name="bgShader">The shader run on each pixel of the background texture.</param>
         /// <param name="think">Function that runs on instances of the scene during simulation.</param>
@@ -75,20 +73,20 @@ namespace RenderSharp.Render2d
         internal Scene(
             int framerate,
             double duration,
-            Camera? camera = null,
-            RGBA? bgColor = null,
-            Texture? bgTexture = null,
-            FragShader? bgShader = null,
-            ThinkFunc? think = null,
-            ActorIndex? actorIndex = null)
+            Dictionary<string, Camera> cameras,
+            Texture bgTexture,
+            FragShader bgShader,
+            ThinkFunc think,
+            ActorIndex actorIndex)
         {
             Framerate = framerate;
             Duration = duration;
-            Camera = camera ?? new Camera(new Vec2(0, 0), 1, 0);
-            BgTexture = bgTexture ?? new Texture(1, 1, bgColor ?? new RGB());
-            BgShader = bgShader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            Think = think ?? ((SceneInstance scene, double time, double dt) => { });
-            ActorIndex = actorIndex ?? new ActorIndex();
+            Cameras = cameras;
+            BgTexture = bgTexture;
+            BgShader = bgShader;
+            Think = think;
+            ActorIndex = actorIndex;
+
             TimeSeq = new List<double>();
             for (int i = 0; i < framerate * duration; i++)
             {

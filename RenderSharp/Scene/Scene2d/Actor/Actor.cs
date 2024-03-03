@@ -51,17 +51,17 @@ namespace RenderSharp.Render2d
         /// <param name="rotation">Rotation of the actor about its center (radians).</param>
         /// <param name="shader">Shader to be applied to the actor's texture.</param>
         internal Actor(
-            FVec2? size = null,
-            double rotation = 0,
-            FVec2? position = null,
-            Texture? texture = null,
-            FragShader? shader = null)
+            FVec2 size,
+            double rotation,
+            FVec2 position,
+            Texture texture,
+            FragShader shader)
         {
-            Texture = texture ?? new Texture((Vec2)(size ?? new Vec2()));
-            Position = position ?? new FVec2();
-            Size = size ?? new FVec2();
+            Texture = texture;
+            Position = position;
+            Size = size;
             Rotation = rotation;
-            Shader = shader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+            Shader = shader;
         }
 
         /// <summary>
@@ -72,7 +72,11 @@ namespace RenderSharp.Render2d
             Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
         }
 
-        internal virtual Actor Reconstruct()
+        /// <summary>
+        /// Creates a deep copy of the actor.
+        /// </summary>
+        /// <returns>An actor with the same properties but non-referential to the original object.</returns>
+        public virtual Actor Copy()
         {
             return new Actor(
                     new FVec2(Size),

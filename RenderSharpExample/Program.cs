@@ -11,18 +11,18 @@ namespace RenderSharpExample
         static readonly int resX = 300;
         static readonly int resY = 300;
 
-        static void Main(string[] args)
+        static void Main()
         {
             // Create scene
             Scene scene = SceneBuilder
-                .AsDynamic()
+                .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
                 .WithThink(
                     (SceneInstance scene, double time, double dt) =>
                     {
-                        Actor box = scene["Box"];
-                        Line line = (Line)scene["Line"];
+                        Actor box = scene.GetActor("Box");
+                        Line line = scene.GetLine("Line");
                         box.Position += new FVec2(0, 50) * dt;
                         box.Rotation += 3 * dt;
                         line.Start = box.Position;
@@ -30,12 +30,14 @@ namespace RenderSharpExample
                 )
                 .WithActor(new ActorBuilder()
                     .WithSize(new FVec2(100, 100))
-                    .WithShader(ExampleShaders.Ghostly), "Box")
+                    .WithShader(ExampleShaders.Ghostly)
+                    , "Box")
                 .WithActor(new LineBuilder()
                     .WithThickness(10)
                     .WithEnd(new FVec2(20, 0))
                     .WithColor(new RGB(255, 0, 0))
-                    .WithShader(ExampleShaders.Psychedelic), "Line")
+                    .WithShader(ExampleShaders.Psychedelic)
+                    , "Line")
                 .WithBgColor(new RGB(0, 0, 255))
                 .Build();
 

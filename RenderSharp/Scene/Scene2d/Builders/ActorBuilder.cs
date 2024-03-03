@@ -8,11 +8,12 @@ namespace RenderSharp.Render2d
     /// </summary>
     public class ActorBuilder
     {
-        private FVec2? size = null;
-        private double rotation = 0;
-        private FVec2? position = null;
-        private Texture? texture = null;
-        private FragShader shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+        private FVec2? size;
+        private double rotation;
+        private FVec2? position;
+        private RGBA? color;
+        private Texture? texture;
+        private FragShader? shader;
 
         /// <inheritdoc cref="Actor.Size"/>
         public ActorBuilder WithSize(FVec2 size)
@@ -33,7 +34,17 @@ namespace RenderSharp.Render2d
         {
             this.position = new FVec2(position);
             return this;
-        
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public ActorBuilder WithColor(RGBA color)
+        {
+            this.color = new RGBA(color);
+            return this;
         }
 
         /// <inheritdoc cref="Actor.Texture"/>
@@ -53,9 +64,13 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// Builds the actor.
         /// </summary>
-        /// <returns>A constructed actor.</returns>
+        /// <returns>A constructed <see cref="Actor"/>.</returns>
         internal Actor Build()
         {
+            size ??= new FVec2();
+            texture ??= new Texture((Vec2)size, color);
+            position ??= new FVec2();
+            shader ??= ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             return new Actor(size, rotation, position, texture, shader);
         }
     }
