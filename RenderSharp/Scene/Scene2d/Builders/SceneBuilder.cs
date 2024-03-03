@@ -42,31 +42,39 @@ namespace RenderSharp.Render2d
     {
         private int framerate;
         private double duration;
-        private Camera? camera;
+        private Dictionary<string, Camera> cameras;
         private RGBA? bgColor;
         private Texture? bgTexture;
-        private FragShader bgShader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
-        private Scene.ThinkFunc think = (SceneInstance scene, double time, double dt) => { };
-        private ActorIndex actorIndex = new ActorIndex();
+        private FragShader? bgShader;
+        private Scene.ThinkFunc? think;
+        private ActorIndex actorIndex;
 
         internal OptionalsStep(int framerate, double duration)
         {
             this.framerate = framerate;
             this.duration = duration;
+            actorIndex = new ActorIndex();
+            cameras = new Dictionary<string, Camera>();
         }
 
-        /// <inheritdoc cref="Scene.Camera"/>
-        public OptionalsStep WithCamera(FVec2 center, double zoom = 1, double rotation = 1)
+        /// <summary>
+        /// Camera to add to the scene. The first to be added is the starting camera for the scene.
+        /// If no cameras are added, a default camera will be created and named "main".
+        /// </summary>
+        /// <param name="center">Center of the camera in world space.</param>
+        /// <param name="zoom">Zoom of the camera.</param>
+        /// <param name="rotation">Rotation of the camera in world space.</param>
+        /// <param name="name">Name of the camera.</param>
+        public OptionalsStep WithCamera(string name, FVec2 center, double zoom = 1, double rotation = 1)
         {
-            camera = new Camera(new FVec2(center), zoom, rotation);
+            cameras.Add(name, new Camera(new FVec2(center), zoom, rotation));
             return this;
         }
 
         /// <summary>
         /// The fill color of the scene's background if there is no <see cref="Scene.BgTexture"/>.
         /// </summary>
-        /// <param name="bgColor"></param>
-        /// <returns></returns>
+        /// <param name="bgColor">Background color.</param>
         public OptionalsStep WithBgColor(RGBA bgColor)
         {
             this.bgColor = new RGBA(bgColor);
@@ -100,7 +108,6 @@ namespace RenderSharp.Render2d
         /// <param name="actorBuilder">Builder to modify and pass.</param>
         /// <param name="actorId">Id of the actor for accessing it by <see cref="SceneInstance.this[string]"/>.</param>
         /// <param name="plane">Plane in the scene to place the actor in.</param>
-        /// <returns></returns>
         public OptionalsStep WithActor(ActorBuilder actorBuilder, string actorId, int plane = 0)
         {
             actorIndex.EnsurePlaneExists(plane);
@@ -114,7 +121,6 @@ namespace RenderSharp.Render2d
         /// <param name="lineBuilder">Builder to modify and pass.</param>
         /// <param name="actorId">Id of the actor for accessing it by <see cref="SceneInstance.this[string]"/>.</param>
         /// <param name="plane">Plane in the scene to place the line in.</param>
-        /// <returns></returns>
         public OptionalsStep WithActor(LineBuilder lineBuilder, string actorId, int plane = 0)
         {
             actorIndex.EnsurePlaneExists(plane);
@@ -123,12 +129,29 @@ namespace RenderSharp.Render2d
         }
 
         /// <summary>
-        /// Fully construct the scene with options provided to the builder.
+        /// Builds the scene.
         /// </summary>
-        /// <returns>A new <see cref="Scene"/> object.</returns>
+        /// <returns>A new <see cref="Scene"/>.</returns>
         public Scene Build()
         {
-            return new Scene(framerate, duration, camera, bgColor, bgTexture, bgShader, think, actorIndex);
+            if (cameras.Count == 0) 
+            {
+                cameras.Add("main", new Camera());
+            }
+
+            bgTexture ??= new Texture(1, 1, bgColor);
+            bgShader ??= (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            think ??= (SceneInstance scene, double time, double dt) => { };
+
+            return new Scene(
+                framerate,
+                duration,
+                new Dictionary<string, Camera>(
+                    cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value)))),
+                bgTexture,
+                bgShader,
+                think,
+                new ActorIndex(actorIndex));
         }
     }
 
@@ -141,7 +164,7 @@ namespace RenderSharp.Render2d
         /// Pick this if you want a dynamic scene (capable of video rendering).
         /// </summary>
         /// <returns></returns>
-        static public DynamicStep AsDynamic()
+        static public DynamicStep MakeDynamic()
         {
             return new DynamicStep();
         }
@@ -150,7 +173,7 @@ namespace RenderSharp.Render2d
         /// Pick this if you want a static scene (only renders an image).
         /// </summary>
         /// <returns></returns>
-        static public OptionalsStep AsStatic()
+        static public OptionalsStep MakeStatic()
         {
             return new OptionalsStep(0, 0);
         }

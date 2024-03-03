@@ -8,10 +8,10 @@ namespace RenderSharp.Render2d
     /// </summary>
     public class LineBuilder
     {
-        private double thickness = 0;
-        private FVec2? start = null;
-        private FVec2? end = null;
-        private RGBA? color = null;
+        private double thickness;
+        private FVec2? start;
+        private FVec2? end;
+        private RGBA? color;
         private FragShader shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
 
         /// <inheritdoc cref="Line.Thickness"/>
@@ -39,7 +39,6 @@ namespace RenderSharp.Render2d
         /// Color of the line.
         /// </summary>
         /// <param name="color"></param>
-        /// <returns></returns>
         public LineBuilder WithColor(RGBA color)
         {
             this.color = new RGBA(color);
@@ -53,8 +52,16 @@ namespace RenderSharp.Render2d
             return this;
         }
 
+        /// <summary>
+        /// Builds the line.
+        /// </summary>
+        /// <returns>A constructed <see cref="Line"/>.</returns>
         internal Line Build()
         {
+            start ??= new FVec2();
+            end ??= new FVec2();
+            color ??= new RGBA();
+            shader ??= ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             return new Line(thickness, start, end, color, shader);
         }
     }

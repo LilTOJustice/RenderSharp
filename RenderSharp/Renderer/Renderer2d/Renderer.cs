@@ -75,7 +75,7 @@ namespace RenderSharp.Render2d
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
-            Console.Write($"Simulating to frame index {index}...");
+            Console.Write($"Simulating to frame index {index}... ");
             SceneInstance sceneInstance = Scene.Simulate(index).Last();
             stopwatch.Stop();
             Console.WriteLine($"Finished in {stopwatch.Elapsed}");
