@@ -13,7 +13,7 @@ namespace RenderSharp.Render2d
         public FVec2 Center { get; set; }
 
         /// <summary>
-        /// Zoom of the camera.
+        /// Zoom of the camera. Represents the world space vertical length of the screen space.
         /// </summary>
         public double Zoom { get; set; }
 

@@ -24,6 +24,11 @@ namespace RenderSharp.Render2d
         public int Height { get { return Resolution.Y; } set { Resolution.Y = value; } }
 
         /// <summary>
+        /// Aspect ratio of the renderer's target resolution (<see cref="Resolution"/>).
+        /// </summary>
+        public double AspectRatio { get { return (double)Width / Height; } }
+
+        /// <summary>
         /// Target scene for the render.
         /// </summary>
         public Scene Scene { get; set; }
@@ -201,7 +206,7 @@ namespace RenderSharp.Render2d
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    FVec2 worldLoc = Util.Transforms.ScreenToWorld2(Resolution, new Vec2(x, y), scene.Camera.Center, scene.Camera.Zoom, scene.Camera.Rotation);
+                    FVec2 worldLoc = Util.Transforms.ScreenToWorld2(Resolution, new Vec2(x, y), scene.Camera.Center, AspectRatio, scene.Camera.Zoom, scene.Camera.Rotation);
                     Vec2 bgTextureInd = Util.Transforms.WorldToBgTexture2(worldLoc, bgTexture.Size);
                     RGBA outColor = bgTexture[bgTextureInd.X, bgTextureInd.Y];
 

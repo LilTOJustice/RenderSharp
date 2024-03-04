@@ -67,8 +67,8 @@ namespace RenderSharp.Render2d
         /// <returns>A constructed <see cref="Actor"/>.</returns>
         internal Actor Build()
         {
-            size ??= new FVec2();
-            texture ??= new Texture((Vec2)size, color);
+            size ??= new FVec2(1, 1);
+            texture ??= new Texture(1, 1, color);
             position ??= new FVec2();
             shader ??= ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             return new Actor(size, rotation, position, texture, shader);
