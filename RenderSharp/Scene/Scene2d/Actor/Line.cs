@@ -127,7 +127,7 @@ namespace RenderSharp.Render2d
             FVec2 disp = _end - _start;
             Size.X = disp.Length();
             ((Actor)this).Position = _start + (disp / 2);
-            ((Actor)this).Rotation = Math.Atan2(disp.Y, disp.X);
+            ((Actor)this).Rotation = -Math.Atan2(disp.Y, disp.X);
         }
 
         /// <inheritdoc cref="Actor.Copy"/>

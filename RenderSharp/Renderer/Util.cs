@@ -18,13 +18,16 @@ namespace RenderSharp
             /// <param name="screenSize">Size of the screen.</param>
             /// <param name="screenCoords">Position within the screen.</param>
             /// <param name="cameraCenter">Center of the camera in the world.</param>
+            /// <param name="aspectRatio">Aspect ratio for proper screen scaling.</param>
             /// <param name="cameraZoom">Zoom of the camera.</param>
             /// <param name="cameraRotation">Rotation of the camera.</param>
             /// <returns>The world coordinates corresponding to the screen coordinates.</returns>
-            public static FVec2 ScreenToWorld2(Vec2 screenSize, Vec2 screenCoords, FVec2 cameraCenter, double cameraZoom, double cameraRotation)
+            public static FVec2 ScreenToWorld2(Vec2 screenSize, Vec2 screenCoords, FVec2 cameraCenter, double aspectRatio, double cameraZoom, double cameraRotation)
             {
-                return (new Vec2(screenCoords.X - (screenSize.X / 2),
-                         (screenSize.Y / 2) - screenCoords.Y) / cameraZoom + cameraCenter).Rotate(cameraRotation);
+                FVec2 result = (new FVec2(screenCoords.X - (screenSize.X / 2),
+                         (screenSize.Y / 2) - screenCoords.Y) / screenSize / cameraZoom + cameraCenter).Rotate(cameraRotation);
+                result.X *= aspectRatio;
+                return result;
             }
 
             /// <summary>
@@ -50,7 +53,7 @@ namespace RenderSharp
             /// <returns>The actor coordinates corresponding to the world coordinates, or null if the actor is not intersected.</returns>
             public static FVec2? WorldToActor2(FVec2 worldCoord, FVec2 actorPosition, FVec2 actorSize, double actorRotation)
             {
-                FVec2 result = (actorPosition - worldCoord).Rotate(-actorRotation);
+                FVec2 result = (worldCoord - actorPosition).Rotate(actorRotation);
                 return (result.X < -actorSize.X / 2
                     || result.Y < -actorSize.Y / 2
                     || result.X > actorSize.X / 2

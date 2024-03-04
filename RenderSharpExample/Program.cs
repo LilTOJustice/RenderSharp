@@ -8,8 +8,8 @@ namespace RenderSharpExample
     {
         static readonly int framerate = 60;
         static readonly int duration = 3;
-        static readonly int resX = 300;
-        static readonly int resY = 300;
+        static readonly int resX = 600;
+        static readonly int resY = 600;
 
         static void Main()
         {
@@ -23,18 +23,19 @@ namespace RenderSharpExample
                     {
                         Actor box = scene.GetActor("Box");
                         Line line = scene.GetLine("Line");
-                        box.Position += new FVec2(0, 50) * dt;
-                        box.Rotation += 3 * dt;
+                        box.Position += new FVec2(0, 0.1) * dt;
                         line.Start = box.Position;
                     }
                 )
                 .WithActor(new ActorBuilder()
-                    .WithSize(new FVec2(100, 100))
+                    .WithSize(new FVec2(0.1, 0.05))
+                    .WithTexture(new Texture(new Vec2(2, 2)))
+                    .WithShader(ExampleShaders.TopLeftDebug)
                     .WithShader(ExampleShaders.Ghostly)
                     , "Box")
                 .WithActor(new LineBuilder()
-                    .WithThickness(10)
-                    .WithEnd(new FVec2(20, 0))
+                    .WithThickness(0.001)
+                    .WithEnd(new FVec2(0.8, 0))
                     .WithColor(new RGB(255, 0, 0))
                     .WithShader(ExampleShaders.Psychedelic)
                     , "Line")
