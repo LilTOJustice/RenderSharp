@@ -48,15 +48,8 @@ namespace RenderSharp.Render2d
         /// </summary>
         public Scene.ThinkFunc Think { get; private set; }
 
-        /// <summary>
-        /// Contains planes within the scene, each of which contains a list of actors in the plane.
-        /// </summary>
         internal ActorIndex ActorIndex { get; set; }
 
-        /// <summary>
-        /// Constructs a scene for the start of the simulation.
-        /// </summary>
-        /// <param name="scene">Scene to copy and simulate off of.</param>
         internal SceneInstance(Scene scene)
         {
             Cameras = new Dictionary<string, Camera>(
@@ -73,12 +66,6 @@ namespace RenderSharp.Render2d
             BgCoordShader = scene.BgCoordShader;
         }
 
-        /// <summary>
-        /// Constructs a scene for intermediate frames of the simulation.
-        /// </summary>
-        /// <param name="scene">Scene instance to copy and simulate off of.</param>
-        /// <param name="time">Simulation time for this instance.</param>
-        /// <param name="index">Index into the scene this instance was constructed from.</param>
         internal SceneInstance(SceneInstance scene, double time, int index)
         {
             Cameras = new Dictionary<string, Camera>(

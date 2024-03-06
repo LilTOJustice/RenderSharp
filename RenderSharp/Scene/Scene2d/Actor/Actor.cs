@@ -56,15 +56,6 @@ namespace RenderSharp.Render2d
             CoordShader = (in Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; };
         }
 
-        /// <summary>
-        /// Constructs an actor.
-        /// </summary>
-        /// <param name="texture">Texture to be rendered on the actor.</param>
-        /// <param name="position">World space position of the actor.</param>
-        /// <param name="size">World space size of the actor.</param>
-        /// <param name="rotation">Rotation of the actor about its center (radians).</param>
-        /// <param name="fragShader">Shader to be applied to the actor's texture.</param>
-        /// <param name="coordShader">Shader to be applied to the actor space coordinates before the <see cref="FragShader"/>.</param>
         internal Actor(
             FVec2 size,
             double rotation,
@@ -113,13 +104,13 @@ namespace RenderSharp.Render2d
         public virtual Actor Copy()
         {
             return new Actor(
-                    new FVec2(Size),
-                    Rotation,
-                    new FVec2(Position),
-                    Texture,
-                    FragShader,
-                    CoordShader
-                );
+                new FVec2(Size),
+                Rotation,
+                new FVec2(Position),
+                Texture,
+                FragShader,
+                CoordShader
+            );
         }
     }
 }

@@ -99,14 +99,6 @@ namespace RenderSharp.Render2d
             }
         }
 
-        /// <summary>
-        /// Constructs a 2d line based on start and end points.
-        /// </summary>
-        /// <param name="thickness">Thickness of the line in world space.</param>
-        /// <param name="start">Location of the start of the line in world space.</param>
-        /// <param name="end">Location of the end of the line in world space.</param>
-        /// <param name="color">Color of the line.</param>
-        /// <param name="fragShader">Shader run on the single pixel representing the line.</param>
         internal Line(
             double thickness,
             FVec2 start,

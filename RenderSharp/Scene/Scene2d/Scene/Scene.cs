@@ -15,73 +15,28 @@ namespace RenderSharp.Render2d
         /// <param name="dt">Time between each frame of the simulation.</param>
         public delegate void ThinkFunc(SceneInstance scene, double time, double dt);
 
-        /// <summary>
-        /// Framerate of the scene.
-        /// </summary>
         internal int Framerate { get { return (int)(1 / DeltaTime); } set { DeltaTime = 1d / value; } }
 
-        /// <summary>
-        /// All cameras within the scene. First added is the starting primary.
-        /// </summary>
         internal Dictionary<string, Camera> Cameras { get; set; }
 
-        /// <summary>
-        /// List of times that each frame of simulation occurs at.
-        /// </summary>
         internal List<double> TimeSeq { get; private set; }
         
-        /// <summary>
-        /// Total duration of the simulation for the scene in seconds. 0 when the scene is static.
-        /// </summary>
         internal double Duration { get; private set; }
         
-        /// <summary>
-        /// Amount of time between each frame of the simulation.
-        /// </summary>
         internal double DeltaTime { get; private set; } 
         
-        /// <summary>
-        /// Background texture to use if an actor is not intersected by the renderer.
-        /// </summary>
         internal Texture BgTexture { get; set; }
 
-        /// <summary>
-        /// Background texture size in world space.
-        /// </summary>
         internal FVec2 BgTextureWorldSize { get; set; }
         
-        /// <summary>
-        /// Shader to be run each frame on the background if no actor is intersected by the renderer.
-        /// </summary>
         internal FragShader BgFragShader { get; set; }
 
-        /// <summary>
-        /// Shader to be run on the background space coordinates before being passed to the fragment shader.
-        /// </summary>
         internal CoordShader BgCoordShader { get; set; }
         
-        /// <summary>
-        /// Think function to be run each frame of the simulation of a dynamic scene.
-        /// </summary>
         internal ThinkFunc Think { get; set; }
 
-        /// <summary>
-        /// Collection of planes containing dictionaries of actors indexed by their actorId.
-        /// </summary>
         internal ActorIndex ActorIndex { get; set; }
 
-        /// <summary>
-        /// Constructs a scene.
-        /// </summary>
-        /// <param name="framerate">The framerate of the simulation. If 0 or negative, the scene will be considered static.</param>
-        /// <param name="duration">The duration of the simulation in seconds. If 0 or negative, the scene will be considered static.</param>
-        /// <param name="cameras">List of cameras in the scene.</param>
-        /// <param name="bgTexture">The background texture to be used if no actor is intersected.</param>
-        /// <param name="bgTextureWorldSize">Size of the background texture in world space.</param>
-        /// <param name="bgFragShader">The shader run on each pixel of the background texture.</param>
-        /// <param name="bgCoordShader">The shader run on each coordinate of the background texture before passed to the frag shader.</param>
-        /// <param name="think">Function that runs on instances of the scene during simulation.</param>
-        /// <param name="actorIndex">Lookup for actors in the scene.</param>
         internal Scene(
             int framerate,
             double duration,
@@ -110,12 +65,6 @@ namespace RenderSharp.Render2d
             }
         }
 
-        /// <summary>
-        /// Simulates the scene and returns all instances at each time up to the given index.
-        /// </summary>
-        /// <param name="simulateToIndex">Index into the scene to simulate up to.
-        /// If no argument is provided, the simulation will run fully.</param>
-        /// <returns></returns>
         internal List<SceneInstance> Simulate(int? simulateToIndex = null)
         {
             simulateToIndex ??= TimeSeq.Count - 1;

@@ -69,10 +69,6 @@ namespace RenderSharp.Render2d
             return this;
         }
 
-        /// <summary>
-        /// Builds the actor.
-        /// </summary>
-        /// <returns>A constructed <see cref="Actor"/>.</returns>
         internal Actor Build()
         {
             size ??= new FVec2(1, 1);

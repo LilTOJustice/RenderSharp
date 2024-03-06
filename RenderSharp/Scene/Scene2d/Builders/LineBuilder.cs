@@ -52,10 +52,6 @@ namespace RenderSharp.Render2d
             return this;
         }
 
-        /// <summary>
-        /// Builds the line.
-        /// </summary>
-        /// <returns>A constructed <see cref="Line"/>.</returns>
         internal Line Build()
         {
             start ??= new FVec2();
