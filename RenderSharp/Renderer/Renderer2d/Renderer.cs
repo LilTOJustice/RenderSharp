@@ -164,13 +164,6 @@ namespace RenderSharp.Render2d
         static int loadSeqInd = 0;
         static string loadSeq = "|/-\\";
 
-        /// <summary>
-        /// Prints a loading bar to the screen given the progress and settings.
-        /// </summary>
-        /// <param name="frameIndex">Current progress.</param>
-        /// <param name="numFrames">Target progress.</param>
-        /// <param name="totalBars">Loading bar length in characters.</param>
-        /// <param name="timeElapsed">Optional time to show next to the bar.</param>
         internal static void PrintBar(int frameIndex, int numFrames, int totalBars = 50, string timeElapsed = "")
         {
             int numBars = (int)(1d * frameIndex / numFrames * totalBars);
@@ -191,12 +184,6 @@ namespace RenderSharp.Render2d
             Console.Out.Flush();
         }
 
-        /// <summary>
-        /// Rendering pipeline for a single frame.
-        /// </summary>
-        /// <param name="scene">Scene instance to render.</param>
-        /// <param name="verbose">Whether to print status updates and time info.</param>
-        /// <returns>The rendered frame.</returns>
         private Frame Render(SceneInstance scene, bool verbose = false)
         {
             Frame output = new(Resolution);
