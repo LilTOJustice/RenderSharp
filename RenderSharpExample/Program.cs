@@ -8,8 +8,8 @@ namespace RenderSharpExample
     {
         static readonly int framerate = 60;
         static readonly int duration = 3;
-        static readonly int resX = 600;
-        static readonly int resY = 600;
+        static readonly int resX = 1200;
+        static readonly int resY = 1200;
 
         static void Main()
         {
@@ -21,21 +21,18 @@ namespace RenderSharpExample
                 .WithThink(
                     (SceneInstance scene, double time, double dt) =>
                     {
-                        Actor box = scene.GetActor("Box");
-                        box.Position += new FVec2(0, 0.1) * dt;
+                        scene.Camera.Zoom = 1 + Math.Sin(time);
                     }
                 )
-                .WithActor(new ActorBuilder()
-                    .WithSize(new FVec2(0.1, 0.05))
-                    .WithColor(new RGBA(0, 0, 0, 0))
-                    , "Box")
-                .WithBgTexture(new Texture("C:\\Users\\muian\\OneDrive\\Pictures\\Profile Pic\\gordon.jpg"), new FVec2(1, 1))
-                //.WithBgColor(new RGB(0, 0, 255))
+                .WithBgTexture(new Texture(resX, resY))
+                .WithBgTextureWorldSize(new FVec2(1, 1))
+                .WithBgShader(ExampleShaders.Multibrot)
+                .WithBgShader(ExampleShaders.WavyX)
+                .WithCamera("main", new FVec2(-0.1, 2))
                 .Build();
 
             // Create renderer
             Renderer renderer = new(resX, resY, scene);
-            renderer.CoordShader = ExampleShaders.Wavy;
 
             // Finally render and output the video
             renderer.RenderMovie().Output("test");

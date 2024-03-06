@@ -91,7 +91,7 @@ namespace RenderSharp.Render2d
             SceneInstance sceneInstance = Scene.Simulate(index).Last();
             stopwatch.Stop();
             Console.WriteLine($"Finished in {stopwatch.Elapsed}");
-            return Render(sceneInstance, Scene.BgTexture, Scene.BgTextureWorldSize, true);
+            return Render(sceneInstance, true);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace RenderSharp.Render2d
                 for (int i = Interlocked.Increment(ref nextId); i < instances.Count; i = Interlocked.Increment(ref nextId))
                 {
                     var instance = instances[i];
-                    movie.WriteFrame(Render(instance, instance.BgTexture, instance.BgTextureWorldSize), instance.Index);
+                    movie.WriteFrame(Render(instance), instance.Index);
                     Interlocked.Increment(ref doneCount);
                 }
             };
@@ -195,11 +195,9 @@ namespace RenderSharp.Render2d
         /// Rendering pipeline for a single frame.
         /// </summary>
         /// <param name="scene">Scene instance to render.</param>
-        /// <param name="bgTexture">Optional background texture to render if no actors are intersected.</param>
-        /// <param name="bgTextureWorldSize">Size of the texture in world space.</param>
         /// <param name="verbose">Whether to print status updates and time info.</param>
         /// <returns>The rendered frame.</returns>
-        private Frame Render(SceneInstance scene, Texture bgTexture, FVec2 bgTextureWorldSize, bool verbose = false)
+        private Frame Render(SceneInstance scene, bool verbose = false)
         {
             Frame output = new(Resolution);
 
@@ -214,7 +212,7 @@ namespace RenderSharp.Render2d
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    output[x, y] = RenderPixel(scene, bgTexture, bgTextureWorldSize, x, y);
+                    output[x, y] = RenderPixel(scene, x, y);
                 }
             }
 
@@ -228,55 +226,76 @@ namespace RenderSharp.Render2d
             return output;
         }
 
-        private RGBA RenderPixel(SceneInstance scene, Texture bgTexture, FVec2 bgTextureWorldSize, int x, int y)
+        private RGBA RenderPixel(SceneInstance scene, int x, int y)
         {
             Vec2 screenPos = new(x, y);
 
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
 
-            FVec2 worldLoc = Util.Transforms.ScreenToWorld2(Resolution, screenPos, scene.Camera.Center, AspectRatio, scene.Camera.Zoom, scene.Camera.Rotation);
-            Vec2 bgTextureInd = bgTextureWorldSize.X == 0 || bgTextureWorldSize.Y == 0 ?
-                Util.Transforms.ScreenToStretchBgTexture(screenPos, Resolution, bgTexture.Size)
-                : Util.Transforms.WorldToBgTexture2(worldLoc, bgTexture.Size, bgTextureWorldSize);
-            Scene.BgCoordShader(bgTextureInd, out bgTextureInd, Resolution, scene.Time);
-            RGBA outColor = bgTexture[Util.Mod(bgTextureInd.X, bgTexture.Width), Util.Mod(bgTextureInd.Y, bgTexture.Height)];
+            FVec2 worldLoc = Util.Transforms.ScreenToWorld2(
+                Resolution,
+                AspectRatio,
+                screenPos,
+                scene.Camera.Center,
+                scene.Camera.Zoom,
+                scene.Camera.Rotation
+            );
 
-            FRGBA fOut = outColor;
-            Scene.BgFragShader(fOut, out fOut, bgTextureInd, bgTexture.Size, scene.Time);
-            outColor = fOut;
+            RGBA outColor = SampleFromBgTexture(scene, screenPos, worldLoc);
 
             for (int i = scene.ActorIndex.Count - 1; i >= 0; i--)
             {
                 foreach (var actor in scene.ActorIndex[i].Values)
                 {
-                    FVec2? actorLoc = Util.Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation);
-                    if (actorLoc is null)
-                    {
-                        continue;
-                    }
-
-                    Vec2? textureInd = Util.Transforms.ActorToTexture2(actorLoc, actor.Size, actor.Texture.Size);
-                    if (textureInd is null)
-                    {
-                        continue;
-                    }
-
-                    actor.CoordShader(textureInd, out textureInd, actor.Texture.Size, scene.Time);
-                    RGBA textureSample = actor.Texture[textureInd.X, textureInd.Y];
-
-                    fOut = textureSample;
-                    actor.FragShader(fOut, out fOut, textureInd, actor.Texture.Size, scene.Time);
-                    textureSample = fOut;
-
-                    outColor = ColorFunctions.AlphaBlend(textureSample, outColor);
+                    outColor = SampleFromActor(scene, actor, outColor, worldLoc);
                 }
             }
 
-            fOut = outColor;
-            FragShader(fOut, out fOut, screenPos, Resolution, scene.Time);
-            outColor = fOut;
+            return ScreenSpaceShaderPass(scene, screenPos, outColor);
+        }
 
-            return outColor;
+        private RGBA SampleFromBgTexture(SceneInstance scene, Vec2 screenPos, FVec2 worldLoc)
+        {
+            Vec2 bgTextureInd = scene.BgTextureWorldSize.X == 0 || scene.BgTextureWorldSize.Y == 0 ?
+                Util.Transforms.ScreenToStretchBgTexture(screenPos, Resolution, scene.BgTexture.Size)
+                : Util.Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize);
+            Scene.BgCoordShader(bgTextureInd, out bgTextureInd, Resolution, scene.Time);
+            RGBA outColor = scene.BgTexture[Util.Mod(bgTextureInd.X, scene.BgTexture.Width), Util.Mod(bgTextureInd.Y, scene.BgTexture.Height)];
+
+            FRGBA fOut = outColor;
+            Scene.BgFragShader(fOut, out fOut, bgTextureInd, scene.BgTexture.Size, scene.Time);
+            return fOut;
+        }
+
+        private RGBA SampleFromActor(SceneInstance scene, Actor actor, RGBA inColor, FVec2 worldLoc)
+        {
+            FVec2? actorLoc = Util.Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation);
+            if (actorLoc is null)
+            {
+                return inColor;
+            }
+
+            Vec2? textureInd = Util.Transforms.ActorToTexture2(actorLoc, actor.Size, actor.Texture.Size);
+            if (textureInd is null)
+            {
+                return inColor;
+            }
+
+            actor.CoordShader(textureInd, out textureInd, actor.Texture.Size, scene.Time);
+            RGBA textureSample = actor.Texture[textureInd.X, textureInd.Y];
+
+            FRGBA fOut = textureSample;
+            actor.FragShader(fOut, out fOut, textureInd, actor.Texture.Size, scene.Time);
+            textureSample = fOut;
+
+            return ColorFunctions.AlphaBlend(textureSample, inColor);
+        }
+
+        private RGBA ScreenSpaceShaderPass(SceneInstance scene, Vec2 screenPos, RGBA inColor)
+        {
+            FRGBA fOut = inColor;
+            FragShader(fOut, out fOut, screenPos, Resolution, scene.Time);
+            return fOut;
         }
 
         /// <summary>

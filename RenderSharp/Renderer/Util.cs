@@ -22,7 +22,7 @@ namespace RenderSharp
             /// <param name="cameraZoom">Zoom of the camera.</param>
             /// <param name="cameraRotation">Rotation of the camera.</param>
             /// <returns>The world coordinates corresponding to the screen coordinates.</returns>
-            public static FVec2 ScreenToWorld2(Vec2 screenSize, Vec2 screenCoords, FVec2 cameraCenter, double aspectRatio, double cameraZoom, double cameraRotation)
+            public static FVec2 ScreenToWorld2(Vec2 screenSize, double aspectRatio, Vec2 screenCoords, FVec2 cameraCenter, double cameraZoom, double cameraRotation)
             {
                 FVec2 result = (new FVec2(screenCoords.X - (screenSize.X / 2),
                          (screenSize.Y / 2) - screenCoords.Y) / screenSize / cameraZoom + cameraCenter).Rotate(cameraRotation);

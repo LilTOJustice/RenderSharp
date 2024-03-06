@@ -45,7 +45,7 @@ namespace RenderSharp.Render2d
         private Dictionary<string, Camera> cameras;
         private RGBA? bgColor;
         private Texture? bgTexture;
-        private FVec2? bgTextureSize;
+        private FVec2? bgTextureWorldSize;
         private FragShader? bgFragShader;
         private CoordShader? bgCoordShader;
         private Scene.ThinkFunc? think;
@@ -67,7 +67,7 @@ namespace RenderSharp.Render2d
         /// <param name="zoom">Zoom of the camera.</param>
         /// <param name="rotation">Rotation of the camera in world space.</param>
         /// <param name="name">Name of the camera.</param>
-        public OptionalsStep WithCamera(string name, FVec2 center, double zoom = 1, double rotation = 1)
+        public OptionalsStep WithCamera(string name, FVec2 center, double zoom = 1, double rotation = 0)
         {
             cameras.Add(name, new Camera(new FVec2(center), zoom, rotation));
             return this;
@@ -85,11 +85,19 @@ namespace RenderSharp.Render2d
 
         /// <inheritdoc cref="Scene.BgTexture"/>
         /// <param name="bgTexture"></param>
-        /// <param name="worldSize">Size of the texture in world space. If excluded or either component is 0, the texture will fill the screen.</param>
-        public OptionalsStep WithBgTexture(Texture bgTexture, FVec2? worldSize = null)
+        public OptionalsStep WithBgTexture(Texture bgTexture)
         {
             this.bgTexture = bgTexture;
-            this.bgTextureSize = worldSize;
+            return this;
+        }
+
+        /// <inheritdoc cref="Scene.BgTextureWorldSize"/>
+        /// <param name="bgTextureWorldSize">Size of the texture in world space.
+        /// If excluded or either component is 0, the texture will fill the screen.</param>
+        /// <returns></returns>
+        public OptionalsStep WithBgTextureWorldSize(FVec2 bgTextureWorldSize)
+        {
+            this.bgTextureWorldSize = new FVec2(bgTextureWorldSize);
             return this;
         }
 
@@ -152,7 +160,7 @@ namespace RenderSharp.Render2d
             }
 
             bgTexture ??= new Texture(1, 1, bgColor);
-            bgTextureSize ??= new FVec2();
+            bgTextureWorldSize ??= new FVec2();
             bgFragShader ??= (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
             bgCoordShader ??= (in Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; };
             think ??= (SceneInstance scene, double time, double dt) => { };
@@ -163,7 +171,7 @@ namespace RenderSharp.Render2d
                 new Dictionary<string, Camera>(
                     cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value)))),
                 bgTexture,
-                bgTextureSize,
+                bgTextureWorldSize,
                 bgFragShader,
                 bgCoordShader,
                 think,
