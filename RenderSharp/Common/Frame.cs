@@ -10,47 +10,22 @@ namespace RenderSharp
     {   
         private static readonly int channels = 4;
 
-        /// <summary>
-        /// Size of the frame.
-        /// </summary>
         internal Vec2 Size { get; private set; }
 
-        /// <summary>
-        /// Height component of the <see cref="Size"/>.
-        /// </summary>
         internal int Height { get { return Size.Y; } private set { Size.Y = value; } }
 
-        /// <summary>
-        /// Width component of the <see cref="Size"/>.
-        /// </summary>
         internal int Width { get { return Size.X; } private set { Size.X = value; } }
 
-        /// <summary>
-        /// Aspect ratio of the frame (Width / Height).
-        /// </summary>
         internal double AspectRatio { get { return Width / Height; } }
 
-        /// <summary>
-        /// Internal frame buffer.
-        /// </summary>
         private byte[] Image { get; set; }
 
-        /// <summary>
-        /// Creates an empty black frame.
-        /// </summary>
-        /// <param name="size"></param>
         internal Frame(Vec2 size)
         {
             Size = size;
             Image = new byte[Width * Height * channels];
         }
 
-        /// <summary>
-        /// Accesses the pixel at the given position.
-        /// </summary>
-        /// <param name="x">Position relative to the <see cref="Width"/> of the frame.</param>
-        /// <param name="y">Position relative to the <see cref="Height"/> of the frame.</param>
-        /// <returns>The pixel at the desired location.</returns>
         internal RGBA this[int x, int y]
         {
             get
