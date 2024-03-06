@@ -62,7 +62,7 @@ namespace RenderSharp
             var image = new MagickImage(filename);
             var bmp = image.ToByteArray(MagickFormat.Rgba);
 
-            Size = new Vec2 (image.Width, image.Height);
+            Size = new Vec2(image.Width, image.Height);
             _texture = new RGBA[Height, Width];
 
             for (int i = 0; i < image.Height; i++)
@@ -107,7 +107,7 @@ namespace RenderSharp
         /// <returns>A pixel in the texture.</returns>
         internal RGBA this[int x, int y]
         {
-            get { return _texture[y, x]; }
+            get { return y < Height && x < Width ? _texture[y, x] : new RGBA(); }
         }
     }
 }

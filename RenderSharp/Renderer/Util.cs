@@ -39,7 +39,7 @@ namespace RenderSharp
             public static Vec2 WorldToBgTexture2(FVec2 worldCoord, Vec2 bgTextureSize)
             {
                 Vec2 ind = (Vec2)worldCoord + new Vec2(bgTextureSize.X / 2, bgTextureSize.Y / 2);
-                ind = new Vec2(Mod(ind.X, bgTextureSize.X), bgTextureSize.Y - Mod(ind.Y, bgTextureSize.Y) - 1);
+                ind = new Vec2(ind.X, bgTextureSize.Y - ind.Y - 1);
                 return ind;
             }
 

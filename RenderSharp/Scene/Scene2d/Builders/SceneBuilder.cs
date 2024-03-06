@@ -45,7 +45,8 @@ namespace RenderSharp.Render2d
         private Dictionary<string, Camera> cameras;
         private RGBA? bgColor;
         private Texture? bgTexture;
-        private FragShader? bgShader;
+        private FragShader? bgFragShader;
+        private CoordShader? bgCoordShader;
         private Scene.ThinkFunc? think;
         private ActorIndex actorIndex;
 
@@ -88,10 +89,17 @@ namespace RenderSharp.Render2d
             return this;
         }
 
-        /// <inheritdoc cref="Scene.BgShader"/>
+        /// <inheritdoc cref="Scene.BgFragShader"/>
         public OptionalsStep WithBgShader(FragShader bgShader)
         {
-            this.bgShader += bgShader;
+            bgFragShader += bgShader;
+            return this;
+        }
+
+        /// <inheritdoc cref="Scene.BgCoordShader"/>
+        public OptionalsStep WithBgShader(CoordShader bgShader)
+        {
+            bgCoordShader += bgShader;
             return this;
         }
 
@@ -140,7 +148,8 @@ namespace RenderSharp.Render2d
             }
 
             bgTexture ??= new Texture(1, 1, bgColor);
-            bgShader ??= (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            bgFragShader ??= (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            bgCoordShader ??= (in Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; };
             think ??= (SceneInstance scene, double time, double dt) => { };
 
             return new Scene(
@@ -149,7 +158,8 @@ namespace RenderSharp.Render2d
                 new Dictionary<string, Camera>(
                     cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value)))),
                 bgTexture,
-                bgShader,
+                bgFragShader,
+                bgCoordShader,
                 think,
                 new ActorIndex(actorIndex));
         }

@@ -13,7 +13,8 @@ namespace RenderSharp.Render2d
         private FVec2? position;
         private RGBA? color;
         private Texture? texture;
-        private FragShader? shader;
+        private FragShader? fragShader;
+        private CoordShader? coordShader;
 
         /// <inheritdoc cref="Actor.Size"/>
         public ActorBuilder WithSize(FVec2 size)
@@ -54,10 +55,17 @@ namespace RenderSharp.Render2d
             return this;
         }
 
-        /// <inheritdoc cref="Actor.Shader"/>
+        /// <inheritdoc cref="Actor.FragShader"/>
         public ActorBuilder WithShader(FragShader shader)
         {
-            this.shader += shader;
+            fragShader += shader;
+            return this;
+        }
+
+        /// <inheritdoc cref="Actor.CoordShader"/>
+        public ActorBuilder WithShader(CoordShader shader)
+        {
+            coordShader += shader;
             return this;
         }
 
@@ -70,8 +78,9 @@ namespace RenderSharp.Render2d
             size ??= new FVec2(1, 1);
             texture ??= new Texture(1, 1, color);
             position ??= new FVec2();
-            shader ??= ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            return new Actor(size, rotation, position, texture, shader);
+            fragShader ??= ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+            coordShader ??= ((in Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; });
+            return new Actor(size, rotation, position, texture, fragShader, coordShader);
         }
     }
 }

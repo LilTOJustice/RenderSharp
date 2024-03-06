@@ -106,18 +106,18 @@ namespace RenderSharp.Render2d
         /// <param name="start">Location of the start of the line in world space.</param>
         /// <param name="end">Location of the end of the line in world space.</param>
         /// <param name="color">Color of the line.</param>
-        /// <param name="shader">Shader run on the single pixel representing the line.</param>
+        /// <param name="fragShader">Shader run on the single pixel representing the line.</param>
         internal Line(
             double thickness,
             FVec2 start,
             FVec2 end,
             RGBA color,
-            FragShader shader) : base(new FVec2(), 0, new FVec2(), new(0, 0), (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; })
+            FragShader fragShader)
         {
             _start = start;
             _end = end;
             Texture = new Texture(1, 1, color);
-            Shader = shader;
+            FragShader = fragShader;
             ((Actor)this).Size = new FVec2(0, thickness);
             Recompute();
         }
@@ -133,7 +133,7 @@ namespace RenderSharp.Render2d
         /// <inheritdoc cref="Actor.Copy"/>
         public override Line Copy()
         {
-            return new Line(Thickness, _start, _end, Texture[0, 0], Shader);
+            return new Line(Thickness, _start, _end, Texture[0, 0], FragShader);
         }
     }
 }
