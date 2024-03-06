@@ -40,7 +40,21 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// Shader to be applied to the actor's texture.
         /// </summary>
-        public FragShader Shader { get; set; }
+        public FragShader FragShader { get; set; }
+
+        /// <summary>
+        /// Shader applied to the actor space coordinates before being passed to the fragment shader.
+        /// </summary>
+        public CoordShader CoordShader { get; set; }
+
+        internal Actor()
+        {
+            Size = new FVec2();
+            Position = new FVec2();
+            Texture = new Texture(0, 0);
+            FragShader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            CoordShader = (in Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; };
+        }
 
         /// <summary>
         /// Constructs an actor.
@@ -49,19 +63,38 @@ namespace RenderSharp.Render2d
         /// <param name="position">World space position of the actor.</param>
         /// <param name="size">World space size of the actor.</param>
         /// <param name="rotation">Rotation of the actor about its center (radians).</param>
-        /// <param name="shader">Shader to be applied to the actor's texture.</param>
+        /// <param name="fragShader">Shader to be applied to the actor's texture.</param>
+        /// <param name="coordShader">Shader to be applied to the actor space coordinates before the <see cref="FragShader"/>.</param>
         internal Actor(
             FVec2 size,
             double rotation,
             FVec2 position,
             Texture texture,
-            FragShader shader)
+            FragShader fragShader,
+            CoordShader coordShader)
         {
             Texture = texture;
             Position = position;
             Size = size;
             Rotation = rotation;
-            Shader = shader;
+            FragShader = fragShader;
+            CoordShader = coordShader;
+        }
+
+        /// <summary>
+        /// Clears any active fragment shaders on the actor.
+        /// </summary>
+        public void ClearFragShaders()
+        {
+            FragShader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+        }
+
+        /// <summary>
+        /// Clears any active coordinate shaders on the actor.
+        /// </summary>
+        public void ClearCoordShaders()
+        {
+            CoordShader = (in Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; };
         }
 
         /// <summary>
@@ -69,7 +102,8 @@ namespace RenderSharp.Render2d
         /// </summary>
         public void ClearShaders()
         {
-            Shader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; }; 
+            ClearFragShaders();
+            ClearCoordShaders();
         }
 
         /// <summary>
@@ -83,7 +117,8 @@ namespace RenderSharp.Render2d
                     Rotation,
                     new FVec2(Position),
                     Texture,
-                    Shader
+                    FragShader,
+                    CoordShader
                 );
         }
     }

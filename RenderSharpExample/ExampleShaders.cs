@@ -100,5 +100,15 @@ namespace RenderSharp
                 fragOut.A = 0;
             }
         }
+
+        public static void WavyX(in Vec2 coordIn, out Vec2 coordOut, Vec2 size, double time)
+        {
+            coordOut = coordIn + new Vec2((int)(20 * Math.Sin(coordIn.Y / 20.0 + time)), 0);
+        }
+
+        public static void WavyY(in Vec2 coordIn, out Vec2 coordOut, Vec2 size, double time)
+        {
+            coordOut = coordIn + new Vec2(0, (int)(20 * Math.Sin(coordIn.Y / 20.0 + time)));
+        }
     }
 }

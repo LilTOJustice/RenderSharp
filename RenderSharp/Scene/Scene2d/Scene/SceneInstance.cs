@@ -33,9 +33,15 @@ namespace RenderSharp.Render2d
 
         /// <inheritdoc cref="Scene.BgTexture"/>
         public Texture BgTexture { get; set; }
+
+        /// <inheritdoc cref="Scene.BgTextureWorldSize"/>
+        public FVec2 BgTextureWorldSize { get; set; }
         
-        /// <inheritdoc cref="Scene.BgShader"/>
-        public FragShader BgShader { get; set; }
+        /// <inheritdoc cref="Scene.BgFragShader"/>
+        public FragShader BgFragShader { get; set; }
+
+        /// <inheritdoc cref="Scene.BgCoordShader"/>
+        public CoordShader BgCoordShader { get; set; }
 
         /// <summary>
         /// Think function to be run for the next instance.
@@ -55,14 +61,16 @@ namespace RenderSharp.Render2d
         {
             Cameras = new Dictionary<string, Camera>(
                 scene.Cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value))));
-            primaryCameraKey = scene.Cameras.Keys.First();
-            Camera = scene.Cameras[primaryCameraKey];
+            primaryCameraKey = Cameras.Keys.First();
+            Camera = Cameras[primaryCameraKey];
             ActorIndex = new ActorIndex(scene.ActorIndex);
             Time = 0;
             Index = 0;
             Think = scene.Think;
             BgTexture = scene.BgTexture;
-            BgShader = scene.BgShader;
+            BgTextureWorldSize = scene.BgTextureWorldSize;
+            BgFragShader = scene.BgFragShader;
+            BgCoordShader = scene.BgCoordShader;
         }
 
         /// <summary>
@@ -75,14 +83,16 @@ namespace RenderSharp.Render2d
         {
             Cameras = new Dictionary<string, Camera>(
                 scene.Cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value))));
-            primaryCameraKey = scene.Cameras.Keys.First();
-            Camera = scene.Cameras[primaryCameraKey];
+            primaryCameraKey = Cameras.Keys.First();
+            Camera = Cameras[primaryCameraKey];
             ActorIndex = new ActorIndex(scene.ActorIndex);
             Time = time;
             Index = index;
             Think = scene.Think;
             BgTexture = scene.BgTexture;
-            BgShader = scene.BgShader;
+            BgTextureWorldSize = scene.BgTextureWorldSize;
+            BgFragShader = scene.BgFragShader;
+            BgCoordShader = scene.BgCoordShader;
         }
 
         /// <summary>
@@ -108,7 +118,7 @@ namespace RenderSharp.Render2d
         /// </summary>
         public void ClearShaders()
         {
-            BgShader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            BgFragShader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
         }
 
         /// <summary>

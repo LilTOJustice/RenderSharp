@@ -22,7 +22,7 @@ namespace RenderSharp
             /// <param name="cameraZoom">Zoom of the camera.</param>
             /// <param name="cameraRotation">Rotation of the camera.</param>
             /// <returns>The world coordinates corresponding to the screen coordinates.</returns>
-            public static FVec2 ScreenToWorld2(Vec2 screenSize, Vec2 screenCoords, FVec2 cameraCenter, double aspectRatio, double cameraZoom, double cameraRotation)
+            public static FVec2 ScreenToWorld2(Vec2 screenSize, double aspectRatio, Vec2 screenCoords, FVec2 cameraCenter, double cameraZoom, double cameraRotation)
             {
                 FVec2 result = (new FVec2(screenCoords.X - (screenSize.X / 2),
                          (screenSize.Y / 2) - screenCoords.Y) / screenSize / cameraZoom + cameraCenter).Rotate(cameraRotation);
@@ -32,15 +32,17 @@ namespace RenderSharp
 
             /// <summary>
             /// Transforms world-space coordinates to edge-wrapped background texture space.
+            /// 
             /// </summary>
             /// <param name="worldCoord">Position within the world.</param>
             /// <param name="bgTextureSize">Size of the background texture.</param>
+            /// <param name="worldRelativeSize">Dimensions of the texture in world-space coordinates.</param>
             /// <returns></returns>
-            public static Vec2 WorldToBgTexture2(FVec2 worldCoord, Vec2 bgTextureSize)
+            public static Vec2 WorldToBgTexture2(FVec2 worldCoord, Vec2 bgTextureSize, FVec2 worldRelativeSize)
             {
-                Vec2 ind = (Vec2)worldCoord + new Vec2(bgTextureSize.X / 2, bgTextureSize.Y / 2);
-                ind = new Vec2(Mod(ind.X, bgTextureSize.X), bgTextureSize.Y - Mod(ind.Y, bgTextureSize.Y) - 1);
-                return ind;
+                FVec2 fromTl = worldCoord - new FVec2(-worldRelativeSize.X / 2, worldRelativeSize.Y / 2);
+                Vec2 ind = (Vec2)(fromTl * bgTextureSize);
+                return new Vec2(ind.X, bgTextureSize.Y - ind.Y - 1);
             }
 
             /// <summary>
@@ -80,6 +82,11 @@ namespace RenderSharp
                     || result.X >= textureSize.X
                     || result.Y >= textureSize.Y)
                     ? null : result;
+            }
+
+            internal static Vec2 ScreenToStretchBgTexture(Vec2 screenPos, Vec2 res, Vec2 bgTextureSize)
+            {
+                return (Vec2)((FVec2)screenPos / res * bgTextureSize);
             }
         }
 
