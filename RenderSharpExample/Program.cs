@@ -22,28 +22,20 @@ namespace RenderSharpExample
                     (SceneInstance scene, double time, double dt) =>
                     {
                         Actor box = scene.GetActor("Box");
-                        Line line = scene.GetLine("Line");
                         box.Position += new FVec2(0, 0.1) * dt;
-                        line.Start = box.Position;
                     }
                 )
                 .WithActor(new ActorBuilder()
                     .WithSize(new FVec2(0.1, 0.05))
-                    .WithTexture(new Texture(new Vec2(2, 2)))
-                    .WithShader(ExampleShaders.TopLeftDebug)
-                    .WithShader(ExampleShaders.Ghostly)
+                    .WithColor(new RGBA(0, 0, 0, 0))
                     , "Box")
-                .WithActor(new LineBuilder()
-                    .WithThickness(0.001)
-                    .WithEnd(new FVec2(0.8, 0))
-                    .WithColor(new RGB(255, 0, 0))
-                    .WithShader(ExampleShaders.Psychedelic)
-                    , "Line")
-                .WithBgColor(new RGB(0, 0, 255))
+                .WithBgTexture(new Texture("C:\\Users\\muian\\OneDrive\\Pictures\\Profile Pic\\gordon.jpg"), new FVec2(1, 1))
+                //.WithBgColor(new RGB(0, 0, 255))
                 .Build();
 
             // Create renderer
             Renderer renderer = new(resX, resY, scene);
+            renderer.CoordShader = ExampleShaders.Wavy;
 
             // Finally render and output the video
             renderer.RenderMovie().Output("test");

@@ -91,7 +91,7 @@ namespace RenderSharp.Render2d
             SceneInstance sceneInstance = Scene.Simulate(index).Last();
             stopwatch.Stop();
             Console.WriteLine($"Finished in {stopwatch.Elapsed}");
-            return Render(sceneInstance, Scene.BgTexture, true);
+            return Render(sceneInstance, Scene.BgTexture, Scene.BgTextureWorldSize, true);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace RenderSharp.Render2d
                 for (int i = Interlocked.Increment(ref nextId); i < instances.Count; i = Interlocked.Increment(ref nextId))
                 {
                     var instance = instances[i];
-                    movie.WriteFrame(Render(instance, Scene.BgTexture), instance.Index);
+                    movie.WriteFrame(Render(instance, instance.BgTexture, instance.BgTextureWorldSize), instance.Index);
                     Interlocked.Increment(ref doneCount);
                 }
             };
@@ -196,9 +196,10 @@ namespace RenderSharp.Render2d
         /// </summary>
         /// <param name="scene">Scene instance to render.</param>
         /// <param name="bgTexture">Optional background texture to render if no actors are intersected.</param>
+        /// <param name="bgTextureWorldSize">Size of the texture in world space.</param>
         /// <param name="verbose">Whether to print status updates and time info.</param>
         /// <returns>The rendered frame.</returns>
-        private Frame Render(SceneInstance scene, Texture bgTexture, bool verbose = false)
+        private Frame Render(SceneInstance scene, Texture bgTexture, FVec2 bgTextureWorldSize, bool verbose = false)
         {
             Frame output = new(Resolution);
 
@@ -213,7 +214,7 @@ namespace RenderSharp.Render2d
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    output[x, y] = RenderPixel(scene, bgTexture, x, y);
+                    output[x, y] = RenderPixel(scene, bgTexture, bgTextureWorldSize, x, y);
                 }
             }
 
@@ -227,14 +228,16 @@ namespace RenderSharp.Render2d
             return output;
         }
 
-        private RGBA RenderPixel(SceneInstance scene, Texture bgTexture, int x, int y)
+        private RGBA RenderPixel(SceneInstance scene, Texture bgTexture, FVec2 bgTextureWorldSize, int x, int y)
         {
             Vec2 screenPos = new(x, y);
 
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
 
             FVec2 worldLoc = Util.Transforms.ScreenToWorld2(Resolution, screenPos, scene.Camera.Center, AspectRatio, scene.Camera.Zoom, scene.Camera.Rotation);
-            Vec2 bgTextureInd = Util.Transforms.WorldToBgTexture2(worldLoc, bgTexture.Size);
+            Vec2 bgTextureInd = bgTextureWorldSize.X == 0 || bgTextureWorldSize.Y == 0 ?
+                Util.Transforms.ScreenToStretchBgTexture(screenPos, Resolution, bgTexture.Size)
+                : Util.Transforms.WorldToBgTexture2(worldLoc, bgTexture.Size, bgTextureWorldSize);
             Scene.BgCoordShader(bgTextureInd, out bgTextureInd, Resolution, scene.Time);
             RGBA outColor = bgTexture[Util.Mod(bgTextureInd.X, bgTexture.Width), Util.Mod(bgTextureInd.Y, bgTexture.Height)];
 
@@ -274,7 +277,6 @@ namespace RenderSharp.Render2d
             outColor = fOut;
 
             return outColor;
-
         }
 
         /// <summary>

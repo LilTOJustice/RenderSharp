@@ -44,6 +44,11 @@ namespace RenderSharp.Render2d
         /// Background texture to use if an actor is not intersected by the renderer.
         /// </summary>
         internal Texture BgTexture { get; set; }
+
+        /// <summary>
+        /// Background texture size in world space.
+        /// </summary>
+        internal FVec2 BgTextureWorldSize { get; set; }
         
         /// <summary>
         /// Shader to be run each frame on the background if no actor is intersected by the renderer.
@@ -72,6 +77,7 @@ namespace RenderSharp.Render2d
         /// <param name="duration">The duration of the simulation in seconds. If 0 or negative, the scene will be considered static.</param>
         /// <param name="cameras">List of cameras in the scene.</param>
         /// <param name="bgTexture">The background texture to be used if no actor is intersected.</param>
+        /// <param name="bgTextureWorldSize">Size of the background texture in world space.</param>
         /// <param name="bgFragShader">The shader run on each pixel of the background texture.</param>
         /// <param name="bgCoordShader">The shader run on each coordinate of the background texture before passed to the frag shader.</param>
         /// <param name="think">Function that runs on instances of the scene during simulation.</param>
@@ -81,6 +87,7 @@ namespace RenderSharp.Render2d
             double duration,
             Dictionary<string, Camera> cameras,
             Texture bgTexture,
+            FVec2 bgTextureWorldSize,
             FragShader bgFragShader,
             CoordShader bgCoordShader,
             ThinkFunc think,
@@ -90,6 +97,7 @@ namespace RenderSharp.Render2d
             Duration = duration;
             Cameras = cameras;
             BgTexture = bgTexture;
+            BgTextureWorldSize = bgTextureWorldSize;
             BgFragShader = bgFragShader;
             BgCoordShader = bgCoordShader;
             Think = think;
