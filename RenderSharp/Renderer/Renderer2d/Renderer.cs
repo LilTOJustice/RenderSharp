@@ -219,7 +219,7 @@ namespace RenderSharp.Render2d
 
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
 
-            FVec2 worldLoc = Util.Transforms.ScreenToWorld2(
+            FVec2 worldLoc = Transforms.ScreenToWorld2(
                 Resolution,
                 AspectRatio,
                 screenPos,
@@ -244,10 +244,10 @@ namespace RenderSharp.Render2d
         private RGBA SampleFromBgTexture(SceneInstance scene, Vec2 screenPos, FVec2 worldLoc)
         {
             Vec2 bgTextureInd = scene.BgTextureWorldSize.X == 0 || scene.BgTextureWorldSize.Y == 0 ?
-                Util.Transforms.ScreenToStretchBgTexture(screenPos, Resolution, scene.BgTexture.Size)
-                : Util.Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize);
+                Transforms.ScreenToStretchBgTexture(screenPos, Resolution, scene.BgTexture.Size)
+                : Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize);
             Scene.BgCoordShader(bgTextureInd, out bgTextureInd, Resolution, scene.Time);
-            RGBA outColor = scene.BgTexture[Util.Mod(bgTextureInd.X, scene.BgTexture.Width), Util.Mod(bgTextureInd.Y, scene.BgTexture.Height)];
+            RGBA outColor = scene.BgTexture[Mod(bgTextureInd.X, scene.BgTexture.Width), Mod(bgTextureInd.Y, scene.BgTexture.Height)];
 
             FRGBA fOut = outColor;
             Scene.BgFragShader(fOut, out fOut, bgTextureInd, scene.BgTexture.Size, scene.Time);
@@ -256,13 +256,13 @@ namespace RenderSharp.Render2d
 
         private RGBA SampleFromActor(SceneInstance scene, Actor actor, RGBA inColor, FVec2 worldLoc)
         {
-            FVec2? actorLoc = Util.Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation);
+            FVec2? actorLoc = Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation);
             if (actorLoc is null)
             {
                 return inColor;
             }
 
-            Vec2? textureInd = Util.Transforms.ActorToTexture2(actorLoc, actor.Size, actor.Texture.Size);
+            Vec2? textureInd = Transforms.ActorToTexture2(actorLoc, actor.Size, actor.Texture.Size);
             if (textureInd is null)
             {
                 return inColor;
