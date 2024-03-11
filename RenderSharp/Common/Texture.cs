@@ -12,9 +12,9 @@ namespace RenderSharp
 
         internal Vec2 Size { get; set; } 
 
-        internal int Height { get { return Size.Y; } set { Size.Y = value; } }
+        internal int Height { get { return Size.Y; } } //set { Size = new(value, Size.Y); } }
 
-        internal int Width { get { return Size.X; } set { Size.X = value; } }
+        internal int Width { get { return Size.X; } } //{ Size = new(value, Size.Y); } }
 
         /// <summary>
         /// Constructs an alpha opaque texture with the given dimensions and color.

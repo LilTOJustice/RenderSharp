@@ -31,14 +31,14 @@ namespace RenderSharp.Render2d
 
         internal Camera(Camera other)
         {
-            Center = new(other.Center);
+            Center = other.Center;
             Zoom = other.Zoom;
             Rotation = other.Rotation;
         }
 
-        internal Camera(FVec2 center, double zoom, double rotation)
+        internal Camera(in FVec2 center, double zoom, double rotation)
         {
-            Center = new(center);
+            Center = center;
             Zoom = zoom;
             Rotation = rotation;
         }

@@ -11,9 +11,9 @@ namespace RenderSharp
     {
         internal Vec2 Size { get; private set; }
 
-        internal int Height { get { return Size.Y; } private set { Size.Y = value; } }
+        internal int Height { get { return Size.Y; } }
 
-        internal int Width { get { return Size.X; } private set { Size.X = value; } }
+        internal int Width { get { return Size.X; } }
 
         internal double AspectRatio { get { return Width / Height; } }
 

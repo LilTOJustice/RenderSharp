@@ -58,11 +58,11 @@ namespace RenderSharp.Render2d
         /// </summary>
         public double Length
         {
-            get { return (_end - _start).Length(); }
+            get { return (_end - _start).Mag(); }
             set
             {
                 FVec2 disp = _end - _start;
-                disp = (disp / disp.Length()) * value / 2;
+                disp = disp / disp.Mag() * value / 2;
                 _end = disp + Position;
                 _start = (disp * -1) + Position;
                 Recompute();
@@ -81,7 +81,7 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// The thickness of the line in world space.
         /// </summary>
-        public double Thickness { get { return Size.Y; } set { Size.Y = value; } }
+        public double Thickness { get { return Size.Y; } set { Size = new FVec2(Size.X, value); } }
 
         /// <summary>
         /// The rotation of the line in world space.
@@ -117,7 +117,7 @@ namespace RenderSharp.Render2d
         private void Recompute()
         {
             FVec2 disp = _end - _start;
-            Size.X = disp.Length();
+            Size = new FVec2(Size.X, disp.Mag());
             ((Actor)this).Position = _start + (disp / 2);
             ((Actor)this).Rotation = -Math.Atan2(disp.Y, disp.X);
         }

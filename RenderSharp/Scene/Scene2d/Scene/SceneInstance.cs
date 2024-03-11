@@ -105,7 +105,7 @@ namespace RenderSharp.Render2d
         /// </summary>
         public void ClearShaders()
         {
-            BgFragShader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            BgFragShader = (FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
         }
 
         /// <summary>

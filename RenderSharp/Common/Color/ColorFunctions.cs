@@ -13,7 +13,7 @@
         /// <returns>The resulting blended color (<see href="https://en.wikipedia.org/wiki/Alpha_compositing"/>).</returns>
         public static RGBA AlphaBlend(FRGBA top, FRGBA bottom)
         {
-            return top.RGB * top.A + bottom.RGB * (1d - top.A);
+            return (FRGB)top * top.A + (FRGB)bottom * (1d - top.A);
         }
     }
 }

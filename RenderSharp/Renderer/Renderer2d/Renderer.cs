@@ -16,12 +16,12 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// Width from the renderer's target resolution (<see cref="Resolution"/>).
         /// </summary>
-        public int Width { get { return Resolution.X; } set { Resolution.X = value; } }
+        public int Width { get { return Resolution.X; } }
 
         /// <summary>
         /// Height from the renderer's target resolution (<see cref="Resolution"/>).
         /// </summary>
-        public int Height { get { return Resolution.Y; } set { Resolution.Y = value; } }
+        public int Height { get { return Resolution.Y; } }
 
         /// <summary>
         /// Aspect ratio of the renderer's target resolution (<see cref="Resolution"/>).
@@ -53,22 +53,22 @@ namespace RenderSharp.Render2d
 
             Resolution = new Vec2(resX, resY);
             Scene = scene;
-            FragShader = fragShader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            CoordShader = coordShader ?? ((in Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; });
+            FragShader = fragShader ?? ((FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+            CoordShader = coordShader ?? ((Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; });
         }
 
         /// <inheritdoc cref="Renderer"/>
-        public Renderer(Vec2 resolution, Scene scene, FragShader? fragShader = null, CoordShader? coordShader = null)
+        public Renderer(in Vec2 resolution, Scene scene, FragShader? fragShader = null, CoordShader? coordShader = null)
         {
             if (resolution.X < 1 || resolution.Y < 1)
             {
                 throw new ArgumentOutOfRangeException("Resolution must be >= 1 for both axes.");
             }
 
-            Resolution = new Vec2(resolution.Components);
+            Resolution = resolution;
             Scene = scene;
-            FragShader = fragShader ?? ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            CoordShader = coordShader ?? ((in Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; });
+            FragShader = fragShader ?? ((FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+            CoordShader = coordShader ?? ((Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; });
         }
 
         /// <summary>
@@ -241,29 +241,31 @@ namespace RenderSharp.Render2d
             return ScreenSpaceShaderPass(scene, screenPos, outColor);
         }
 
-        private RGBA SampleFromBgTexture(SceneInstance scene, Vec2 screenPos, FVec2 worldLoc)
+        private RGBA SampleFromBgTexture(SceneInstance scene, in Vec2 screenPos, in FVec2 worldLoc)
         {
             Vec2 bgTextureInd = scene.BgTextureWorldSize.X == 0 || scene.BgTextureWorldSize.Y == 0 ?
                 Transforms.ScreenToStretchBgTexture(screenPos, Resolution, scene.BgTexture.Size)
                 : Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize);
             Scene.BgCoordShader(bgTextureInd, out bgTextureInd, Resolution, scene.Time);
-            RGBA outColor = scene.BgTexture[Mod(bgTextureInd.X, scene.BgTexture.Width), Mod(bgTextureInd.Y, scene.BgTexture.Height)];
+            RGBA outColor = scene.BgTexture[
+                Operations.Mod(bgTextureInd.X, scene.BgTexture.Width),
+                Operations.Mod(bgTextureInd.Y, scene.BgTexture.Height)];
 
             FRGBA fOut = outColor;
             Scene.BgFragShader(fOut, out fOut, bgTextureInd, scene.BgTexture.Size, scene.Time);
             return fOut;
         }
 
-        private RGBA SampleFromActor(SceneInstance scene, Actor actor, RGBA inColor, FVec2 worldLoc)
+        private RGBA SampleFromActor(SceneInstance scene, Actor actor, in RGBA inColor, in FVec2 worldLoc)
         {
-            FVec2? actorLoc = Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation);
-            if (actorLoc is null)
+            FVec2 actorLoc;
+            if (!Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation, out actorLoc))
             {
                 return inColor;
             }
 
-            Vec2? textureInd = Transforms.ActorToTexture2(actorLoc, actor.Size, actor.Texture.Size);
-            if (textureInd is null)
+            Vec2 textureInd;
+            if (!Transforms.ActorToTexture2(actorLoc, actor.Size, actor.Texture.Size, out textureInd))
             {
                 return inColor;
             }
@@ -290,7 +292,7 @@ namespace RenderSharp.Render2d
         /// </summary>
         public void ClearFragShader()
         {
-            FragShader = (in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            FragShader = (FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
         }
 
         /// <summary>
@@ -298,7 +300,7 @@ namespace RenderSharp.Render2d
         /// </summary>
         public void ClearCoordShader()
         {
-            CoordShader = (in Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; };
+            CoordShader = (Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; };
         }
 
         /// <summary>

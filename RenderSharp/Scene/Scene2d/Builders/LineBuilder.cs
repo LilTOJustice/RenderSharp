@@ -22,16 +22,16 @@ namespace RenderSharp.Render2d
         }
 
         /// <inheritdoc cref="Line.Start"/>
-        public LineBuilder WithStart(FVec2 start)
+        public LineBuilder WithStart(in FVec2 start)
         {
-            this.start = new FVec2(start);
+            this.start = start;
             return this;
         }
 
         /// <inheritdoc cref="Line.End"/>
-        public LineBuilder WithEnd(FVec2 end)
+        public LineBuilder WithEnd(in FVec2 end)
         {
-            this.end = new FVec2(end);
+            this.end = end;
             return this;
         }
 
@@ -39,9 +39,9 @@ namespace RenderSharp.Render2d
         /// Color of the line.
         /// </summary>
         /// <param name="color"></param>
-        public LineBuilder WithColor(RGBA color)
+        public LineBuilder WithColor(in RGBA color)
         {
-            this.color = new RGBA(color);
+            this.color = color;
             return this;
         }
         
@@ -57,8 +57,8 @@ namespace RenderSharp.Render2d
             start ??= new FVec2();
             end ??= new FVec2();
             color ??= new RGBA();
-            shader ??= ((in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            return new Line(thickness, start, end, color, shader);
+            shader ??= ((FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
+            return new Line(thickness, (FVec2)start, (FVec2)end, (RGBA)color, shader);
         }
     }
 }
