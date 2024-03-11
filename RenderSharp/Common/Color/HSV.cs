@@ -70,71 +70,25 @@ namespace RenderSharp
         /// Returns the color expressed in RGB space.
         /// </summary>
         /// <returns>A new color with red, green and blue [0, 255].</returns>
-        public RGB ToRGB()
-        {
-            double H = this.H, S = this.S, V = this.V;
-            double M = 255 * V;
-            double m = M * (1 - S);
-            double z = (M - m) * (1 - Math.Abs(H / 60 % 2 - 1));
-            byte R, G, B;
-
-            if (H < 60)
-            {
-                R = (byte)M;
-                G = (byte)(z + m);
-                B = (byte)m;
-            }
-            else if (H < 120)
-            {
-                R = (byte)(z + m);
-                G = (byte)M;
-                B = (byte)m;
-            }
-            else if (H < 180)
-            {
-                R = (byte)m;
-                G = (byte)M;
-                B = (byte)(z + m);
-            }
-            else if (H < 240)
-            {
-                R = (byte)m;
-                G = (byte)(z + m);
-                B = (byte)M;
-            }
-            else if (H < 300)
-            {
-                R = (byte)(z + m);
-                G = (byte)m;
-                B = (byte)M;
-            }
-            else
-            {
-                R = (byte)M;
-                G = (byte)m;
-                B = (byte)(z + m);
-            }
-
-            return new RGB(R, G, B);
-        }
+        public RGB ToRGB() => ColorFunctions.HSVToRGB(this);
 
         /// <summary>
         /// Returns the color expressed in FRGB space.
         /// </summary>
         /// <returns>A new color with red, green and blue [0, 1].</returns>
-        public FRGB ToFRGB() => ToRGB();
+        public FRGB ToFRGB() => ColorFunctions.HSVToRGB(this).ToFRGB();
 
         /// <summary>
         /// Returns the color expressed in RGBA space.
         /// </summary>
         /// <returns>A new color with red, green and blue [0, 255], and an additional alpha 255.</returns>
-        public RGBA ToRGBA() => ToRGB();
+        public RGBA ToRGBA() => new RGBA(ToRGB(), 255);
 
         /// <summary>
         /// Returns the color expressed in FRGBA space.
         /// </summary>
         /// <returns>A new color with red, green and blue [0, 1], and an addition alpha 1.</returns>
-        public FRGBA ToFRGBA() => ToRGB();
+        public FRGBA ToFRGBA() => new FRGBA(ToFRGB(), 1d);
 
         /// <summary>
         /// Returns the color expressed in HSVA space.

@@ -26,7 +26,7 @@ namespace RenderSharpExample
                 )
                 .WithBgTexture(new Texture(resX, resY))
                 .WithBgTextureWorldSize(new FVec2(1, 1))
-                //.WithBgShader(ExampleShaders.Mandelbrot)
+                .WithBgShader(ExampleShaders.Multibrot)
                 .WithBgShader(ExampleShaders.WavyX)
                 .WithCamera("main", new FVec2(-0.1, 2))
                 .Build();

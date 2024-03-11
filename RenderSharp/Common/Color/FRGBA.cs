@@ -79,19 +79,19 @@ namespace RenderSharp
         /// Returns the color expressed in RGBA space.
         /// </summary>
         /// <returns>A new color with values scaled by 255.</returns>
-        public RGBA ToRGBA() => new RGBA((RGB)this, (byte)(A * 255));
+        public RGBA ToRGBA() => new RGBA((byte)(R * 255), (byte)(R * 255), (byte)(R * 255), (byte)(A * 255));
 
         /// <summary>
         /// Returns the color expressed in HSVA space.
         /// </summary>
         /// <returns>A new color with hue [0, 360] and saturation, value and alpha [0 - 1].</returns>
-        public HSVA ToHSVA() => new HSVA((RGB)this, A);
+        public HSVA ToHSVA() => new HSVA(ToHSV(), A);
 
         /// <summary>
         /// Returns the color expressed in RGB space.
         /// </summary>
         /// <returns>A new color with values scaled down by 255 and alpha truncated.</returns>
-        public RGB ToRGB() => new FRGB(R, G, B);
+        public RGB ToRGB() => new RGB((byte)(R * 255), (byte)(G * 255), (byte)(B * 255));
 
         /// <summary>
         /// Returns the color expressed in FRGB space.
@@ -103,7 +103,7 @@ namespace RenderSharp
         /// Returns the color expressed in HSV space.
         /// </summary>
         /// <returns>A new color with hue [0, 360], saturation and value [0, 1] and alpha truncated.</returns>
-        public HSV ToHSV() => ToFRGB();
+        public HSV ToHSV() => ColorFunctions.RGBToHSV(ToRGB());
 
         /// <inheritdoc cref="IVec4{T, T, T, T}.Mag2"/>
         public double Mag2() => IVec4<FRGBA, double, double, FRGBA>.IMag2(this);

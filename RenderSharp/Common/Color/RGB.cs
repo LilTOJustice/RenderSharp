@@ -87,30 +87,13 @@ namespace RenderSharp
         /// Returns the color expressed in HSV space.
         /// </summary>
         /// <returns>A new color with hue [0, 360], saturation and value [0, 1].</returns>
-        public HSV ToHSV()
-        {
-            double R = this.R, G = this.G, B = this.B;
-            double M = Math.Max(Math.Max(R, G), B);
-            double m = Math.Min(Math.Min(R, G), B);
-            double V = M / 255;
-            double S = (M > 0 ? 1 - m / M : 0);
-            double H = Math.Acos(
-                (R - .5 * G - .5 * B) / Math.Sqrt(R * R + G * G + B * B - R * G - R * B - G * B)
-            ) * 180 / Math.PI;
-
-            if (B > G)
-            {
-                H = 360 - H;
-            }
-
-            return new HSV(H, S, V);
-        }
+        public HSV ToHSV() => ColorFunctions.RGBToHSV(this);
 
         /// <summary>
         /// Returns the color expressed in HSVA space.
         /// </summary>
         /// <returns>A new color with hue [0, 360], saturation and value [0, 1], and an additional alpha 1.</returns>
-        public HSVA ToHSVA() => new HSVA(ToHSV(), 1d);
+        public HSVA ToHSVA() => new HSVA(ColorFunctions.RGBToHSV(this), 1d);
 
         /// <inheritdoc cref="ToFRGB"/>
         public static implicit operator FRGB(in RGB rgb) => rgb.ToFRGB();

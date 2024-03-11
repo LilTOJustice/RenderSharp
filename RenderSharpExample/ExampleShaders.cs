@@ -48,6 +48,7 @@ namespace RenderSharp
                 fragOut = new HSV(mandelOut * 5, 1, 1);
             }
         }
+
         public static void Multibrot(FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             FVec2 st = (FVec2)fragCoord / res;

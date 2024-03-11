@@ -268,7 +268,7 @@ namespace RenderSharp.Render2d
 
             FRGBA fOut = outColor;
             Scene.BgFragShader(fOut, out fOut, bgTextureInd, scene.BgTexture.Size, scene.Time);
-            return fOut;
+            return fOut.ToRGBA();
         }
 
         private RGBA SampleFromActor(SceneInstance scene, Actor actor, in RGBA inColor, in FVec2 worldLoc)
