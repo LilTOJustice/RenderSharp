@@ -8,25 +8,13 @@ namespace RenderSharp
     /// </summary>
     public class Texture
     {
-        /// <summary>
-        /// Internal texture buffer.
-        /// </summary>
         private RGBA[,] _texture; 
 
-        /// <summary>
-        /// Dimensions of the texture.
-        /// </summary>
         internal Vec2 Size { get; set; } 
 
-        /// <summary>
-        /// Height component of the <see cref="Size"/>.
-        /// </summary>
-        internal int Height { get { return Size.Y; } set { Size.Y = value; } }
+        internal int Height { get { return Size.Y; } } //set { Size = new(value, Size.Y); } }
 
-        /// <summary>
-        /// Width component of the <see cref="Size"/>.
-        /// </summary>
-        internal int Width { get { return Size.X; } set { Size.X = value; } }
+        internal int Width { get { return Size.X; } } //{ Size = new(value, Size.Y); } }
 
         /// <summary>
         /// Constructs an alpha opaque texture with the given dimensions and color.
@@ -84,10 +72,6 @@ namespace RenderSharp
             }
         }
 
-        /// <summary>
-        /// Fills the texture with the given color.
-        /// </summary>
-        /// <param name="color">Color to fill the texture with.</param>
         private void Fill(RGBA color)
         {
             for (int i = 0; i < Height; i++)
@@ -99,12 +83,6 @@ namespace RenderSharp
             }
         }
 
-        /// <summary>
-        /// Returns a pixel from the texture.
-        /// </summary>
-        /// <param name="x">Position within the texture relative to the width.</param>
-        /// <param name="y">Position within the texture relative to the height.</param>
-        /// <returns>A pixel in the texture.</returns>
         internal RGBA this[int x, int y]
         {
             get { return y < Height && x < Width ? _texture[y, x] : new RGBA(); }

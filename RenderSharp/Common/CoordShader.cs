@@ -9,5 +9,5 @@ namespace RenderSharp
     /// <param name="coordOut">Output coordinates for the shader.</param>
     /// <param name="size">Size of the space the shader is run on.</param>
     /// <param name="time">Time elapsed.</param>
-    public delegate void CoordShader(in Vec2 coordIn, out Vec2 coordOut, Vec2 size, double time);
+    public delegate void CoordShader(Vec2 coordIn, out Vec2 coordOut, Vec2 size, double time);
 }

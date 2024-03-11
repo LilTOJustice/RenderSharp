@@ -32,7 +32,7 @@ namespace RenderSharp
             return absolute;
         }
 
-        public static void Mandelbrot(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void Mandelbrot(FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             FVec2 st = (FVec2)fragCoord / res;
             st.X *= 1d * res.X / res.Y;
@@ -48,7 +48,7 @@ namespace RenderSharp
                 fragOut = new HSV(mandelOut * 5, 1, 1);
             }
         }
-        public static void Multibrot(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void Multibrot(FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             FVec2 st = (FVec2)fragCoord / res;
             st.X *= 1d * res.X / res.Y;
@@ -66,14 +66,14 @@ namespace RenderSharp
             }
         }
 
-        public static void Psychedelic(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void Psychedelic(FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             HSV hsv = (HSV)fragIn;
             hsv.H = (time * 360) % 360;
             fragOut = hsv;
         }
 
-        public static void TopLeftDebug(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void TopLeftDebug(FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             if (fragCoord == res / 4)
             {
@@ -85,28 +85,28 @@ namespace RenderSharp
             }
         }
 
-        public static void Ghostly(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void Ghostly(FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             fragOut = fragIn;
             fragOut.A = 0.5 + Math.Sin(time * 2) * 0.5;
         }
 
-        public static void CircleCut(in FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
+        public static void CircleCut(FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
             fragOut = fragIn;
             FVec2 st = (((FVec2)fragCoord) / res) - new FVec2(0.5, 0.5);
-            if (st.Length() > 0.5)
+            if (st.Mag() > 0.5)
             {
                 fragOut.A = 0;
             }
         }
 
-        public static void WavyX(in Vec2 coordIn, out Vec2 coordOut, Vec2 size, double time)
+        public static void WavyX(Vec2 coordIn, out Vec2 coordOut, Vec2 size, double time)
         {
             coordOut = coordIn + new Vec2((int)(20 * Math.Sin(coordIn.Y / 20.0 + time)), 0);
         }
 
-        public static void WavyY(in Vec2 coordIn, out Vec2 coordOut, Vec2 size, double time)
+        public static void WavyY(Vec2 coordIn, out Vec2 coordOut, Vec2 size, double time)
         {
             coordOut = coordIn + new Vec2(0, (int)(20 * Math.Sin(coordIn.Y / 20.0 + time)));
         }

@@ -1,20 +1,9 @@
 ﻿namespace RenderSharp.Render2d
 {
-    /// <summary>
-    /// Collection of virtual "planes", each of which contain a dictionary of actors.
-    /// This is used to organize which actors are closer to the camera.
-    /// </summary>
     internal class ActorIndex : List<Dictionary<string, Actor>>
     {
-        /// <summary>
-        /// Constructs an empty actor index.
-        /// </summary>
         public ActorIndex() : base() { }
 
-        /// <summary>
-        /// <c>Deep</c> copies an actor index.
-        /// </summary>
-        /// <param name="index">Actor index to copy from.</param>
         public ActorIndex(ActorIndex index)
         {
             foreach (Dictionary<string, Actor> pair in index)
@@ -24,12 +13,6 @@
             }
         }
 
-        /// <summary>
-        /// Get an actor from 
-        /// </summary>
-        /// <param name="actorId"></param>
-        /// <returns>The actor found in the scene.</returns>
-        /// <exception cref="KeyNotFoundException">Returned if the actor doesn't exist in the scene.</exception>
         public (int, Actor) this[string actorId]
         {
             get
