@@ -1,5 +1,4 @@
 ﻿using MathSharp;
-using System.Security.Cryptography;
 
 namespace RenderSharp
 {

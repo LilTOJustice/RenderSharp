@@ -20,13 +20,13 @@ namespace RenderSharp
 
         private byte[] Image { get; set; }
 
-        internal Frame(Vec2 size)
+        internal Frame(in Vec2 size)
         {
             Size = size;
             Image = new byte[Width * Height * channels];
         }
 
-        internal RGBA this[int x, int y]
+        internal unsafe RGBA this[int x, int y]
         {
             get
             {
@@ -42,10 +42,8 @@ namespace RenderSharp
             set
             {
                 int index = (y * Width + x) * channels;
-                Image[index] = value.R;
-                Image[index + 1] = value.G;
-                Image[index + 2] = value.B;
-                Image[index + 3] = value.A;
+                Span<byte> color = new((byte*)&value, 4);
+                color.CopyTo(new Span<byte>(Image, index, 4));
             }
         }
 
@@ -62,9 +60,7 @@ namespace RenderSharp
             settings.Width = Width;
             settings.Height = Height;
             settings.Depth = 8;
-            var image = new MagickImage(Image, settings);
-            image.Write(fullname);
-            
+            new MagickImage(Image, settings).Write(fullname);
         }
     }
 }   

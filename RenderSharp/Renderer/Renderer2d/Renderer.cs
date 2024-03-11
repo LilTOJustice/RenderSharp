@@ -31,7 +31,7 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// Target scene for the render.
         /// </summary>
-        public Scene Scene { get; set; }
+        public Scene Scene { get; }
         
         /// <summary>
         /// Final shader delegate run on every pixel of every frame of the render.
@@ -42,6 +42,8 @@ namespace RenderSharp.Render2d
         /// First shader run to transform screen space coordinates.
         /// </summary>
         public CoordShader CoordShader { get; set; }
+
+        private Func<Vec2, FVec2, Vec2> BgTextureTransform { get; set; }
 
         /// <inheritdoc cref="Renderer"/>
         public Renderer(int resX, int resY, Scene scene, FragShader? fragShader = null, CoordShader? coordShader = null)
@@ -55,6 +57,12 @@ namespace RenderSharp.Render2d
             Scene = scene;
             FragShader = fragShader ?? ((FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             CoordShader = coordShader ?? ((Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; });
+            BgTextureTransform = scene.BgTextureWorldSize.X == 0 || scene.BgTextureWorldSize.Y == 0 ?
+                new Func<Vec2, FVec2, Vec2>(
+                    (Vec2 screenPos, FVec2 worldLoc)
+                    => Transforms.ScreenToStretchBgTexture(screenPos, Resolution, scene.BgTexture.Size)) :
+                new Func<Vec2, FVec2, Vec2>(
+                    (Vec2 screenPos, FVec2 worldLoc) => Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize));
         }
 
         /// <inheritdoc cref="Renderer"/>
@@ -69,6 +77,12 @@ namespace RenderSharp.Render2d
             Scene = scene;
             FragShader = fragShader ?? ((FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             CoordShader = coordShader ?? ((Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; });
+            BgTextureTransform = scene.BgTextureWorldSize.X == 0 || scene.BgTextureWorldSize.Y == 0 ?
+                new Func<Vec2, FVec2, Vec2>(
+                    (Vec2 screenPos, FVec2 worldLoc)
+                    => Transforms.ScreenToStretchBgTexture(screenPos, Resolution, scene.BgTexture.Size)) :
+                new Func<Vec2, FVec2, Vec2>(
+                    (Vec2 screenPos, FVec2 worldLoc) => Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize));
         }
 
         /// <summary>
@@ -116,7 +130,7 @@ namespace RenderSharp.Render2d
             Console.WriteLine($"Finished in {stopwatch.Elapsed}");
 
             int numThreads = Environment.ProcessorCount;
-            List<Thread> threads = new(numThreads);
+            List<Thread> threads = new();
             int nextId = -1;
             int doneCount = 0;
             var threadRender = () =>
@@ -243,9 +257,10 @@ namespace RenderSharp.Render2d
 
         private RGBA SampleFromBgTexture(SceneInstance scene, in Vec2 screenPos, in FVec2 worldLoc)
         {
-            Vec2 bgTextureInd = scene.BgTextureWorldSize.X == 0 || scene.BgTextureWorldSize.Y == 0 ?
-                Transforms.ScreenToStretchBgTexture(screenPos, Resolution, scene.BgTexture.Size)
-                : Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize);
+            // 
+            Vec2 bgTextureInd = BgTextureTransform(screenPos, worldLoc);
+                //Transforms.ScreenToStretchBgTexture(screenPos, Resolution, scene.BgTexture.Size)
+                //: Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize);
             Scene.BgCoordShader(bgTextureInd, out bgTextureInd, Resolution, scene.Time);
             RGBA outColor = scene.BgTexture[
                 Operations.Mod(bgTextureInd.X, scene.BgTexture.Width),
