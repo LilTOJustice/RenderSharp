@@ -38,6 +38,9 @@
             return new HSV(H, S, V);
         }
 
+        /// <summary>
+        /// Converts an <see cref="HSV"/> color to an <see cref="RGB"/> color.
+        /// </summary>
         public static RGB HSVToRGB(in HSV hsv)
         {
             double H = hsv.H, S = hsv.S, V = hsv.V;
