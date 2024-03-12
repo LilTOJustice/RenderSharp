@@ -79,25 +79,25 @@ namespace RenderSharp
         /// Returns the color expressed in RGBA space.
         /// </summary>
         /// <returns>A new color with red, green, blue and alpha [0, 255].</returns>
-        public RGBA ToRGBA() => new RGBA(ToHSV(), (byte)(A * 255));
+        public RGBA ToRGBA() => new RGBA(ColorFunctions.HSVToRGB(ToHSV()), (byte)(A * 255));
 
         /// <summary>
         /// Returns the color expressed in FRGBA space.
         /// </summary>
         /// <returns>A new color with red, green, blue and alpha [0, 1].</returns>
-        public FRGBA ToFRGBA() => ToRGBA();
+        public FRGBA ToFRGBA() => new FRGBA(ToFRGB(), A);
 
         /// <summary>
         /// Returns the color expressed in RGB space.
         /// </summary>
         /// <returns>A new color with red, green and blue [0, 255], and alpha truncated.</returns>
-        public RGB ToRGB() => ToHSV();
+        public RGB ToRGB() => ColorFunctions.HSVToRGB(ToHSV());
 
         /// <summary>
         /// Returns the color expressed in FRGB space.
         /// </summary>
         /// <returns>A new color with red, green and blue [0, 1], and alpha truncated.</returns>
-        public FRGB ToFRGB() => ToHSV();
+        public FRGB ToFRGB() => ColorFunctions.HSVToRGB(ToHSV()).ToFRGB();
 
         /// <summary>
         /// Returns the color expressed in HSV space.

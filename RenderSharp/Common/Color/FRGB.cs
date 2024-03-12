@@ -1,5 +1,4 @@
 ﻿using MathSharp;
-using System.Security.Cryptography;
 
 namespace RenderSharp
 {
@@ -76,25 +75,25 @@ namespace RenderSharp
         /// Returns the color expressed in RGBA space.
         /// </summary>
         /// <returns>A new color with values scaled by 255, and an additional alpha 255.</returns>
-        public RGBA ToRGBA() => ToRGB();
+        public RGBA ToRGBA() => new RGBA((byte)(R * 255), (byte)(G * 255), (byte)(B * 255), 255);
 
         /// <summary>
         /// Returns the color expressed in FRGBA space.
         /// </summary>
         /// <returns>A new color with the same values, and an additional alpha 1.</returns>
-        public FRGBA ToFRGBA() => ToRGB();
+        public FRGBA ToFRGBA() => new FRGBA(R, G, B, 1d);
 
         /// <summary>
         /// Returns the color expressed in HSV space.
         /// </summary>
         /// <returns>A new color with hue [0, 360], saturation and value [0, 1].</returns>
-        public HSV ToHSV() => ToRGB();
+        public HSV ToHSV() => ColorFunctions.RGBToHSV(ToRGB());
 
         /// <summary>
         /// Returns the color expressed in HSVA space.
         /// </summary>
         /// <returns>A new color with hue [0, 360], saturation and value [0, 1], and an additional alpha 1.</returns>
-        public HSVA ToHSVA() => ToRGB();
+        public HSVA ToHSVA() => new HSVA(ToHSV(), 1d);
 
         /// <inheritdoc cref="ToRGB"/>
         public static implicit operator RGB(in FRGB rgbf) => rgbf.ToRGB();
