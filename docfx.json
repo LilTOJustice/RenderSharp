@@ -39,6 +39,8 @@
       "_appName": "RenderSharp",
       "_appTitle": "RenderSharp",
       "_enableSearch": true,
+      "_appLogoPath": "icon.png"
+      "_appFaviconPath": "icon.png"
       "pdf": true
     }
   }
