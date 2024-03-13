@@ -26,7 +26,7 @@
     "resource": [
       {
         "files": [
-          "images/**"
+          "resource/**"
         ]
       }
     ],
@@ -39,8 +39,8 @@
       "_appName": "RenderSharp",
       "_appTitle": "RenderSharp",
       "_enableSearch": true,
-      "_appLogoPath": "icon.png"
-      "_appFaviconPath": "icon.png"
+      "_appLogoPath": "resource/icon.png",
+      "_appFaviconPath": "resource/icon.ico",
       "pdf": true
     }
   }
