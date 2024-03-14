@@ -62,7 +62,7 @@ namespace RenderSharp.Render2d
                     (Vec2 screenPos, FVec2 worldLoc)
                     => Transforms.ScreenToStretchBgTexture(screenPos, Resolution, scene.BgTexture.Size)) :
                 new Func<Vec2, FVec2, Vec2>(
-                    (Vec2 screenPos, FVec2 worldLoc) => Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize));
+                    (Vec2 screenPos, FVec2 worldLoc) => Transforms.WorldToBgTexture(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize));
         }
 
         /// <inheritdoc cref="Renderer"/>
@@ -82,7 +82,7 @@ namespace RenderSharp.Render2d
                     (Vec2 screenPos, FVec2 worldLoc)
                     => Transforms.ScreenToStretchBgTexture(screenPos, Resolution, scene.BgTexture.Size)) :
                 new Func<Vec2, FVec2, Vec2>(
-                    (Vec2 screenPos, FVec2 worldLoc) => Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize));
+                    (Vec2 screenPos, FVec2 worldLoc) => Transforms.WorldToBgTexture(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize));
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace RenderSharp.Render2d
 
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
 
-            FVec2 worldLoc = Transforms.ScreenToWorld2(
+            FVec2 worldLoc = Transforms.ScreenToWorld(
                 Resolution,
                 AspectRatio,
                 screenPos,
@@ -274,13 +274,13 @@ namespace RenderSharp.Render2d
         private RGBA SampleFromActor(SceneInstance scene, Actor actor, in RGBA inColor, in FVec2 worldLoc)
         {
             FVec2 actorLoc;
-            if (!Transforms.WorldToActor2(worldLoc, actor.Position, actor.Size, actor.Rotation, out actorLoc))
+            if (!Transforms.WorldToActor(worldLoc, actor.Position, actor.Size, actor.Rotation, out actorLoc))
             {
                 return inColor;
             }
 
             Vec2 textureInd;
-            if (!Transforms.ActorToTexture2(actorLoc, actor.Size, actor.Texture.Size, out textureInd))
+            if (!Transforms.ActorToTexture(actorLoc, actor.Size, actor.Texture.Size, out textureInd))
             {
                 return inColor;
             }
