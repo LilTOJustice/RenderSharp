@@ -4,7 +4,8 @@ using System.Diagnostics;
 namespace RenderSharp.Render3d
 {
     /// <summary>
-    /// Renderer for 2d scenes (<see cref="Scene"/>). Used for rendering scenes into <see cref="Frame"/>s or <see cref="Movie"/>s.
+    /// NOT IMPLEMENTED YET.
+    /// Renderer for 3d scenes (<see cref="Scene"/>). Used for rendering scenes into <see cref="Frame"/>s or <see cref="Movie"/>s.
     /// </summary>
     public class Renderer
     {
