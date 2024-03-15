@@ -15,12 +15,12 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// World space width of the actor.
         /// </summary>
-        public double Width { get { return Size.X; } set { Size = new FVec2(Size.X, value); } }
+        public double Width { get { return Size.X; } }
 
         /// <summary>
         /// World space height of the actor.
         /// </summary>
-        public double Height { get { return Size.Y; } set { Size = new FVec2(Size.X, value); } }
+        public double Height { get { return Size.Y; } }
         
         /// <summary>
         /// World space position of the actor.

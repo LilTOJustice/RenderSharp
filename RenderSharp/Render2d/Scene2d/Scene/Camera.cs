@@ -29,11 +29,11 @@ namespace RenderSharp.Render2d
             Rotation = 0;
         }
 
-        internal Camera(Camera other)
+        internal Camera(Camera camera)
         {
-            Center = other.Center;
-            Zoom = other.Zoom;
-            Rotation = other.Rotation;
+            Center = camera.Center;
+            Zoom = camera.Zoom;
+            Rotation = camera.Rotation;
         }
 
         internal Camera(in FVec2 center, double zoom, double rotation)

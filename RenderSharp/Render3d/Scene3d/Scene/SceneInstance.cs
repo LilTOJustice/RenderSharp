@@ -1,6 +1,6 @@
 ﻿using MathSharp;
 
-namespace RenderSharp.Render2d
+namespace RenderSharp.Render3d
 {
     /// <summary>
     /// A single instance of a <see cref="Scene"/>. It stores deep copies of
@@ -31,24 +31,12 @@ namespace RenderSharp.Render2d
         /// </summary>
         private Dictionary<string, Camera> Cameras { get; }
 
-        /// <inheritdoc cref="Scene.BgTexture"/>
-        public Texture BgTexture { get; set; }
-
-        /// <inheritdoc cref="Scene.BgTextureWorldSize"/>
-        public FVec2 BgTextureWorldSize { get; set; }
-        
-        /// <inheritdoc cref="Scene.BgFragShader"/>
-        public FragShader BgFragShader { get; set; }
-
-        /// <inheritdoc cref="Scene.BgCoordShader"/>
-        public CoordShader BgCoordShader { get; set; }
-
         /// <summary>
         /// Think function to be run for the next instance.
         /// </summary>
         public Scene.ThinkFunc Think { get; private set; }
 
-        internal ActorIndex ActorIndex { get; set; }
+        internal Dictionary<string, Actor> Actors { get; set; }
 
         internal SceneInstance(Scene scene)
         {
@@ -56,14 +44,11 @@ namespace RenderSharp.Render2d
                 scene.Cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value))));
             primaryCameraKey = Cameras.Keys.First();
             Camera = Cameras[primaryCameraKey];
-            ActorIndex = new ActorIndex(scene.ActorIndex);
+            Actors = new Dictionary<string, Actor>(
+                scene.Actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy())));
             Time = 0;
             Index = 0;
             Think = scene.Think;
-            BgTexture = scene.BgTexture;
-            BgTextureWorldSize = scene.BgTextureWorldSize;
-            BgFragShader = scene.BgFragShader;
-            BgCoordShader = scene.BgCoordShader;
         }
 
         internal SceneInstance(SceneInstance scene, double time, int index)
@@ -72,40 +57,21 @@ namespace RenderSharp.Render2d
                 scene.Cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value))));
             primaryCameraKey = Cameras.Keys.First();
             Camera = Cameras[primaryCameraKey];
-            ActorIndex = new ActorIndex(scene.ActorIndex);
+            Actors = new Dictionary<string, Actor>(
+                scene.Actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy())));
             Time = time;
             Index = index;
             Think = scene.Think;
-            BgTexture = scene.BgTexture;
-            BgTextureWorldSize = scene.BgTextureWorldSize;
-            BgFragShader = scene.BgFragShader;
-            BgCoordShader = scene.BgCoordShader;
         }
 
         /// <summary>
-        /// Removes the actor from all planes that have it in <see cref="ActorIndex"/>.
+        /// Removes the actor from all planes that have it in <see cref="Actors"/>.
         /// </summary>
         /// <param name="actorId">Id for looking up the actor.</param>
         /// <returns>Whether the actor could be removed.</returns>
         public bool RemoveActor(string actorId)
         {
-            foreach (Dictionary<string, Actor> plane in ActorIndex)
-            {
-                if (plane.ContainsKey(actorId))
-                {
-                    plane.Remove(actorId);
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Clears all active shaders on the scene background.
-        /// </summary>
-        public void ClearShaders()
-        {
-            BgFragShader = (FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
+            return Actors.Remove(actorId);
         }
 
         /// <summary>
@@ -120,12 +86,11 @@ namespace RenderSharp.Render2d
         /// Retrieves an actor from the scene.
         /// </summary>
         /// <param name="actorId">Id of the actor to retrieve.</param>
-        /// <returns></returns>
         public Actor this[string actorId]
         {
             get
             {
-                return ActorIndex[actorId].Item2;
+                return Actors[actorId];
             }
         }
 
@@ -159,36 +124,13 @@ namespace RenderSharp.Render2d
         }
 
         /// <summary>
-        /// Gets the plane that the actor is in.
-        /// </summary>
-        /// <param name="actorId">Id of the actor.</param>
-        /// <returns>The plane the actor resides in, if it exists.</returns>
-        public int GetActorPlane(string actorId)
-        {
-            return ActorIndex[actorId].Item1;
-        }
-
-        /// <summary>
-        /// Move the actor from its current plane to another.
-        /// </summary>
-        /// <param name="actorId">Actor to move.</param>
-        /// <param name="plane">Plane to move to.</param>
-        public void MoveActor(string actorId, int plane)
-        {
-            (int oldPlane, Actor actor) = ActorIndex[actorId];
-            ActorIndex[plane].Add(actorId, actor);
-            ActorIndex[oldPlane].Remove(actorId);
-        }
-
-        /// <summary>
         /// Add a new actor to the scene.
         /// </summary>
         /// <param name="actor">Actor to add (build with <see cref="ActorBuilder"/>).</param>
         /// <param name="actorId">Unique Id for the actor.</param>
-        /// <param name="plane">Plane for the actor to reside in.</param>
-        public void AddActor(ActorBuilder actor, string actorId, int plane)
+        public void AddActor(ActorBuilder actor, string actorId)
         {
-            ActorIndex[plane].Add(actorId, actor.Build());
+            Actors.Add(actorId, actor.Build());
         }
 
         /// <summary>
@@ -199,16 +141,6 @@ namespace RenderSharp.Render2d
         public Actor GetActor(string actorId)
         {
             return this[actorId];
-        }
-
-        /// <summary>
-        /// Gets an actor as <see cref="Line"/>.
-        /// </summary>
-        /// <param name="actorId">Id of the actor.</param>
-        /// <returns>An actor as <see cref="Line"/> type.</returns>
-        public Line GetLine(string actorId)
-        {
-            return (Line)this[actorId];
         }
     }
 }
