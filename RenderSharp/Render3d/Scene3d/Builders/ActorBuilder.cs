@@ -4,34 +4,34 @@ namespace RenderSharp.Render3d
 {
     /// <summary>
     /// Builder for the <see cref="Actor"/> class.
-    /// Used for <see cref="OptionalsStep.WithActor(ActorBuilder, string, int)"/> within <see cref="SceneBuilder"/>.
+    /// Used for <see cref="OptionalsStep.WithActor(ActorBuilder, string)"/> within <see cref="SceneBuilder"/>.
     /// </summary>
     public class ActorBuilder
     {
-        private FVec2? size;
-        private double rotation;
-        private FVec2? position;
+        private FVec3? boundingBoxSize;
+        private AVec3? rotation;
+        private FVec3? position;
         private RGBA? color;
         private Texture? texture;
         private FragShader? fragShader;
         private CoordShader? coordShader;
 
-        /// <inheritdoc cref="Actor.Size"/>
-        public ActorBuilder WithSize(in FVec2 size)
+        /// <inheritdoc cref="Actor.BoundingBoxSize"/>
+        public ActorBuilder WithBoundingBoxSize(in FVec3 boundingBoxSize)
         {
-            this.size = size;
+            this.boundingBoxSize = boundingBoxSize;
             return this;
         }
 
         /// <inheritdoc cref="Actor.Rotation"/>
-        public ActorBuilder WithRotation(double rotation)
+        public ActorBuilder WithRotation(AVec3 rotation)
         {
             this.rotation = rotation;
             return this;
         }
 
         /// <inheritdoc cref="Actor.Position"/>
-        public ActorBuilder WithPosition(in FVec2 position)
+        public ActorBuilder WithPosition(in FVec3 position)
         {
             this.position = position;
             return this;
@@ -71,12 +71,13 @@ namespace RenderSharp.Render3d
 
         internal Actor Build()
         {
-            size ??= new FVec2(1, 1);
+            boundingBoxSize ??= new FVec3(1, 1, 1);
+            rotation ??= new AVec3();
             texture ??= new Texture(1, 1, color);
-            position ??= new FVec2();
+            position ??= new FVec3();
             fragShader ??= ((FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             coordShader ??= ((Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; });
-            return new Actor((FVec2)size, rotation, (FVec2)position, texture, fragShader, coordShader);
+            return new Actor((FVec3)boundingBoxSize, (AVec3)rotation, (FVec3)position, texture, fragShader, coordShader);
         }
     }
 }

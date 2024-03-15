@@ -43,19 +43,14 @@ namespace RenderSharp.Render3d
         private int framerate;
         private double duration;
         private Dictionary<string, Camera> cameras;
-        private RGBA? bgColor;
-        private Texture? bgTexture;
-        private FVec2? bgTextureWorldSize;
-        private FragShader? bgFragShader;
-        private CoordShader? bgCoordShader;
         private Scene.ThinkFunc? think;
-        private ActorIndex actorIndex;
+        private Dictionary<string, Actor> actors;
 
         internal OptionalsStep(int framerate, double duration)
         {
             this.framerate = framerate;
             this.duration = duration;
-            actorIndex = new ActorIndex();
+            actors = new Dictionary<string, Actor>();
             cameras = new Dictionary<string, Camera>();
         }
 
@@ -64,54 +59,12 @@ namespace RenderSharp.Render3d
         /// If no cameras are added, a default camera will be created and named "main".
         /// </summary>
         /// <param name="center">Center of the camera in world space.</param>
-        /// <param name="zoom">Zoom of the camera.</param>
+        /// <param name="fov">Field of view of the camera.</param>
         /// <param name="rotation">Rotation of the camera in world space.</param>
         /// <param name="name">Name of the camera.</param>
-        public OptionalsStep WithCamera(string name, in FVec2 center, double zoom = 1, double rotation = 0)
+        public OptionalsStep WithCamera(string name, in FVec3 center, in FVec2? fov = null, in AVec3? rotation = null)
         {
-            cameras.Add(name, new Camera(center, zoom, rotation));
-            return this;
-        }
-
-        /// <summary>
-        /// The fill color of the scene's background if there is no <see cref="Scene.BgTexture"/>.
-        /// </summary>
-        /// <param name="bgColor">Background color.</param>
-        public OptionalsStep WithBgColor(in RGBA bgColor)
-        {
-            this.bgColor = bgColor;
-            return this;
-        }
-
-        /// <inheritdoc cref="Scene.BgTexture"/>
-        /// <param name="bgTexture"></param>
-        public OptionalsStep WithBgTexture(Texture bgTexture)
-        {
-            this.bgTexture = bgTexture;
-            return this;
-        }
-
-        /// <inheritdoc cref="Scene.BgTextureWorldSize"/>
-        /// <param name="bgTextureWorldSize">Size of the texture in world space.
-        /// If excluded or either component is 0, the texture will fill the screen.</param>
-        /// <returns></returns>
-        public OptionalsStep WithBgTextureWorldSize(in FVec2 bgTextureWorldSize)
-        {
-            this.bgTextureWorldSize = bgTextureWorldSize;
-            return this;
-        }
-
-        /// <inheritdoc cref="Scene.BgFragShader"/>
-        public OptionalsStep WithBgShader(FragShader bgShader)
-        {
-            bgFragShader += bgShader;
-            return this;
-        }
-
-        /// <inheritdoc cref="Scene.BgCoordShader"/>
-        public OptionalsStep WithBgShader(CoordShader bgShader)
-        {
-            bgCoordShader += bgShader;
+            cameras.Add(name, new Camera(center, fov ?? new FVec2(), rotation ?? new AVec3()));
             return this;
         }
 
@@ -127,24 +80,9 @@ namespace RenderSharp.Render3d
         /// </summary>
         /// <param name="actorBuilder">Builder to modify and pass.</param>
         /// <param name="actorId">Id of the actor for accessing it by <see cref="SceneInstance.this[string]"/>.</param>
-        /// <param name="plane">Plane in the scene to place the actor in.</param>
-        public OptionalsStep WithActor(ActorBuilder actorBuilder, string actorId, int plane = 0)
+        public OptionalsStep WithActor(ActorBuilder actorBuilder, string actorId)
         {
-            actorIndex.EnsurePlaneExists(plane);
-            actorIndex[plane].Add(actorId, actorBuilder.Build());
-            return this;
-        }
-
-        /// <summary>
-        /// Create a <see cref="LineBuilder"/> and add properties to the line here.
-        /// </summary>
-        /// <param name="lineBuilder">Builder to modify and pass.</param>
-        /// <param name="actorId">Id of the actor for accessing it by <see cref="SceneInstance.this[string]"/>.</param>
-        /// <param name="plane">Plane in the scene to place the line in.</param>
-        public OptionalsStep WithActor(LineBuilder lineBuilder, string actorId, int plane = 0)
-        {
-            actorIndex.EnsurePlaneExists(plane);
-            actorIndex[plane].Add(actorId, lineBuilder.Build());
+            actors.Add(actorId, actorBuilder.Build());
             return this;
         }
 
@@ -159,10 +97,6 @@ namespace RenderSharp.Render3d
                 cameras.Add("main", new Camera());
             }
 
-            bgTexture ??= new Texture(1, 1, bgColor);
-            bgTextureWorldSize ??= new FVec2();
-            bgFragShader ??= (FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; };
-            bgCoordShader ??= (Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; };
             think ??= (SceneInstance scene, double time, double dt) => { };
 
             return new Scene(
@@ -170,12 +104,9 @@ namespace RenderSharp.Render3d
                 duration,
                 new Dictionary<string, Camera>(
                     cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value)))),
-                bgTexture,
-                (FVec2)bgTextureWorldSize,
-                bgFragShader,
-                bgCoordShader,
                 think,
-                new ActorIndex(actorIndex));
+                new Dictionary<string, Actor>(
+                    actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy()))));
         }
     }
 

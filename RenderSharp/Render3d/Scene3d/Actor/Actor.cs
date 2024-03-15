@@ -8,24 +8,24 @@ namespace RenderSharp.Render3d
     public class Actor
     {
         /// <summary>
-        /// World space collision box size of the actor.
+        /// World space bounding box size of the actor.
         /// </summary>
-        public FVec3 CollisionBoxSize { get; set; }
+        public FVec3 BoundingBoxSize { get; set; }
         
         /// <summary>
         /// World space width of the actor's collision box.
         /// </summary>
-        public double Width { get { return CollisionBoxSize.X; } }
+        public double Width { get { return BoundingBoxSize.X; } }
 
         /// <summary>
         /// World space height of the actor's collision box.
         /// </summary>
-        public double Height { get { return CollisionBoxSize.Y; } }
+        public double Height { get { return BoundingBoxSize.Y; } }
 
         /// <summary>
         /// World space depth of the actor's collision box.
         /// </summary>
-        public double Depth { get { return CollisionBoxSize.Z; } }
+        public double Depth { get { return BoundingBoxSize.Z; } }
         
         /// <summary>
         /// World space position of the actor's center.
@@ -62,7 +62,7 @@ namespace RenderSharp.Render3d
         {
             Texture = texture;
             Position = position;
-            CollisionBoxSize = size;
+            BoundingBoxSize = size;
             Rotation = rotation;
             FragShader = fragShader;
             CoordShader = coordShader;
@@ -100,7 +100,7 @@ namespace RenderSharp.Render3d
         public virtual Actor Copy()
         {
             return new Actor(
-                CollisionBoxSize,
+                BoundingBoxSize,
                 Rotation,
                 Position,
                 Texture,

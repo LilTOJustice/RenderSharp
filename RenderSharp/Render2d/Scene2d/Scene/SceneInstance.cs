@@ -120,7 +120,6 @@ namespace RenderSharp.Render2d
         /// Retrieves an actor from the scene.
         /// </summary>
         /// <param name="actorId">Id of the actor to retrieve.</param>
-        /// <returns></returns>
         public Actor this[string actorId]
         {
             get

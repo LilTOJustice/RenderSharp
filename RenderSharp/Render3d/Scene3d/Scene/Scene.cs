@@ -3,7 +3,7 @@
 namespace RenderSharp.Render3d
 {
     /// <summary>
-    /// 2d scene for rendering. Created using a <see cref="SceneBuilder"/>.
+    /// 3d scene for rendering. Created using a <see cref="SceneBuilder"/>.
     /// </summary>
     public class Scene
     {
@@ -25,38 +25,22 @@ namespace RenderSharp.Render3d
         
         internal double DeltaTime { get; private set; } 
         
-        internal Texture BgTexture { get; set; }
-
-        internal FVec2 BgTextureWorldSize { get; set; }
-        
-        internal FragShader BgFragShader { get; set; }
-
-        internal CoordShader BgCoordShader { get; set; }
-        
         internal ThinkFunc Think { get; set; }
 
-        internal ActorIndex ActorIndex { get; set; }
+        internal Dictionary<string, Actor> Actors { get; set; }
 
         internal Scene(
             int framerate,
             double duration,
             Dictionary<string, Camera> cameras,
-            Texture bgTexture,
-            FVec2 bgTextureWorldSize,
-            FragShader bgFragShader,
-            CoordShader bgCoordShader,
             ThinkFunc think,
-            ActorIndex actorIndex)
+            Dictionary<string, Actor> actors)
         {
             Framerate = framerate;
             Duration = duration;
             Cameras = cameras;
-            BgTexture = bgTexture;
-            BgTextureWorldSize = bgTextureWorldSize;
-            BgFragShader = bgFragShader;
-            BgCoordShader = bgCoordShader;
             Think = think;
-            ActorIndex = actorIndex;
+            Actors = actors;
 
             TimeSeq = new List<double>();
             for (int i = 0; i < framerate * duration; i++)
