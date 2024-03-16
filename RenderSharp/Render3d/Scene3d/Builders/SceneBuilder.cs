@@ -60,11 +60,12 @@ namespace RenderSharp.Render3d
         /// </summary>
         /// <param name="center">Center of the camera in world space.</param>
         /// <param name="fov">Field of view of the camera.</param>
+        /// <param name="focalLength">Focal length (distance from the near plane) in world space of the camera.</param>
         /// <param name="rotation">Rotation of the camera in world space.</param>
         /// <param name="name">Name of the camera.</param>
-        public OptionalsStep WithCamera(string name, in FVec3 center, in FVec2? fov = null, in AVec3? rotation = null)
+        public OptionalsStep WithCamera(string name, in FVec3 center, in FVec2? fov = null, double focalLength = 1, in AVec3? rotation = null)
         {
-            cameras.Add(name, new Camera(center, fov ?? new FVec2(), rotation ?? new AVec3()));
+            cameras.Add(name, new Camera(center, focalLength, fov ?? new FVec2(Math.PI / 2, Math.PI / 2), rotation ?? new AVec3()));
             return this;
         }
 

@@ -1,4 +1,5 @@
 ﻿using MathSharp;
+using RenderSharp.Render3d.Renderer3d;
 
 namespace RenderSharp.Render3d
 {
@@ -51,6 +52,14 @@ namespace RenderSharp.Render3d
         /// Shader applied to the actor space coordinates before being passed to the fragment shader.
         /// </summary>
         public CoordShader CoordShader { get; set; }
+
+        internal Triangle[] Triangles
+        {
+            get
+            {
+                return new Triangle[0];
+            }
+        }
 
         internal Actor(
             in FVec3 size,

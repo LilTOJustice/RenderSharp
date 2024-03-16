@@ -1,4 +1,5 @@
 ﻿using MathSharp;
+using RenderSharp.Render3d.Renderer3d;
 using System.Diagnostics;
 
 namespace RenderSharp.Render3d
@@ -81,7 +82,7 @@ namespace RenderSharp.Render3d
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the index is negative or too large for the scene's duration.</exception>
         public Frame RenderFrame(int index = 0)
         {
-            if (index < 0 || index >= Scene.TimeSeq.Count)
+            if (index < 0 || (index >= Scene.TimeSeq.Count && Scene.TimeSeq.Count != 0))
             {
                 throw new ArgumentOutOfRangeException("Index argument should be >= 0 and <" +
                     " the length of the scene's time sequence.");
@@ -200,7 +201,7 @@ namespace RenderSharp.Render3d
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    output[x, y] = RenderPixel(scene, x, y);
+                    output[x, y] = RenderPixel(scene, scene.Triangles, x, y);
                 }
             }
 
@@ -214,15 +215,25 @@ namespace RenderSharp.Render3d
             return output;
         }
 
-        private RGBA RenderPixel(SceneInstance scene, int x, int y)
+        private RGBA RenderPixel(SceneInstance scene, List<Triangle> triangles, int x, int y)
         {
             Vec2 screenPos = new(x, y);
+            FVec2 screenPosNorm = (FVec2)screenPos * 2 / Resolution - new FVec2(1, 1);
+            screenPosNorm.Y *= -1;
+            double lx = scene.Camera.FocalLength * Math.Tan(scene.Camera.Fov.X / 2);
+            double ly = scene.Camera.FocalLength * Math.Tan(scene.Camera.Fov.Y / 2);
+            FVec3 cameraDir = new FVec3(1, 0, 0) * scene.Camera.FocalLength; //.Rotate(scene.Camera.Rotation);
+            FVec3 worldVec = scene.Camera.Position + cameraDir + new FVec3(0, ly * screenPosNorm.Y, lx * screenPosNorm.X);
 
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
 
             RGBA outColor = new();
-            
+
             // Todo: Actually render the damn thing.
+            foreach (Triangle triangle in triangles)
+            {
+                outColor += triangle.Sample(worldVec);
+            }
 
             return ScreenSpaceShaderPass(scene, screenPos, outColor);
         }
