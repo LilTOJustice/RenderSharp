@@ -16,6 +16,9 @@ namespace RenderSharpExample
             // Create scene
             Scene scene = SceneBuilder
                 .MakeStatic()
+                .WithCamera("main",
+                new FVec3(0, 0, 0),
+                new FVec2(Math.PI / 2, Math.PI / 2))
                 .Build();
 
             // Create renderer

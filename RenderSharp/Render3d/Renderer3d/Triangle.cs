@@ -5,16 +5,10 @@ namespace RenderSharp.Render3d.Renderer3d
     internal struct Triangle
     {
         FVec3 v0, v1, v2;
-
-        private FVec3 Normal
-        {
-            get
-            {
-                FVec3 right = v2 - v0;
-                FVec3 left = v1 - v0;
-                return right.Cross(left);
-            }
-        }
+        FVec3 v01, v12, v20;
+        FVec3 normal;
+        FVec3 unitNorm;
+        double d;
 
         // v0 , v1, v2 are the vertices of the triangle, ordered counter-clockwise
         public Triangle(FVec3 v0, FVec3 v1, FVec3 v2)
@@ -22,19 +16,25 @@ namespace RenderSharp.Render3d.Renderer3d
             this.v0 = v0;
             this.v1 = v1;
             this.v2 = v2;
+            v01 = v1 - v0;
+            v12 = v2 - v1;
+            v20 = v0 - v2;
+            normal = (v2 - v0).Cross(v01);
+            unitNorm = normal.Norm();
+            d = -unitNorm.Dot(v0);
         }
 
         private bool Within(FVec3 test)
         {
-            FVec3 normal = Normal;
+            // Check if we are facing the triangle side-on
             if (normal.Dot(test) == 0)
             {
                 return false;
             }
 
-            FVec3 unitNorm = Normal.Norm();
-            double d = -unitNorm.Dot(v0);
             double t = - d / test.Dot(unitNorm);
+
+            // Check if the intersection is behind the near plane.
             if (t < 0)
             {
                 return false;
@@ -42,13 +42,9 @@ namespace RenderSharp.Render3d.Renderer3d
             
             FVec3 intersection = test * t;
 
-            double one = (v1 - v0).Cross(intersection - v0).Dot(unitNorm);
-            double two = (v2 - v1).Cross(intersection - v1).Dot(unitNorm);
-            double three = (v0 - v2).Cross(intersection - v2).Dot(unitNorm);
-
-            return (v1 - v0).Cross(intersection - v0).Dot(unitNorm) <= 0 &&
-                   (v2 - v1).Cross(intersection - v1).Dot(unitNorm) <= 0 &&
-                   (v0 - v2).Cross(intersection - v2).Dot(unitNorm) <= 0;
+            return v01.Cross(intersection - v0).Dot(unitNorm) <= 0 &&
+                   v12.Cross(intersection - v1).Dot(unitNorm) <= 0 &&
+                   v20.Cross(intersection - v2).Dot(unitNorm) <= 0;
         }
 
         public RGBA Sample(FVec3 planeNormal)
