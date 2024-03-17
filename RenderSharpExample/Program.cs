@@ -1,5 +1,4 @@
 ﻿using MathSharp;
-using RenderSharp;
 using RenderSharp.Render3d;
 
 namespace RenderSharpExample
@@ -18,7 +17,12 @@ namespace RenderSharpExample
                 .MakeStatic()
                 .WithCamera("main",
                 new FVec3(0, 0, 0),
-                new FVec2(Math.PI / 2, Math.PI / 2))
+                fov: new DVec2(90, 90))
+                .WithActor("triangle", new TriangleActorBuilder()
+                    .WithTriangle(new Triangle(
+                        new FVec3(2, -Math.Sqrt(3) / 4, -0.5),
+                        new FVec3(2, -Math.Sqrt(3) / 4, 0.5),
+                        new FVec3(2, Math.Sqrt(3) / 4, 0))))
                 .Build();
 
             // Create renderer

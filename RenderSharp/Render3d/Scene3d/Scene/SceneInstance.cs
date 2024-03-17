@@ -1,7 +1,4 @@
-﻿using MathSharp;
-using RenderSharp.Render3d.Renderer3d;
-
-namespace RenderSharp.Render3d
+﻿namespace RenderSharp.Render3d
 {
     /// <summary>
     /// A single instance of a <see cref="Scene"/>. It stores deep copies of
@@ -38,15 +35,6 @@ namespace RenderSharp.Render3d
         public Scene.ThinkFunc Think { get; private set; }
 
         internal Dictionary<string, Actor> Actors { get; set; }
-
-        internal List<Triangle> Triangles
-        {
-            get
-            {
-                //return Actors.Values.SelectMany(actor => actor.Triangles).ToList();
-                return new List<Triangle>() { new Triangle(new FVec3(2, -Math.Sqrt(3) / 4, -0.5), new FVec3(2, -Math.Sqrt(3) / 4, 0.5), new FVec3(2, Math.Sqrt(3) / 4, 0)) };
-            }
-        }
 
         internal SceneInstance(Scene scene)
         {

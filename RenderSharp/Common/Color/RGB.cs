@@ -114,7 +114,7 @@ namespace RenderSharp
         public RGB Cross(in RGB rhs) => IVec3<RGB, byte, double, FVec3>.ICross(this, rhs);
 
         /// <inheritdoc cref="IVec3{T, T, T, T}.Rotate"/>
-        public FVec3 Rotate(in AVec3 angle) => IVec3<RGB, byte, double, FVec3>.IRotate(this, angle);
+        public FVec3 Rotate(in RVec3 angle) => IVec3<RGB, byte, double, FVec3>.IRotate(this, angle);
 
         /// <inheritdoc cref="IVec3{T, T, T, T}.Mag2"/>
         public byte Mag2() => IVec3<RGB, byte, double, FVec3>.IMag2(this);

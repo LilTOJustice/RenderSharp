@@ -1,5 +1,4 @@
 ﻿using MathSharp;
-using RenderSharp.Render3d.Renderer3d;
 using System.Diagnostics;
 
 namespace RenderSharp.Render3d
@@ -201,7 +200,7 @@ namespace RenderSharp.Render3d
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    output[x, y] = RenderPixel(scene, scene.Triangles, x, y);
+                    output[x, y] = RenderPixel(scene, x, y);
                 }
             }
 
@@ -215,24 +214,16 @@ namespace RenderSharp.Render3d
             return output;
         }
 
-        private RGBA RenderPixel(SceneInstance scene, List<Triangle> triangles, int x, int y)
+        private RGBA RenderPixel(SceneInstance scene, int x, int y)
         {
             Vec2 screenPos = new(x, y);
-            FVec2 screenPosNorm = (FVec2)screenPos * 2 / Resolution - new FVec2(1, 1);
-            screenPosNorm.Y *= -1;
-            double lx = scene.Camera.FocalLength * Math.Tan(scene.Camera.Fov.X / 2);
-            double ly = scene.Camera.FocalLength * Math.Tan(scene.Camera.Fov.Y / 2);
-            FVec3 cameraDir = new FVec3(1, 0, 0) * scene.Camera.FocalLength; //.Rotate(scene.Camera.Rotation);
-            FVec3 worldVec = scene.Camera.Position + cameraDir + new FVec3(0, ly * screenPosNorm.Y, lx * screenPosNorm.X);
-
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
-
+            FVec3 worldVec = Transforms.ScreenToWorldVec(screenPos, Resolution, scene.Camera);
             RGBA outColor = new();
 
-            // Todo: Actually render the damn thing.
-            foreach (Triangle triangle in triangles)
+            foreach (Actor actor in scene.Actors.Values)
             {
-                outColor += triangle.Sample(worldVec);
+                outColor = ColorFunctions.AlphaBlend(actor.Sample(worldVec), outColor);
             }
 
             return ScreenSpaceShaderPass(scene, screenPos, outColor);

@@ -111,7 +111,7 @@ namespace RenderSharp
         public static implicit operator HSVA(in FRGB rgbf) => rgbf.ToHSVA();
 
         /// <inheritdoc cref="IVec3{T, T, T, T}.Rotate"/>
-        public FRGB Rotate(in AVec3 angle) => IVec3<FRGB, double, double, FRGB>.IRotate(this, angle);
+        public FRGB Rotate(in RVec3 angle) => IVec3<FRGB, double, double, FRGB>.IRotate(this, angle);
 
         /// <inheritdoc cref="IVec3{T, T, T, T}.Mag2"/>
         public double Mag2() => IVec3<FRGB, double, double, FRGB>.IMag2(this);

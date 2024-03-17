@@ -1,16 +1,23 @@
 ﻿using MathSharp;
 
-namespace RenderSharp.Render3d.Renderer3d
+namespace RenderSharp.Render3d
 {
-    internal struct Triangle
+    /// <summary>
+    /// Represents a single triangle in 3D space.
+    /// </summary>
+    public struct Triangle
     {
-        FVec3 v0, v1, v2;
+        internal readonly FVec3 v0, v1, v2;
         FVec3 v01, v12, v20;
         FVec3 normal;
         FVec3 unitNorm;
         double d;
 
         // v0 , v1, v2 are the vertices of the triangle, ordered counter-clockwise
+        /// <summary>
+        /// Constructs a triangle with vertices v0, v1, and v2.
+        /// <b>The vertices should be ordered counter-clockwise.</b>
+        /// </summary>
         public Triangle(FVec3 v0, FVec3 v1, FVec3 v2)
         {
             this.v0 = v0;
@@ -26,13 +33,15 @@ namespace RenderSharp.Render3d.Renderer3d
 
         private bool Within(FVec3 test)
         {
+            double dot = test.Dot(unitNorm);
+
             // Check if we are facing the triangle side-on
-            if (normal.Dot(test) == 0)
+            if (dot == 0)
             {
                 return false;
             }
 
-            double t = - d / test.Dot(unitNorm);
+            double t = - d / dot;
 
             // Check if the intersection is behind the near plane.
             if (t < 0)
@@ -47,9 +56,9 @@ namespace RenderSharp.Render3d.Renderer3d
                    v20.Cross(intersection - v2).Dot(unitNorm) <= 0;
         }
 
-        public RGBA Sample(FVec3 planeNormal)
+        internal RGBA Sample(in FVec3 worldVec)
         {
-            return Within(planeNormal) ? new RGBA(255, 255, 255, 255) : new RGBA(0, 0, 0, 255);
+            return Within(worldVec) ? new RGBA(255, 255, 255, 255) : new RGBA();
         }
     }
 }

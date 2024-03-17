@@ -20,19 +20,19 @@ namespace RenderSharp.Render3d
         /// <summary>
         /// Fov of the camera.
         /// </summary>
-        public FVec2 Fov { get; set; }
+        public RVec2 Fov { get; set; }
 
         /// <summary>
         /// Rotation of the camera in radians.
         /// </summary>
-        public AVec3 Rotation { get; set; }
+        public RVec3 Rotation { get; set; }
 
         internal Camera()
         {
             Position = new FVec3();
             FocalLength = 1;
-            Fov = new FVec2(Math.PI / 2, Math.PI / 2);
-            Rotation = new AVec3();
+            Fov = new DVec2(90, 90);
+            Rotation = new RVec3();
         }
 
         internal Camera(Camera camera)
@@ -43,7 +43,7 @@ namespace RenderSharp.Render3d
             Rotation = camera.Rotation;
         }
 
-        internal Camera(in FVec3 center, double focalLength, in FVec2 fov, in AVec3 rotation)
+        internal Camera(in FVec3 center, double focalLength, in RVec2 fov, in RVec3 rotation)
         {
             Position = center;
             FocalLength = focalLength;
