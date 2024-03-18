@@ -1,15 +1,14 @@
 ﻿using MathSharp;
-using RenderSharp;
-using RenderSharp.Render2d;
+using RenderSharp.Render3d;
 
 namespace RenderSharpExample
 {
     internal class Program
     {
         static readonly int framerate = 60;
-        static readonly int duration = 3;
-        static readonly int resX = 1200;
-        static readonly int resY = 1200;
+        static readonly int duration = 5;
+        static readonly int resX = 1000;
+        static readonly int resY = 1000;
 
         static void Main()
         {
@@ -18,17 +17,15 @@ namespace RenderSharpExample
                 .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
-                .WithThink(
-                    (SceneInstance scene, double time, double dt) =>
-                    {
-                        scene.Camera.Zoom = 1 + Math.Sin(time);
-                    }
-                )
-                .WithBgTexture(new Texture(resX, resY))
-                .WithBgTextureWorldSize(new FVec2(1, 1))
-                .WithBgShader(ExampleShaders.Multibrot)
-                .WithBgShader(ExampleShaders.WavyX)
-                .WithCamera("main", new FVec2(-0.1, 2))
+                .WithCamera("main",
+                new FVec3(0, 0, 0),
+                fov: new DVec2(90, 90))
+                .WithActor("triangle", new TriangleActorBuilder()
+                    .WithPosition(new FVec3(0, 0, 2))
+                ).WithThink((SceneInstance scene, double time, double dt) =>
+                {
+                    scene["triangle"].Rotation += new RVec3(1 * dt, 2 * dt, 3 * dt);
+                })
                 .Build();
 
             // Create renderer

@@ -115,7 +115,7 @@ namespace RenderSharp
         public HSV Cross(in HSV rhs) => IVec3<HSV, double, double, HSV>.ICross(this, rhs);
 
         /// <inheritdoc cref="IVec3{T, T, T, T}.Rotate"/>
-        public HSV Rotate(in AVec3 angle) => IVec3<HSV, double, double, HSV>.IRotate(this, angle);
+        public HSV Rotate(in RVec3 angle) => IVec3<HSV, double, double, HSV>.IRotate(this, angle);
 
         /// <inheritdoc cref="IVec3{T, T, T, T}.Mag2"/>
         public double Mag2() => IVec3<HSV, double, double, HSV>.IMag2(this);

@@ -1,6 +1,4 @@
-﻿using MathSharp;
-
-namespace RenderSharp.Render3d
+﻿namespace RenderSharp.Render3d
 {
     /// <summary>
     /// A single instance of a <see cref="Scene"/>. It stores deep copies of
@@ -55,7 +53,7 @@ namespace RenderSharp.Render3d
         {
             Cameras = new Dictionary<string, Camera>(
                 scene.Cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value))));
-            primaryCameraKey = Cameras.Keys.First();
+            primaryCameraKey = scene.primaryCameraKey;
             Camera = Cameras[primaryCameraKey];
             Actors = new Dictionary<string, Actor>(
                 scene.Actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy())));

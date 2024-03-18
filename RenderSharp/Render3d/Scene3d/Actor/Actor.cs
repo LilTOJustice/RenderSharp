@@ -35,7 +35,7 @@ namespace RenderSharp.Render3d
         /// <summary>
         /// Rotation of the actor about its center.
         /// </summary>
-        public AVec3 Rotation { get; set; }
+        public RVec3 Rotation { get; set; }
         
         /// <summary>
         /// Texture to render on the actor.
@@ -43,29 +43,22 @@ namespace RenderSharp.Render3d
         public Texture Texture { get; set; }
         
         /// <summary>
-        /// Shader to be applied to the actor's texture.
+        /// Shader to be applied to every rendered pixel of the actor.
         /// </summary>
         public FragShader FragShader { get; set; }
 
-        /// <summary>
-        /// Shader applied to the actor space coordinates before being passed to the fragment shader.
-        /// </summary>
-        public CoordShader CoordShader { get; set; }
-
         internal Actor(
             in FVec3 size,
-            in AVec3 rotation,
+            in RVec3 rotation,
             in FVec3 position,
             Texture texture,
-            FragShader fragShader,
-            CoordShader coordShader)
+            FragShader fragShader)
         {
             Texture = texture;
             Position = position;
             BoundingBoxSize = size;
             Rotation = rotation;
             FragShader = fragShader;
-            CoordShader = coordShader;
         }
 
         /// <summary>
@@ -77,35 +70,31 @@ namespace RenderSharp.Render3d
         }
 
         /// <summary>
-        /// Clears any active coordinate shaders on the actor.
-        /// </summary>
-        public void ClearCoordShaders()
-        {
-            CoordShader = (Vec2 vertIn, out Vec2 vertOut, Vec2 size, double time) => { vertOut = vertIn; };
-        }
-
-        /// <summary>
         /// Clears any active shaders on the actor.
         /// </summary>
         public void ClearShaders()
         {
             ClearFragShaders();
-            ClearCoordShaders();
+        }
+
+        // TODO: Implement
+        internal virtual RGBA Sample(in FVec3 worldVec)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// Creates a deep copy of the actor.
         /// </summary>
         /// <returns>An actor with the same properties but non-referential to the original object.</returns>
-        public virtual Actor Copy()
+        internal virtual Actor Copy()
         {
             return new Actor(
                 BoundingBoxSize,
                 Rotation,
                 Position,
                 Texture,
-                FragShader,
-                CoordShader
+                FragShader
             );
         }
     }

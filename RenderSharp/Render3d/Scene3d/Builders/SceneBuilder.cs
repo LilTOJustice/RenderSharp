@@ -2,119 +2,121 @@
 
 namespace RenderSharp.Render3d
 {
-    /// <summary>
-    /// Next, choose the <see cref="Scene.Duration"/> with <see cref="WithDuration(float)"/>
-    /// </summary>
-    public class FramerateStep
-    {
-        private int framerate;
-
-        internal FramerateStep(int framerate)
-        {
-            this.framerate = framerate;
-        }
-
-        /// <inheritdoc cref="Scene.Duration"/>
-        public OptionalsStep WithDuration(float duration)
-        {
-            return new OptionalsStep(framerate, duration);
-        }
-    }
-
-    /// <summary>
-    /// Next, choose the <see cref="Scene.Framerate"/> with <see cref="WithFramerate(int)"/>
-    /// </summary>
-    public class DynamicStep
-    {
-        internal DynamicStep() { }
-
-        /// <inheritdoc cref="Scene.Framerate"/>
-        public FramerateStep WithFramerate(int framerate)
-        {
-            return new FramerateStep(framerate);
-        }
-    }
-
-    /// <summary>
-    /// Now add any additional properties to the scene and <see cref="Build"/> when done.
-    /// </summary>
-    public class OptionalsStep
-    {
-        private int framerate;
-        private double duration;
-        private Dictionary<string, Camera> cameras;
-        private Scene.ThinkFunc? think;
-        private Dictionary<string, Actor> actors;
-
-        internal OptionalsStep(int framerate, double duration)
-        {
-            this.framerate = framerate;
-            this.duration = duration;
-            actors = new Dictionary<string, Actor>();
-            cameras = new Dictionary<string, Camera>();
-        }
-
-        /// <summary>
-        /// Camera to add to the scene. The first to be added is the starting camera for the scene.
-        /// If no cameras are added, a default camera will be created and named "main".
-        /// </summary>
-        /// <param name="center">Center of the camera in world space.</param>
-        /// <param name="fov">Field of view of the camera.</param>
-        /// <param name="rotation">Rotation of the camera in world space.</param>
-        /// <param name="name">Name of the camera.</param>
-        public OptionalsStep WithCamera(string name, in FVec3 center, in FVec2? fov = null, in AVec3? rotation = null)
-        {
-            cameras.Add(name, new Camera(center, fov ?? new FVec2(), rotation ?? new AVec3()));
-            return this;
-        }
-
-        /// <inheritdoc cref="Scene.Think"/>
-        public OptionalsStep WithThink(Scene.ThinkFunc think)
-        {
-            this.think += think;
-            return this;
-        }
-
-        /// <summary>
-        /// Create an <see cref="ActorBuilder"/> and add properties to the actor here.
-        /// </summary>
-        /// <param name="actorBuilder">Builder to modify and pass.</param>
-        /// <param name="actorId">Id of the actor for accessing it by <see cref="SceneInstance.this[string]"/>.</param>
-        public OptionalsStep WithActor(ActorBuilder actorBuilder, string actorId)
-        {
-            actors.Add(actorId, actorBuilder.Build());
-            return this;
-        }
-
-        /// <summary>
-        /// Builds the scene.
-        /// </summary>
-        /// <returns>A new <see cref="Scene"/>.</returns>
-        public Scene Build()
-        {
-            if (cameras.Count == 0) 
-            {
-                cameras.Add("main", new Camera());
-            }
-
-            think ??= (SceneInstance scene, double time, double dt) => { };
-
-            return new Scene(
-                framerate,
-                duration,
-                new Dictionary<string, Camera>(
-                    cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value)))),
-                think,
-                new Dictionary<string, Actor>(
-                    actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy()))));
-        }
-    }
 
     /// <summary>
     /// Builder for the <see cref="Scene"/> class. Use this to create a scene.
     /// </summary>
-    public abstract class SceneBuilder
+    public class SceneBuilder
     {
+        /// <summary>
+        /// Next, choose the <see cref="Scene.Duration"/> with <see cref="WithDuration(float)"/>
+        /// </summary>
+        public class FramerateStep
+        {
+            private int framerate;
+
+            internal FramerateStep(int framerate)
+            {
+                this.framerate = framerate;
+            }
+
+            /// <inheritdoc cref="Scene.Duration"/>
+            public FinalStep WithDuration(float duration)
+            {
+                return new FinalStep(framerate, duration);
+            }
+        }
+
+        /// <summary>
+        /// Next, choose the <see cref="Scene.Framerate"/> with <see cref="WithFramerate(int)"/>
+        /// </summary>
+        public class DynamicStep
+        {
+            internal DynamicStep() { }
+
+            /// <inheritdoc cref="Scene.Framerate"/>
+            public FramerateStep WithFramerate(int framerate)
+            {
+                return new FramerateStep(framerate);
+            }
+        }
+
+        /// <summary>
+        /// Now add any additional properties to the scene and <see cref="Build"/> when done.
+        /// </summary>
+        public class FinalStep
+        {
+            private int framerate;
+            private double duration;
+            private Dictionary<string, Camera> cameras;
+            private Scene.ThinkFunc? think;
+            private Dictionary<string, Actor> actors;
+
+            internal FinalStep(int framerate, double duration)
+            {
+                this.framerate = framerate;
+                this.duration = duration;
+                actors = new Dictionary<string, Actor>();
+                cameras = new Dictionary<string, Camera>();
+            }
+
+            /// <summary>
+            /// Camera to add to the scene. The first to be added is the starting camera for the scene.
+            /// If no cameras are added, a default camera will be created and named "main".
+            /// </summary>
+            /// <param name="center">Center of the camera in world space.</param>
+            /// <param name="fov">Field of view of the camera.</param>
+            /// <param name="focalLength">Focal length (distance from the near plane) in world space of the camera.</param>
+            /// <param name="rotation">Rotation of the camera in world space.</param>
+            /// <param name="name">Name of the camera.</param>
+            public FinalStep WithCamera(string name, in FVec3 center, in RVec3? rotation = null, in RVec2? fov = null, double focalLength = 1)
+            {
+                cameras.Add(name, new Camera(center, focalLength, fov ?? new DVec2(90, 90), rotation ?? new RVec3()));
+                return this;
+            }
+
+            /// <inheritdoc cref="Scene.Think"/>
+            public FinalStep WithThink(Scene.ThinkFunc think)
+            {
+                this.think += think;
+                return this;
+            }
+
+            /// <summary>
+            /// Create an <see cref="ActorBuilder"/> and add properties to the actor here.
+            /// </summary>
+            /// <param name="actorBuilder">Builder to modify and pass.</param>
+            /// <param name="actorId">Id of the actor for accessing it by <see cref="SceneInstance.this[string]"/>.</param>
+            public FinalStep WithActor(string actorId, ActorBuilder actorBuilder)
+            {
+                actors.Add(actorId, actorBuilder.Build());
+                return this;
+            }
+
+            /// <summary>
+            /// Builds the scene.
+            /// </summary>
+            /// <returns>A new <see cref="Scene"/>.</returns>
+            public Scene Build()
+            {
+                if (cameras.Count == 0)
+                {
+                    cameras.Add("main", new Camera());
+                }
+
+                think ??= (SceneInstance scene, double time, double dt) => { };
+
+                return new Scene(
+                    framerate,
+                    duration,
+                    new Dictionary<string, Camera>(
+                        cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value)))),
+                    think,
+                    new Dictionary<string, Actor>(
+                        actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy()))));
+            }
+        }
+
         /// <summary>
         /// Pick this if you want a dynamic scene (capable of video rendering).
         /// </summary>
@@ -128,9 +130,9 @@ namespace RenderSharp.Render3d
         /// Pick this if you want a static scene (only renders an image).
         /// </summary>
         /// <returns></returns>
-        static public OptionalsStep MakeStatic()
+        static public FinalStep MakeStatic()
         {
-            return new OptionalsStep(0, 0);
+            return new FinalStep(0, 0);
         }
     }
 }

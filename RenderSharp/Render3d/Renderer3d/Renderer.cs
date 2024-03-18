@@ -81,7 +81,7 @@ namespace RenderSharp.Render3d
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the index is negative or too large for the scene's duration.</exception>
         public Frame RenderFrame(int index = 0)
         {
-            if (index < 0 || index >= Scene.TimeSeq.Count)
+            if (index < 0 || (index >= Scene.TimeSeq.Count && Scene.TimeSeq.Count != 0))
             {
                 throw new ArgumentOutOfRangeException("Index argument should be >= 0 and <" +
                     " the length of the scene's time sequence.");
@@ -217,12 +217,14 @@ namespace RenderSharp.Render3d
         private RGBA RenderPixel(SceneInstance scene, int x, int y)
         {
             Vec2 screenPos = new(x, y);
-
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
-
+            FVec3 worldVec = Transforms.ScreenToWorldVec(screenPos, Resolution, scene.Camera);
             RGBA outColor = new();
-            
-            // Todo: Actually render the damn thing.
+
+            foreach (Actor actor in scene.Actors.Values)
+            {
+                outColor = ColorFunctions.AlphaBlend(actor.Sample(worldVec), outColor);
+            }
 
             return ScreenSpaceShaderPass(scene, screenPos, outColor);
         }
