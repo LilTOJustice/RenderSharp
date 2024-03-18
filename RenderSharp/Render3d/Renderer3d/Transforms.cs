@@ -10,8 +10,8 @@ namespace RenderSharp.Render3d
             screenPosNorm.Y *= -1;
             double lx = camera.FocalLength * Math.Tan(camera.Fov.X.Radians / 2);
             double ly = camera.FocalLength * Math.Tan(camera.Fov.Y.Radians / 2);
-            FVec3 cameraDir = new FVec3(1, 0, 0) * camera.FocalLength; //.Rotate(scene.Camera.Rotation);
-            return camera.Position + cameraDir + new FVec3(0, ly * screenPosNorm.Y, lx * screenPosNorm.X);
+            FVec3 cameraDir = (new FVec3(0, 0, 1) * camera.FocalLength + new FVec3(lx * screenPosNorm.X, ly * screenPosNorm.Y, 0)).Rotate(camera.Rotation);
+            return camera.Position + cameraDir;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace RenderSharp.Render3d
     /// </summary>
     public class TriangleActor : Actor
     {
-        private Triangle triangle;
+        private Triangle triangle, renderTriangle;
 
         internal TriangleActor(
             in Triangle triangle,
@@ -18,7 +18,8 @@ namespace RenderSharp.Render3d
             FragShader fragShader)
             : base(size, rotation, position, texture, fragShader)
         {
-            this.triangle = new Triangle(
+            this.triangle = triangle;
+            renderTriangle = new Triangle(
                 position + triangle.v0.Rotate(rotation) * size,
                 position + triangle.v1.Rotate(rotation) * size,
                 position + triangle.v2.Rotate(rotation) * size);
@@ -26,7 +27,7 @@ namespace RenderSharp.Render3d
 
         internal override RGBA Sample(in FVec3 worldVec)
         {
-            return triangle.Sample(worldVec);
+            return renderTriangle.Sample(worldVec);
         }
 
         internal override Actor Copy()
