@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>LilTOJustice.$(AssemblyName)</PackageId>
-    <Version>1.1.2</Version>
+    <Version>1.1.3</Version>
     <Authors>LilTOJustice</Authors>
     <PackageTags>Rendering</PackageTags>
     <Description>This package contains the rendering code for the *Sharp project.</Description>
