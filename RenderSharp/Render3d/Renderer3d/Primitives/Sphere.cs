@@ -8,7 +8,7 @@ namespace RenderSharp.Render3d
         private FVec3 radii2;
         private double c;
 
-        public Sphere(FVec3 pos, FVec3 radii)
+        public Sphere(in FVec3 pos, in FVec3 radii)
         {
             this.pos = pos;
             radii2 = radii * radii;
@@ -18,7 +18,7 @@ namespace RenderSharp.Render3d
 
         }
 
-        private bool Intersects(FVec3 test)
+        private bool Intersects(in FVec3 test)
         {
             double a = test.X * test.X / radii2.X +
                      test.Y * test.Y / radii2.Y +

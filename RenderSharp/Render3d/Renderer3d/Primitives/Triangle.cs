@@ -10,7 +10,7 @@ namespace RenderSharp.Render3d
         private FVec3 unitNorm;
         private double d;
 
-        public Triangle(FVec3 v0, FVec3 v1, FVec3 v2)
+        public Triangle(in FVec3 v0, in FVec3 v1, in FVec3 v2)
         {
             this.v0 = v0;
             this.v1 = v1;
@@ -23,7 +23,7 @@ namespace RenderSharp.Render3d
             d = -unitNorm.Dot(v0);
         }
 
-        private bool Intersects(FVec3 test)
+        private bool Intersects(in FVec3 test)
         {
             double dot = test.Dot(unitNorm);
 

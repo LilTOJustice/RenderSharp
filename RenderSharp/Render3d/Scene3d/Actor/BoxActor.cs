@@ -3,13 +3,13 @@
 namespace RenderSharp.Render3d
 {
     /// <summary>
-    /// Actor representing a triangle in 3D space.
+    /// Actor representing a box in 3D space.
     /// </summary>
-    public class TriangleActor : Actor
+    public class BoxActor : Actor
     {
-        private Triangle triangle;
+        private Box box;
 
-        internal TriangleActor(
+        internal BoxActor(
             in FVec3 size,
             in RVec3 rotation,
             in FVec3 position,
@@ -17,23 +17,17 @@ namespace RenderSharp.Render3d
             FragShader fragShader)
             : base(size, rotation, position, texture, fragShader)
         {
-            FVec3 v0 = new FVec3(-0.5, -0.5, 0);
-            FVec3 v1 = new FVec3(0.5, -0.5, 0);
-            FVec3 v2 = new FVec3(0, 0.5, 0);
-            triangle = new Triangle(
-                position + v0.Rotate(rotation) * size,
-                position + v1.Rotate(rotation) * size,
-                position + v2.Rotate(rotation) * size);
+            box = new Box(position, size);
         }
 
         internal override RGBA Sample(in FVec3 worldVec)
         {
-            return triangle.Sample(worldVec);
+            return box.Sample(worldVec);
         }
 
         internal override Actor Copy()
         {
-            return new TriangleActor(
+            return new BoxActor(
                 BoundingBoxSize,
                 Rotation,
                 Position,
