@@ -9,7 +9,7 @@ namespace RenderSharp.Render2d
     public class ActorBuilder
     {
         private FVec2? size;
-        private double rotation;
+        private Radian rotation;
         private FVec2? position;
         private RGBA? color;
         private Texture? texture;
@@ -24,7 +24,7 @@ namespace RenderSharp.Render2d
         }
 
         /// <inheritdoc cref="Actor.Rotation"/>
-        public ActorBuilder WithRotation(double rotation)
+        public ActorBuilder WithRotation(Radian rotation)
         {
             this.rotation = rotation;
             return this;

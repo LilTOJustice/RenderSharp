@@ -86,13 +86,13 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// The rotation of the line in world space.
         /// </summary>
-        public new double Rotation
+        public new Radian Rotation
         {
             get { return ((Actor)this).Rotation; }
             set
             {
                 ((Actor)this).Rotation = value;
-                _start = new FVec2(Math.Cos(value) * Length / 2, Math.Sin(value) * Length / 2);
+                _start = new FVec2(Math.Cos(value.Radians) * Length / 2, Math.Sin(value.Radians) * Length / 2);
                 _end = _start * -1;
                 _start += Position;
                 _end += Position;
@@ -119,7 +119,7 @@ namespace RenderSharp.Render2d
             FVec2 disp = _end - _start;
             Size = new FVec2(Size.X, disp.Mag());
             ((Actor)this).Position = _start + (disp / 2);
-            ((Actor)this).Rotation = -Math.Atan2(disp.Y, disp.X);
+            ((Actor)this).Rotation = new Radian(-Math.Atan2(disp.Y, disp.X));
         }
 
         /// <inheritdoc cref="Actor.Copy"/>

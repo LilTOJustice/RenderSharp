@@ -21,16 +21,12 @@ namespace RenderSharpExample
                 new FVec3(0, 0, 0),
                 fov: new DVec2(90, 90))
                 .WithActor("triangle", new TriangleActorBuilder()
-                    .WithTriangle(new Triangle(
-                        new FVec3(-0.5, -Math.Sqrt(3) / 4, 0),
-                        new FVec3(0.5, -Math.Sqrt(3) / 4, 0),
-                        new FVec3(0, Math.Sqrt(3) / 4, 0)))
                     .WithPosition(new FVec3(0, 0, 2))
                 ).WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    scene["triangle"].Rotation += new RVec3(2 * dt, 2 * dt, 3 * dt);
-                }
-                ).Build();
+                    scene["triangle"].Rotation += new RVec3(1 * dt, 2 * dt, 3 * dt);
+                })
+                .Build();
 
             // Create renderer
             Renderer renderer = new(resX, resY, scene);

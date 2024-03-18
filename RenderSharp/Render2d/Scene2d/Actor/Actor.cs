@@ -30,7 +30,7 @@ namespace RenderSharp.Render2d
         /// <summary>
         /// Rotation of the actor about its center.
         /// </summary>
-        public double Rotation { get; set; }
+        public Radian Rotation { get; set; }
         
         /// <summary>
         /// Texture to render on the actor.
@@ -58,7 +58,7 @@ namespace RenderSharp.Render2d
 
         internal Actor(
             in FVec2 size,
-            double rotation,
+            Radian rotation,
             in FVec2 position,
             Texture texture,
             FragShader fragShader,

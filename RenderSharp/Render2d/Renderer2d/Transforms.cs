@@ -19,9 +19,9 @@ namespace RenderSharp.Render2d
             return new Vec2(ind.X, bgTextureSize.Y - ind.Y - 1);
         }
 
-        public static bool WorldToActor(in FVec2 worldCoord, in FVec2 actorPosition, in FVec2 actorSize, double actorRotation, out FVec2 actorLoc)
+        public static bool WorldToActor(in FVec2 worldCoord, in FVec2 actorPosition, in FVec2 actorSize, Radian actorRotation, out FVec2 actorLoc)
         {
-            actorLoc = (worldCoord - actorPosition).Rotate(new Radian(actorRotation));
+            actorLoc = (worldCoord - actorPosition).Rotate(actorRotation);
             return (actorLoc.X >= -actorSize.X / 2
                 && actorLoc.Y >= -actorSize.Y / 2
                 && actorLoc.X <= actorSize.X / 2
