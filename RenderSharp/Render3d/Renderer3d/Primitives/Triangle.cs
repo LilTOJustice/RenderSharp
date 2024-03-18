@@ -23,7 +23,7 @@ namespace RenderSharp.Render3d
             d = -unitNorm.Dot(v0);
         }
 
-        private bool Within(FVec3 test)
+        private bool Intersects(FVec3 test)
         {
             double dot = test.Dot(unitNorm);
 
@@ -50,7 +50,7 @@ namespace RenderSharp.Render3d
 
         public RGBA Sample(in FVec3 worldVec)
         {
-            return Within(worldVec) ? new RGBA(255, 255, 255, 255) : new RGBA();
+            return Intersects(worldVec) ? new RGBA(255, 255, 255, 255) : new RGBA();
         }
     }
 }

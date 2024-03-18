@@ -9,6 +9,8 @@ namespace RenderSharp.Render3d
     {
         /// <summary>
         /// World space bounding box size of the actor.
+        /// The actor's center is at the origin of the bounding box, and the actor's rotation is about the center.
+        /// The actor's rendered size is determined by this value.
         /// </summary>
         public FVec3 BoundingBoxSize { get; set; }
         
