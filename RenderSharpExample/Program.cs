@@ -20,14 +20,15 @@ namespace RenderSharpExample
                 .WithCamera("main",
                 new FVec3(0, 0, 0),
                 fov: new DVec2(90, 90))
-                .WithActor("box", new BoxActorBuilder()
+                .WithActor("sphere", new SphereActorBuilder()
                     .WithPosition(new FVec3(0, 0, 3))
-                    .WithBoundingBoxSize(new FVec3(1, 1, 1))
+                    .WithBoundingBoxSize(new FVec3(2, 1, 1))
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    //scene["sphere"].Rotation += new RVec3(0, 0, 1 * dt);
-                    scene.Camera.Rotation += new RVec3(0, 1 * dt, 0);
+                    scene["sphere"].Rotation += new RVec3(0, 1 * dt, 0);
+                    //scene["sphere"].Position += new FVec3(1 * dt, 0, 0);
+                    //scene.Camera.Rotation += new RVec3(0, 1 * dt, 0);
                 })
                 .Build();
 

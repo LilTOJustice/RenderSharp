@@ -17,7 +17,7 @@ namespace RenderSharp.Render3d
             FragShader fragShader)
             : base(size, rotation, position, texture, fragShader)
         {
-            sphere = new Sphere(position, size);
+            sphere = new Sphere(position, size, rotation);
         }
 
         internal override RGBA Sample(in FVec3 worldVec)
