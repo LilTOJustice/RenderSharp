@@ -8,6 +8,7 @@ namespace RenderSharp.Render3d
     public class BoxActor : Actor
     {
         private Box box;
+        private RotorTransform rotorTransform;
 
         internal BoxActor(
             in FVec3 size,
@@ -17,12 +18,13 @@ namespace RenderSharp.Render3d
             FragShader fragShader)
             : base(size, rotation, position, texture, fragShader)
         {
+            rotorTransform = new RotorTransform(rotation);
             box = new Box(position, size);
         }
 
         internal override RGBA Sample(in FVec3 worldVec)
         {
-            return box.Sample(worldVec);
+            return box.Sample(worldVec, rotorTransform);
         }
 
         internal override Actor Copy()

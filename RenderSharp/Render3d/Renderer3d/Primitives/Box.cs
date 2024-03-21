@@ -6,119 +6,55 @@ namespace RenderSharp.Render3d
     {
         private FVec3 position;
         private FVec3 size;
+        private FVec3 size2;
 
-        public Box(FVec3 position, FVec3 size)
+        public Box(in FVec3 position, in FVec3 size)
         {
             this.position = position;
             this.size = size;
+            size2 = size * size;
         }
 
-        private bool TestX(in FVec3 test, out double result)
+        private bool TestX(in RotorTransform rt, in FVec3 s, out double t)
         {
-            result = 0;
-            double a = test.X * test.X;
-            double b = -2 * test.X * position.X;
-            double c = position.X * position.X - size.X * size.X;
-            double sqrt = b * b - 4 * a * c;
-            if (sqrt < 0)
-            {
-                return false;
-            }
-
-            double sqrtResult = Math.Sqrt(sqrt);
-            double plust = (-b + sqrtResult) / (2 * a);
-            double minust = (-b - sqrtResult) / (2 * a);
-            if (plust < 0 && minust < 0)
-            {
-                return false;
-            }
-            else if (plust < 0)
-            {
-                result = minust;
-                return true;
-            }
-            else if (minust < 0)
-            {
-                result = plust;
-                return true;
-            }
-
-            result = Math.Min(plust, minust);
-            return true;
+            ref FVec3 p = ref position;
+            double a = rt.D2 * s.X * s.X + rt.E2 * s.Y * s.Y + rt.F2 * s.Z * s.Z +
+                2 * rt.DE * s.X * s.Y + 2 * rt.DF * s.X * s.Z + 2 * rt.EF * s.Y * s.Z;
+            double b = -2 * (rt.D2 * s.X * p.X + rt.E2 * s.Y * p.Y + rt.F2 * s.Z * p.Z +
+                rt.DE * (s.X * p.Y + s.Y * p.X) + rt.DF * (s.X * p.Z + s.Z * p.X) + rt.EF * (s.Y * p.Z + s.Z * p.Y));
+            double c = rt.D2 * p.X * p.X + rt.E2 * p.Y * p.Y + rt.F2 * p.Z * p.Z +
+                2 * rt.DE * p.X * p.Y + 2 * rt.DF * p.X * p.Z + 2 * rt.EF * p.Y * p.Z - size2.X;
+            return Transforms.SolveQuadratic(a, b, c, out t);
         }
 
-        private bool TestY(in FVec3 test, out double result)
+        private bool TestY(in RotorTransform rt, in FVec3 s, out double t)
         {
-            result = 0;
-            double a = test.Y * test.Y;
-            double b = -2 * test.Y * position.Y;
-            double c = position.Y * position.Y - size.Y * size.Y;
-            double sqrt = b * b - 4 * a * c;
-            if (sqrt < 0)
-            {
-                return false;
-            }
-
-            double sqrtResult = Math.Sqrt(sqrt);
-            double plust = (-b + sqrtResult) / (2 * a);
-            double minust = (-b - sqrtResult) / (2 * a);
-            if (plust < 0 && minust < 0)
-            {
-                return false;
-            }
-            else if (plust < 0)
-            {
-                result = minust;
-                return true;
-            }
-            else if (minust < 0)
-            {
-                result = plust;
-                return true;
-            }
-
-            result = Math.Min(plust, minust);
-            return true;
+            ref FVec3 p = ref position;
+            double a = rt.G2 * s.X * s.X + rt.H2 * s.Y * s.Y + rt.I2 * s.Z * s.Z +
+                2 * rt.GH * s.X * s.Y + 2 * rt.GI * s.X * s.Z + 2 * rt.HI * s.Y * s.Z;
+            double b = -2 * (rt.G2 * s.X * p.X + rt.H2 * s.Y * p.Y + rt.I2 * s.Z * p.Z +
+                rt.GH * (s.X * p.Y + s.Y * p.X) + rt.GI * (s.X * p.Z + s.Z * p.X) + rt.HI * (s.Y * p.Z + s.Z * p.Y));
+            double c = rt.G2 * p.X * p.X + rt.H2 * p.Y * p.Y + rt.I2 * p.Z * p.Z +
+                2 * rt.GH * p.X * p.Y + 2 * rt.GI * p.X * p.Z + 2 * rt.HI * p.Y * p.Z - size2.Y;
+            return Transforms.SolveQuadratic(a, b, c, out t);
         }
 
-        private bool TestZ(in FVec3 test, out double result)
+        private bool TestZ(in RotorTransform rt, in FVec3 s, out double t)
         {
-            result = 0;
-            double a = test.Z * test.Z;
-            double b = -2 * test.Z * position.Z;
-            double c = position.Z * position.Z - size.Z * size.Z;
-            double sqrt = b * b - 4 * a * c;
-            if (sqrt < 0)
-            {
-                return false;
-            }
-
-            double sqrtResult = Math.Sqrt(sqrt);
-            double plust = (-b + sqrtResult) / (2 * a);
-            double minust = (-b - sqrtResult) / (2 * a);
-            if (plust < 0 && minust < 0)
-            {
-                return false;
-            }
-            else if (plust < 0)
-            {
-                result = minust;
-                return true;
-            }
-            else if (minust < 0)
-            {
-                result = plust;
-                return true;
-            }
-
-            result = Math.Min(plust, minust);
-            return true;
+            ref FVec3 p = ref position;
+            double a = rt.J2 * s.X * s.X + rt.K2 * s.Y * s.Y + rt.L2 * s.Z * s.Z +
+                2 * rt.JK * s.X * s.Y + 2 * rt.JL * s.X * s.Z + 2 * rt.KL * s.Y * s.Z;
+            double b = -2 * (rt.J2 * s.X * p.X + rt.K2 * s.Y * p.Y + rt.L2 * s.Z * p.Z +
+                rt.JK * (s.X * p.Y + s.Y * p.X) + rt.JL * (s.X * p.Z + s.Z * p.X) + rt.KL * (s.Y * p.Z + s.Z * p.Y));
+            double c = rt.J2 * p.X * p.X + rt.K2 * p.Y * p.Y + rt.L2 * p.Z * p.Z +
+                2 * rt.JK * p.X * p.Y + 2 * rt.JL * p.X * p.Z + 2 * rt.KL * p.Y * p.Z - size2.Z;
+            return Transforms.SolveQuadratic(a, b, c, out t);
         }
 
-        private bool Intersects(in FVec3 test)
+        private bool Intersects(in FVec3 test, in RotorTransform rt)
         {
             double t;
-            if (TestX(test, out t))
+            if (TestX(rt, test, out t))
             {
                 double resultX = Math.Abs(test.X * t - position.X) / size.X;
                 if (resultX > Math.Abs(test.Y * t - position.Y) / size.Y
@@ -128,7 +64,7 @@ namespace RenderSharp.Render3d
                 }
             }
 
-            if (TestY(test, out t))
+            if (TestY(rt, test, out t))
             {
                 double resultY = Math.Abs(test.Y * t - position.Y) / size.Y;
                 if (resultY > Math.Abs(test.X * t - position.X) / size.X
@@ -138,7 +74,7 @@ namespace RenderSharp.Render3d
                 }
             }
             
-            if (TestZ(test, out t))
+            if (TestZ(rt, test, out t))
             {
                 double resultZ = Math.Abs(test.Z * t - position.Z) / size.Z;
                 if (resultZ > Math.Abs(test.X * t - position.X) / size.X
@@ -151,9 +87,9 @@ namespace RenderSharp.Render3d
             return false;
         }
 
-        public RGBA Sample(in FVec3 worldVec)
+        public RGBA Sample(in FVec3 worldVec, in RotorTransform rt)
         {
-            return Intersects(worldVec) ? new RGBA(255, 255, 255, 255) : new RGBA();
+            return Intersects(worldVec, rt) ? new RGBA(255, 255, 255, 255) : new RGBA();
         }
     }
 }

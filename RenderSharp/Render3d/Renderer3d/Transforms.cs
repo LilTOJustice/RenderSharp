@@ -13,5 +13,36 @@ namespace RenderSharp.Render3d
             FVec3 cameraDir = (new FVec3(0, 0, 1) * camera.FocalLength + new FVec3(lx * screenPosNorm.X, ly * screenPosNorm.Y, 0)).Rotate(camera.Rotation);
             return camera.Position + cameraDir;
         }
+
+        public static bool SolveQuadratic(double a, double b, double c, out double root)
+        {
+            root = 0;
+            double sqrt = b * b - 4 * a * c;
+            if (sqrt < 0)
+            {
+                return false;
+            }
+
+            double sqrtResult = Math.Sqrt(sqrt);
+            double plus = (-b + sqrtResult) / (2 * a);
+            double minus = (-b - sqrtResult) / (2 * a);
+            if (plus < 1 && minus < 1)
+            {
+                return false;
+            }
+            else if (plus < 1)
+            {
+                root = minus;
+                return true;
+            }
+            else if (minus < 1)
+            {
+                root = plus;
+                return true;
+            }
+
+            root = Math.Min(plus, minus);
+            return true;
+        }
     }
 }
