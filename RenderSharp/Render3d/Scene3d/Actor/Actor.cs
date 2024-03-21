@@ -80,8 +80,9 @@ namespace RenderSharp.Render3d
         }
 
         // TODO: Implement
-        internal virtual RGBA Sample(in FVec3 worldVec)
+        internal virtual RGBA Sample(in FVec3 worldVec, out double depth)
         {
+            depth = 0;
             throw new NotImplementedException();
         }
 

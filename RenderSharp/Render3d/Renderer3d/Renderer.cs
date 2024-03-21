@@ -223,7 +223,8 @@ namespace RenderSharp.Render3d
 
             foreach (Actor actor in scene.Actors.Values)
             {
-                outColor = ColorFunctions.AlphaBlend(actor.Sample(worldVec), outColor);
+                double depth;
+                outColor = ColorFunctions.AlphaBlend(actor.Sample(worldVec, out depth), outColor);
             }
 
             return ScreenSpaceShaderPass(scene, screenPos, outColor);

@@ -22,11 +22,12 @@ namespace RenderSharpExample
                 new DVec3(0, 0, 0),
                 fov: new DVec2(90, 90))
                 //.WithActor("sphere", new SphereActorBuilder()
-                //    .WithPosition(new FVec3(0, 0, 3))
+                //    .WithPosition(new FVec3(0, 0, 5))
                 //    .WithBoundingBoxSize(new FVec3(2, 1, 1))
                 //)
                 .WithActor("box", new BoxActorBuilder()
                    .WithPosition(new FVec3(0, 0, 3))
+                   .WithRotation(new DVec3(0, 0, 0))
                    .WithBoundingBoxSize(new FVec3(1, 1, 1))
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
@@ -34,8 +35,9 @@ namespace RenderSharpExample
                     //scene["sphere"].Rotation += new RVec3(0, 1 * dt, 0);
                     //scene["sphere"].Position += new FVec3(0, 0, -1 * dt);
                     //scene.Camera.Rotation += new RVec3(0, 0, 1 * dt);
-                    scene.Camera.Position += new FVec3(0, 0, -1 * dt);
-                    //scene["box"].Rotation += new RVec3(-1 * dt, 0, 0);
+                    //scene.Camera.Position += new FVec3(0, 0, -1 * dt);
+                    scene["box"].Rotation += new RVec3(1 * dt, 0, 0);
+                    //scene["box"].Position += new FVec3(0, 0, -1 * dt);
                 })
                 .Build();
 

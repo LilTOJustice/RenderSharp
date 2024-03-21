@@ -22,9 +22,9 @@ namespace RenderSharp.Render3d
             rotorTransform = new RotorTransform(rotation);
         }
 
-        internal override RGBA Sample(in FVec3 worldVec)
+        internal override RGBA Sample(in FVec3 worldVec, out double depth)
         {
-            return sphere.Sample(worldVec, rotorTransform);
+            return sphere.Sample(worldVec, rotorTransform, out depth);
         }
 
         internal override Actor Copy()
