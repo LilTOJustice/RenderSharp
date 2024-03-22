@@ -192,7 +192,6 @@ namespace RenderSharp.Render3d
             Frame output = new(Resolution);
             double[,] depthBuffer = new double[Width, Height];
             double maxDepth = 0;
-            double minDepth = double.MaxValue;
 
             if (verbose)
             {
@@ -208,7 +207,6 @@ namespace RenderSharp.Render3d
                     double depth;
                     output[x, y] = RenderPixel(scene, x, y, out depth);
                     maxDepth = Math.Max(maxDepth, depth);
-                    minDepth = depth <= 0 ? minDepth : Math.Min(minDepth, depth);
                     depthBuffer[x, y] = depth;
                 }
             }
@@ -219,7 +217,7 @@ namespace RenderSharp.Render3d
                 {
                     for (int x = 0; x < Width; x++)
                     {
-                        double scaled = maxDepth == 0 ? 0 : (depthBuffer[x, y] - minDepth) / (maxDepth - minDepth);
+                        double scaled = depthBuffer[x, y] == 0 || maxDepth == 0 ? 0 : 1 - depthBuffer[x, y] / maxDepth;
                         output[x, y] = new FRGB(scaled, scaled, scaled);
                     }
                 }
