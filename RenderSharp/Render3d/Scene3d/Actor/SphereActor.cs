@@ -8,7 +8,6 @@ namespace RenderSharp.Render3d
     public class SphereActor : Actor
     {
         private Sphere sphere;
-        private RotorTransform rotorTransform;
 
         internal SphereActor(
             in FVec3 size,
@@ -18,13 +17,12 @@ namespace RenderSharp.Render3d
             FragShader fragShader)
             : base(size, rotation, position, texture, fragShader)
         {
-            sphere = new Sphere(position, size);
-            rotorTransform = new RotorTransform(rotation);
+            sphere = new Sphere(position, size, rotation);
         }
 
         internal override RGBA Sample(in FVec3 worldVec, out double depth)
         {
-            return sphere.Sample(worldVec, rotorTransform, out depth);
+            return sphere.Sample(worldVec, out depth);
         }
 
         internal override Actor Copy()
