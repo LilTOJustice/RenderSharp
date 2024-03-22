@@ -20,9 +20,9 @@ namespace RenderSharp.Render3d
             sphere = new Sphere(position, size, rotation);
         }
 
-        internal override RGBA Sample(in FVec3 worldVec, double minDepth, out double depth)
+        internal override RGBA Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, out double depth)
         {
-            return sphere.Sample(worldVec, minDepth, out depth);
+            return sphere.Sample(worldVec, cameraPos, minDepth, out depth);
         }
 
         internal override Actor Copy()

@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace RenderSharp.Render3d
 {
     /// <summary>
-    /// NOT IMPLEMENTED YET.
+    /// NOT FULLY IMPLEMENTED YET.
     /// Renderer for 3d scenes (<see cref="Scene"/>). Used for rendering scenes into <see cref="Frame"/>s or <see cref="Movie"/>s.
     /// </summary>
     public class Renderer
@@ -248,7 +248,7 @@ namespace RenderSharp.Render3d
             foreach (Actor actor in scene.Actors.Values)
             {
                 double sampleDepth;
-                RGBA sample = actor.Sample(worldVec, minDepth, out sampleDepth);
+                RGBA sample = actor.Sample(worldVec, scene.Camera.Position, minDepth, out sampleDepth);
                 depthBuffer[index++] = (sampleDepth, sample);
             }
 
