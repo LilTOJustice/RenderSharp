@@ -205,9 +205,10 @@ namespace RenderSharp.Render3d
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    output[x, y] = RenderPixel(scene, x, y, out depthBuffer[x, y]);
-                    maxDepth = Math.Max(maxDepth, depthBuffer[x, y]);
-                    minDepth = Math.Min(minDepth, depthBuffer[x, y]);
+                    double depth;
+                    output[x, y] = RenderPixel(scene, x, y, out depth);
+                    maxDepth = Math.Max(maxDepth, depth);
+                    minDepth = depth <= 0 ? minDepth : Math.Min(minDepth, depth);
                 }
             }
 
