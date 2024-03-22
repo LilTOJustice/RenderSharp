@@ -13,39 +13,16 @@ namespace RenderSharp.Render3d
             return camera.Position + (new FVec3(0, 0, 1) * camera.FocalLength + new FVec3(lx * screenPosNorm.X, ly * screenPosNorm.Y, 0)).Rotate(camera.Rotation);
         }
 
-        public static bool SolveQuadratic(double a, double b, double c, out double root)
+        public static bool GetValidIntersection(double a, double b, double c, double minDepth, out double depth)
         {
-            root = 0;
-            if (a == 0)
+            double plusRoot, minusRoot;
+            if (!Operations.SolveQuadratic(a, b, c, out plusRoot, out minusRoot) || (plusRoot < minDepth && minusRoot < minDepth))
             {
+                depth = 0;
                 return false;
             }
 
-            double sqrt = b * b - 4 * a * c;
-            if (sqrt < 0)
-            {
-                return false;
-            }
-
-            double sqrtResult = Math.Sqrt(sqrt);
-            double plus = (-b + sqrtResult) / (2 * a);
-            double minus = (-b - sqrtResult) / (2 * a);
-            if (plus < 1 && minus < 1)
-            {
-                return false;
-            }
-            else if (plus < 1)
-            {
-                root = minus;
-                return true;
-            }
-            else if (minus < 1)
-            {
-                root = plus;
-                return true;
-            }
-
-            root = Math.Min(plus, minus);
+            depth = Math.Min(minusRoot, plusRoot);
             return true;
         }
     }

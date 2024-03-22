@@ -22,7 +22,7 @@ namespace RenderSharp.Render3d
                 (rt.J2 * p.X * p.X + rt.K2 * p.Y * p.Y + rt.L2 * p.Z * p.Z + 2 * rt.JK * p.X * p.Y + 2 * rt.JL * p.X * p.Z + 2 * rt.KL * p.Y * p.Z) / radii2.Z - 1;
         }
 
-        private bool Intersects(in FVec3 s, out double depth)
+        private bool Intersects(in FVec3 s, double minDepth, out double depth)
         {
             ref FVec3 p = ref position;
             ref RotorTransform rt = ref rotorTransform;
@@ -35,12 +35,12 @@ namespace RenderSharp.Render3d
                 (rt.G2 * s.X * p.X + rt.H2 * s.Y * p.Y + rt.I2 * s.Z * p.Z + rt.GH * (s.X * p.Y + s.Y * p.X) + rt.GI * (s.X * p.Z + s.Z * p.X) + rt.HI * (s.Y * p.Z + s.Z * p.Y)) / radii2.Y +
                 (rt.J2 * s.X * p.X + rt.K2 * s.Y * p.Y + rt.L2 * s.Z * p.Z + rt.JK * (s.X * p.Y + s.Y * p.X) + rt.JL * (s.X * p.Z + s.Z * p.X) + rt.KL * (s.Y * p.Z + s.Z * p.Y)) / radii2.Z);
 
-            return Transforms.SolveQuadratic(a, b, c, out depth);
+            return Transforms.GetValidIntersection(a, b, c, minDepth, out depth);
         }
 
-        public RGBA Sample(in FVec3 worldVec, out double depth)
+        public RGBA Sample(in FVec3 worldVec, double minDepth, out double depth)
         {
-            return Intersects(worldVec, out depth) ? new RGBA(255, 255, 255, 255) : new RGBA();
+            return Intersects(worldVec, minDepth, out depth) ? new RGBA(255, 0, 0, 255) : new RGBA();
         }
     }
 }

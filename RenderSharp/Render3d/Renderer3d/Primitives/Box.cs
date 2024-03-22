@@ -35,7 +35,7 @@ namespace RenderSharp.Render3d
             return Math.Abs(a - b) <= 0.00000000000001;
         }
 
-        private bool TestX(in FVec3 s, out double t)
+        private bool TestX(in FVec3 s, double minDepth, out double depth)
         {
             ref FVec3 p = ref position;
             ref RotorTransform rt = ref rotorTransform;
@@ -43,10 +43,10 @@ namespace RenderSharp.Render3d
                 2 * rt.DE * s.X * s.Y + 2 * rt.DF * s.X * s.Z + 2 * rt.EF * s.Y * s.Z;
             double b = -2 * (rt.D2 * s.X * p.X + rt.E2 * s.Y * p.Y + rt.F2 * s.Z * p.Z +
                 rt.DE * (s.X * p.Y + s.Y * p.X) + rt.DF * (s.X * p.Z + s.Z * p.X) + rt.EF * (s.Y * p.Z + s.Z * p.Y));
-            return Transforms.SolveQuadratic(a, b, cX, out t);
+            return Transforms.GetValidIntersection(a, b, cX, minDepth, out depth);
         }
 
-        private bool TestY(in FVec3 s, out double t)
+        private bool TestY(in FVec3 s, double minDepth, out double depth)
         {
             ref FVec3 p = ref position;
             ref RotorTransform rt = ref rotorTransform;
@@ -54,10 +54,10 @@ namespace RenderSharp.Render3d
                 2 * rt.GH * s.X * s.Y + 2 * rt.GI * s.X * s.Z + 2 * rt.HI * s.Y * s.Z;
             double b = -2 * (rt.G2 * s.X * p.X + rt.H2 * s.Y * p.Y + rt.I2 * s.Z * p.Z +
                 rt.GH * (s.X * p.Y + s.Y * p.X) + rt.GI * (s.X * p.Z + s.Z * p.X) + rt.HI * (s.Y * p.Z + s.Z * p.Y));
-            return Transforms.SolveQuadratic(a, b, cY, out t);
+            return Transforms.GetValidIntersection(a, b, cY, minDepth, out depth);
         }
 
-        private bool TestZ(in FVec3 s, out double t)
+        private bool TestZ(in FVec3 s, double minDepth, out double depth)
         {
             ref FVec3 p = ref position;
             ref RotorTransform rt = ref rotorTransform;
@@ -65,12 +65,12 @@ namespace RenderSharp.Render3d
                 2 * rt.JK * s.X * s.Y + 2 * rt.JL * s.X * s.Z + 2 * rt.KL * s.Y * s.Z;
             double b = -2 * (rt.J2 * s.X * p.X + rt.K2 * s.Y * p.Y + rt.L2 * s.Z * p.Z +
                 rt.JK * (s.X * p.Y + s.Y * p.X) + rt.JL * (s.X * p.Z + s.Z * p.X) + rt.KL * (s.Y * p.Z + s.Z * p.Y));
-            return Transforms.SolveQuadratic(a, b, cZ, out t);
+            return Transforms.GetValidIntersection(a, b, cZ, minDepth, out depth);
         }
 
-        private bool Intersects(in FVec3 test, out double depth)
+        private bool Intersects(in FVec3 test, double minDepth, out double depth)
         {
-            if (TestX(test, out depth))
+            if (TestX(test, minDepth, out depth))
             {
                 FVec3 rotated = (test * depth - position).Rotate(rotation);
                 double resultX = Math.Abs(rotated.X) / size.X;
@@ -81,7 +81,7 @@ namespace RenderSharp.Render3d
                 }
             }
 
-            if (TestY(test, out depth))
+            if (TestY(test, minDepth, out depth))
             {
                 FVec3 rotated = (test * depth - position).Rotate(rotation);
                 double resultY = Math.Abs(rotated.Y) / size.Y;
@@ -92,7 +92,7 @@ namespace RenderSharp.Render3d
                 }
             }
             
-            if (TestZ(test, out depth))
+            if (TestZ(test, minDepth, out depth))
             {
                 FVec3 rotated = (test * depth - position).Rotate(rotation);
                 double resultZ = Math.Abs(rotated.Z) / size.Z;
@@ -103,12 +103,13 @@ namespace RenderSharp.Render3d
                 }
             }
 
+            depth = 0;
             return false;
         }
 
-        public RGBA Sample(in FVec3 worldVec, out double depth)
+        public RGBA Sample(in FVec3 worldVec, double minDepth, out double depth)
         {
-            return Intersects(worldVec, out depth) ? new RGBA(255, 255, 255, 255) : new RGBA();
+            return Intersects(worldVec, minDepth, out depth) ? new RGBA(0, 0, 255, 255) : new RGBA();
         }
     }
 }
