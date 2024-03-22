@@ -17,20 +17,13 @@ namespace RenderSharpExample
                 .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
-                .WithCamera("main",
-                new FVec3(0, 0, 0),
-                fov: new DVec2(90, 90))
-                /*.WithActor("triangle", new TriangleActorBuilder()
-                    .WithPosition(new FVec3(0, 0, 2))
-                    .WithBoundingBoxSize(new FVec3(1, Math.Sqrt(3) / 2, 1))
-                )*/
-                .WithActor("sphere", new SphereActorBuilder()
-                    .WithPosition(new FVec3(0, 0, 3))
-                    .WithBoundingBoxSize(new FVec3(2, 1, 1))
+                .WithActor("box", new BoxActorBuilder()
+                   .WithPosition(new FVec3(0, 0, 5))
+                   .WithBoundingBoxSize(new FVec3(2, 1, 1))
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    //scene["triangle"].Rotation += new RVec3(1 * dt, 0, 2 * dt);
+                    scene["box"].Rotation += new RVec3(1.5 * dt, 1 * dt, 2 * dt);
                 })
                 .Build();
 

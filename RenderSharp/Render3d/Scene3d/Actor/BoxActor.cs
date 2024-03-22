@@ -3,13 +3,13 @@
 namespace RenderSharp.Render3d
 {
     /// <summary>
-    /// Actor representing a sphere in 3D space.
+    /// Actor representing a box in 3D space.
     /// </summary>
-    public class SphereActor : Actor
+    public class BoxActor : Actor
     {
-        private Sphere sphere;
+        private Box box;
 
-        internal SphereActor(
+        internal BoxActor(
             in FVec3 size,
             in RVec3 rotation,
             in FVec3 position,
@@ -17,17 +17,17 @@ namespace RenderSharp.Render3d
             FragShader fragShader)
             : base(size, rotation, position, texture, fragShader)
         {
-            sphere = new Sphere(position, size, rotation);
+            box = new Box(position, size, rotation);
         }
 
         internal override RGBA Sample(in FVec3 worldVec, out double depth)
         {
-            return sphere.Sample(worldVec, out depth);
+            return box.Sample(worldVec, out depth);
         }
 
         internal override Actor Copy()
         {
-            return new SphereActor(
+            return new BoxActor(
                 BoundingBoxSize,
                 Rotation,
                 Position,

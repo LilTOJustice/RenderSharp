@@ -3,7 +3,7 @@
 namespace RenderSharp.Render3d
 {
     /// <summary>
-    /// Builder for the <see cref="TriangleActor"/> class.
+    /// Builder for the <see cref="SphereActor"/> class.
     /// Used for <see cref="SceneBuilder.FinalStep.WithActor(string, ActorBuilder)"/> within <see cref="SceneBuilder"/>.
     /// </summary>
     public class SphereActorBuilder : ActorBuilder
