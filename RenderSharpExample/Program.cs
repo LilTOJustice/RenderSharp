@@ -17,6 +17,7 @@ namespace RenderSharpExample
                 .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
+                .WithCamera("main", focalLength: 0)
                 .WithActor("box", new BoxActorBuilder()
                    .WithPosition(new FVec3(0, 0, 4))
                    .WithBoundingBoxSize(new FVec3(1, 1, 1))
@@ -29,6 +30,8 @@ namespace RenderSharpExample
                 {
                     scene["box"].Rotation += new RVec3(0, 1 * dt, 0);
                     scene["sphere"].Rotation += new RVec3(0, 1 * dt, 0);
+                    //scene["box"].Position += new FVec3(0, 0, 1 * dt);
+                    //scene["sphere"].Position += new FVec3(0, 0, 1 * dt);
                 })
                 .Build();
 
