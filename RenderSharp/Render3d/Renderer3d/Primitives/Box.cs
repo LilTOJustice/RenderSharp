@@ -64,7 +64,7 @@ namespace RenderSharp.Render3d
             return Transforms.GetValidIntersection(a, b, c, minDepth, out depth);
         }
 
-        private bool Intersects(in FVec3 test, in FVec3 cameraPos, double minDepth, out double depth)
+        public bool Intersects(in FVec3 test, in FVec3 cameraPos, double minDepth, out double depth)
         {
             FVec3 p = position - cameraPos;
             if (TestX(test, cameraPos, minDepth, out depth))
@@ -100,13 +100,8 @@ namespace RenderSharp.Render3d
                 }
             }
 
-            depth = 0;
+            depth = -1;
             return false;
-        }
-
-        public RGBA Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, out double depth)
-        {
-            return Intersects(worldVec, cameraPos, minDepth, out depth) ? new RGBA(0, 0, 255, 255) : new RGBA();
         }
     }
 }

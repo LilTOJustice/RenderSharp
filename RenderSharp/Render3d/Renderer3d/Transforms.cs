@@ -15,14 +15,14 @@ namespace RenderSharp.Render3d
 
         public static bool GetValidIntersection(double a, double b, double c, double minDepth, out double depth)
         {
-            double plusRoot, minusRoot;
-            if (!Operations.SolveQuadratic(a, b, c, out plusRoot, out minusRoot))
+            double minusRoot;
+            if (!Operations.SolveQuadratic(a, b, c, out _, out minusRoot) || minusRoot < minDepth)
             {
-                depth = 0;
+                depth = -1;
                 return false;
             }
 
-            depth = Math.Min(minusRoot, plusRoot);
+            depth = minusRoot;
             return true;
         }
     }

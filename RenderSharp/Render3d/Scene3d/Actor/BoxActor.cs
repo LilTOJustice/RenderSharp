@@ -1,4 +1,5 @@
 ﻿using MathSharp;
+using System.Runtime.InteropServices;
 
 namespace RenderSharp.Render3d
 {
@@ -20,9 +21,16 @@ namespace RenderSharp.Render3d
             box = new Box(position, size, rotation);
         }
 
-        internal override RGBA Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, out double depth)
+        internal override bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, out RGBA sample, out double depth)
         {
-            return box.Sample(worldVec, cameraPos, minDepth, out depth);
+            if (box.Intersects(worldVec, cameraPos, minDepth, out depth))
+            {
+                sample = new RGBA(0, 0, 255, 128);
+                return true;
+            }
+
+            sample = new RGBA();
+            return false;
         }
 
         internal override Actor Copy()

@@ -217,7 +217,8 @@ namespace RenderSharp.Render3d
                 {
                     for (int x = 0; x < Width; x++)
                     {
-                        double scaled = depthBuffer[x, y] == 0 || maxDepth == 0 ? 0 : 1 - depthBuffer[x, y] / maxDepth;
+                        double scaled = depthBuffer[x, y] == -1 || maxDepth == 0 ?
+                            0 : 1 - depthBuffer[x, y] / maxDepth;
                         output[x, y] = new FRGB(scaled, scaled, scaled);
                     }
                 }
@@ -242,21 +243,25 @@ namespace RenderSharp.Render3d
             worldVec = worldVec / minDepth;
             RGBA outColor = new();
             
-            int index = 0;
-            (double, RGBA)[] depthBuffer = new (double, RGBA)[scene.Actors.Count];
+            List<(RGBA, double)> renderQueue = new();
         
             foreach (Actor actor in scene.Actors.Values)
             {
+                RGBA sample;
                 double sampleDepth;
-                RGBA sample = actor.Sample(worldVec, scene.Camera.Position, minDepth, out sampleDepth);
-                depthBuffer[index++] = (sampleDepth, sample);
+                if (actor.Sample(worldVec, scene.Camera.Position, minDepth, out sample, out sampleDepth))
+                {
+                    renderQueue.Add((sample, sampleDepth));
+                }
             }
 
-            Array.Sort(depthBuffer, (a, b) => b.Item1.CompareTo(a.Item1));
-            depth = depthBuffer.Last().Item1;
-            foreach ((_, RGBA sample) in depthBuffer)
+            renderQueue.Sort((a, b)  => b.Item2.CompareTo(a.Item2));
+            depth = -1;
+
+            foreach ((RGBA sample, double d) in renderQueue)
             {
                 outColor = ColorFunctions.AlphaBlend(sample, outColor);
+                depth = d;
             }
 
             return ScreenSpaceShaderPass(scene, screenPos, outColor);
