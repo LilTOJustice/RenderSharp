@@ -67,7 +67,8 @@ namespace RenderSharp.Render3d
             /// </summary>
             /// <param name="center">Center of the camera in world space.</param>
             /// <param name="fov">Field of view of the camera.</param>
-            /// <param name="focalLength">Focal length (distance from the near plane) in world space of the camera.</param>
+            /// <param name="focalLength">Focal length (distance from the near plane) in world space of the camera.
+            /// If it is 0, orthographic projection will be used <see href="https://en.wikipedia.org/wiki/Orthographic_projection"/>.</param>
             /// <param name="rotation">Rotation of the camera in world space.</param>
             /// <param name="name">Name of the camera.</param>
             public FinalStep WithCamera(

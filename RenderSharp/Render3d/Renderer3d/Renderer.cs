@@ -249,7 +249,7 @@ namespace RenderSharp.Render3d
             {
                 worldVec.Z = 0;
                 cameraPos += worldVec;
-                worldVec = new FVec3(0, 0, 1);
+                worldVec = new FVec3(0, 0, 1).Rotate(scene.Camera.Rotation);
             }
 
             RGBA outColor = new();
