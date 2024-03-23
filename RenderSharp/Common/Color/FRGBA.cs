@@ -79,7 +79,7 @@ namespace RenderSharp
         /// Returns the color expressed in RGBA space.
         /// </summary>
         /// <returns>A new color with values scaled by 255.</returns>
-        public RGBA ToRGBA() => new RGBA((byte)(R * 255), (byte)(R * 255), (byte)(R * 255), (byte)(A * 255));
+        public RGBA ToRGBA() => new RGBA((byte)(R * 255), (byte)(G * 255), (byte)(B * 255), (byte)(A * 255));
 
         /// <summary>
         /// Returns the color expressed in HSVA space.

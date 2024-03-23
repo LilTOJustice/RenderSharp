@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>LilTOJustice.$(AssemblyName)</PackageId>
-    <Version>1.1.5</Version>
+    <Version>1.1.6</Version>
     <Authors>LilTOJustice</Authors>
     <PackageTags>Rendering</PackageTags>
     <Description>This package contains the rendering code for the *Sharp project.</Description>
@@ -18,14 +18,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\SimulSharp\README.md">
+    <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LilTOJustice.MathSharp" Version="1.1.4" />
+    <PackageReference Include="LilTOJustice.MathSharp" Version="1.1.6" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
     <PackageReference Include="Xabe.FFmpeg.Downloader" Version="5.2.6" />
   </ItemGroup>

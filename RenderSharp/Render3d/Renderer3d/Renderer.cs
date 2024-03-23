@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace RenderSharp.Render3d
 {
     /// <summary>
-    /// NOT IMPLEMENTED YET.
+    /// NOT FULLY IMPLEMENTED YET.
     /// Renderer for 3d scenes (<see cref="Scene"/>). Used for rendering scenes into <see cref="Frame"/>s or <see cref="Movie"/>s.
     /// </summary>
     public class Renderer
@@ -77,9 +77,10 @@ namespace RenderSharp.Render3d
         /// the scene will simulate up to the given frame index and the final frame will be rendered and returned.
         /// </summary>
         /// <param name="index">Which frame to render.</param>
+        /// <param name="showDepth">Whether to output a depth map rather than color.</param>
         /// <returns>The desired rendered frame, based on the index.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the index is negative or too large for the scene's duration.</exception>
-        public Frame RenderFrame(int index = 0)
+        public Frame RenderFrame(int index = 0, bool showDepth = false)
         {
             if (index < 0 || (index >= Scene.TimeSeq.Count && Scene.TimeSeq.Count != 0))
             {
@@ -92,15 +93,16 @@ namespace RenderSharp.Render3d
             SceneInstance sceneInstance = Scene.Simulate(index).Last();
             stopwatch.Stop();
             Console.WriteLine($"Finished in {stopwatch.Elapsed}");
-            return Render(sceneInstance, true);
+            return Render(sceneInstance, true, showDepth);
         }
 
         /// <summary>
         /// Renders all frames from the <see cref="Scene"/>, and produces a <see cref="Movie"/> that can be exported.
         /// </summary>
+        /// <param name="showDepth">Whether to output a depth map rather than color.</param>
         /// <returns>The rendered movie.</returns>
         /// <exception cref="Exception">Thrown if this method is called when the <see cref="Scene"/> is static (has a <see cref="Scene.TimeSeq"/> of length 0)</exception>
-        public Movie RenderMovie()
+        public Movie RenderMovie(bool showDepth = false)
         {
             if (Scene.TimeSeq.Count == 0)
             {
@@ -125,7 +127,7 @@ namespace RenderSharp.Render3d
                 for (int i = Interlocked.Increment(ref nextId); i < instances.Count; i = Interlocked.Increment(ref nextId))
                 {
                     var instance = instances[i];
-                    movie.WriteFrame(Render(instance), instance.Index);
+                    movie.WriteFrame(Render(instance, false, showDepth), instance.Index);
                     Interlocked.Increment(ref doneCount);
                 }
             };
@@ -185,9 +187,11 @@ namespace RenderSharp.Render3d
             Console.Out.Flush();
         }
 
-        private Frame Render(SceneInstance scene, bool verbose = false)
+        private Frame Render(SceneInstance scene, bool verbose, bool showDepth = false)
         {
             Frame output = new(Resolution);
+            double[,] depthBuffer = new double[Width, Height];
+            double maxDepth = 0;
 
             if (verbose)
             {
@@ -200,7 +204,23 @@ namespace RenderSharp.Render3d
             {
                 for (int x = 0; x < Width; x++)
                 {
-                    output[x, y] = RenderPixel(scene, x, y);
+                    double depth;
+                    output[x, y] = RenderPixel(scene, x, y, out depth);
+                    maxDepth = Math.Max(maxDepth, depth);
+                    depthBuffer[x, y] = depth;
+                }
+            }
+
+            if (showDepth)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    for (int x = 0; x < Width; x++)
+                    {
+                        double scaled = depthBuffer[x, y] == -1 || maxDepth == 0 ?
+                            0 : 1 - depthBuffer[x, y] / maxDepth;
+                        output[x, y] = new FRGB(scaled, scaled, scaled);
+                    }
                 }
             }
 
@@ -214,17 +234,34 @@ namespace RenderSharp.Render3d
             return output;
         }
 
-        private RGBA RenderPixel(SceneInstance scene, int x, int y)
+        private RGBA RenderPixel(SceneInstance scene, int x, int y, out double depth)
         {
             Vec2 screenPos = new(x, y);
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
             FVec3 worldVec = Transforms.ScreenToWorldVec(screenPos, Resolution, scene.Camera);
+            double minDepth = worldVec.Mag();
+            worldVec = worldVec / minDepth;
             RGBA outColor = new();
-
+            
+            List<(RGBA, double)> renderQueue = new();
+        
             foreach (Actor actor in scene.Actors.Values)
             {
-                double depth;
-                outColor = ColorFunctions.AlphaBlend(actor.Sample(worldVec, out depth), outColor);
+                RGBA sample;
+                double sampleDepth;
+                if (actor.Sample(worldVec, scene.Camera.Position, minDepth, out sample, out sampleDepth))
+                {
+                    renderQueue.Add((sample, sampleDepth));
+                }
+            }
+
+            renderQueue.Sort((a, b)  => b.Item2.CompareTo(a.Item2));
+            depth = -1;
+
+            foreach ((RGBA sample, double d) in renderQueue)
+            {
+                outColor = ColorFunctions.AlphaBlend(sample, outColor);
+                depth = d;
             }
 
             return ScreenSpaceShaderPass(scene, screenPos, outColor);

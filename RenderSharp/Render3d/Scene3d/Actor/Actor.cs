@@ -80,7 +80,7 @@ namespace RenderSharp.Render3d
         }
 
         // TODO: Implement
-        internal virtual RGBA Sample(in FVec3 worldVec, out double depth)
+        internal virtual bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, out RGBA sample, out double depth)
         {
             depth = 0;
             throw new NotImplementedException();

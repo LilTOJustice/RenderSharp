@@ -1,4 +1,5 @@
 ﻿using MathSharp;
+using System.Net.Http.Headers;
 
 namespace RenderSharp.Render3d
 {
@@ -69,9 +70,14 @@ namespace RenderSharp.Render3d
             /// <param name="focalLength">Focal length (distance from the near plane) in world space of the camera.</param>
             /// <param name="rotation">Rotation of the camera in world space.</param>
             /// <param name="name">Name of the camera.</param>
-            public FinalStep WithCamera(string name, in FVec3 center, in RVec3? rotation = null, in RVec2? fov = null, double focalLength = 1)
+            public FinalStep WithCamera(
+                string name,
+                in FVec3? center = null,
+                in RVec3? rotation = null,
+                in RVec2? fov = null,
+                double focalLength = 1)
             {
-                cameras.Add(name, new Camera(center, focalLength, fov ?? new DVec2(90, 90), rotation ?? new RVec3()));
+                cameras.Add(name, new Camera(center ?? new FVec3(), focalLength, fov ?? new DVec2(90, 90), rotation ?? new RVec3()));
                 return this;
             }
 
