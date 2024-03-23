@@ -239,8 +239,19 @@ namespace RenderSharp.Render3d
             Vec2 screenPos = new(x, y);
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
             FVec3 worldVec = Transforms.ScreenToWorldVec(screenPos, Resolution, scene.Camera);
-            double minDepth = worldVec.Mag();
-            worldVec = worldVec / minDepth;
+            double minDepth = scene.Camera.FocalLength == 0 ? 0 : worldVec.Mag();
+            FVec3 cameraPos = scene.Camera.Position;
+            if (scene.Camera.FocalLength != 0)
+            {
+                worldVec = worldVec / minDepth;
+            }
+            else
+            {
+                worldVec.Z = 0;
+                cameraPos += worldVec;
+                worldVec = new FVec3(0, 0, 1).Rotate(scene.Camera.Rotation);
+            }
+
             RGBA outColor = new();
             
             List<(RGBA, double)> renderQueue = new();
@@ -249,7 +260,7 @@ namespace RenderSharp.Render3d
             {
                 RGBA sample;
                 double sampleDepth;
-                if (actor.Sample(worldVec, scene.Camera.Position, minDepth, out sample, out sampleDepth))
+                if (actor.Sample(worldVec, cameraPos, minDepth, out sample, out sampleDepth))
                 {
                     renderQueue.Add((sample, sampleDepth));
                 }

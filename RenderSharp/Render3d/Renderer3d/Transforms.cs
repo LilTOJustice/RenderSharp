@@ -8,9 +8,15 @@ namespace RenderSharp.Render3d
         {
             FVec2 screenPosNorm = (FVec2)screenPos * 2 / resolution - new FVec2(1, 1);
             screenPosNorm.Y *= -1;
-            double lx = camera.FocalLength * Math.Tan(camera.Fov.X.Radians / 2);
-            double ly = camera.FocalLength * Math.Tan(camera.Fov.Y.Radians / 2);
-            return new FVec3(lx * screenPosNorm.X, ly * screenPosNorm.Y, camera.FocalLength).Rotate(camera.Rotation);
+            double lx = camera.FocalLength == 0 ? 1
+                : camera.FocalLength * Math.Tan(camera.Fov.X.Radians / 2);
+            double ly = camera.FocalLength == 0 ? 1
+                : camera.FocalLength * Math.Tan(camera.Fov.Y.Radians / 2);
+            return new FVec3(
+                lx * screenPosNorm.X,
+                ly * screenPosNorm.Y,
+                camera.FocalLength == 0 ? 1 : camera.FocalLength
+            ).Rotate(camera.Rotation);
         }
 
         public static bool GetValidIntersection(double a, double b, double c, double minDepth, out double depth)
