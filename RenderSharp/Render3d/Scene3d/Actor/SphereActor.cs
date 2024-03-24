@@ -32,8 +32,8 @@ namespace RenderSharp.Render3d
                     (fromCenter.Z < 0 ? -Math.PI / 2 : Math.PI / 2)
                     : Math.Atan(fromCenter.Z / fromCenter.X);
                 FVec2 uv = new FVec2(
-                    (theta1 + Math.PI / 2) / Math.PI,
-                    (theta2 + Math.PI / 2) / Math.PI);
+                    (theta2 + Math.PI / 2) / Math.PI,
+                    (theta1 + Math.PI / 2) / Math.PI);
                 sample = Texture[uv];
                 return true;
             }
