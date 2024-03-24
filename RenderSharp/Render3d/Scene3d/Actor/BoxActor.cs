@@ -1,5 +1,4 @@
 ﻿using MathSharp;
-using System.Runtime.InteropServices;
 
 namespace RenderSharp.Render3d
 {
@@ -23,13 +22,51 @@ namespace RenderSharp.Render3d
 
         internal override bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, double time, out RGBA sample, out double depth)
         {
-            if (box.Intersects(worldVec, cameraPos, minDepth, out depth))
+            Box.Face face;
+            if (box.Intersects(worldVec, cameraPos, minDepth, out depth, out face))
             {
                 FVec3 fromCenter = (worldVec * depth - (Position - cameraPos)).Rotate(Rotation) / BoundingBoxSize;
-                FVec2 uv = new FVec2(
-                    Operations.Mod((fromCenter.X + 1) / 2, 1),
-                    1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
-                sample = Texture[uv];
+                FVec2 uv;
+            switch (face)
+                {
+                    case Box.Face.PosX:
+                        uv = new FVec2(
+                            1 - Operations.Mod((fromCenter.Z + 1) / 2, 1),
+                            1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        break;
+                    case Box.Face.NegX:
+                        uv = new FVec2(
+                            Operations.Mod((fromCenter.Z + 1) / 2, 1),
+                            1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        break;
+                    case Box.Face.PosY:
+                        uv = new FVec2(
+                            Operations.Mod((fromCenter.X + 1) / 2, 1),
+                            1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
+                        break;
+                    case Box.Face.NegY:
+                        uv = new FVec2(
+                            1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
+                            1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
+                        break;
+                    case Box.Face.NegZ:
+                        uv = new FVec2(
+                            Operations.Mod((fromCenter.X + 1) / 2, 1),
+                            1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        break;
+                    case Box.Face.PosZ:
+                        uv = new FVec2(
+                            1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
+                            1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        break;
+                    default:
+                        uv = new FVec2();
+                        break;
+                }
+
+                FRGBA fOut;
+                FragShader(Texture[uv], out fOut, (Vec2)(uv * Texture.Size), Texture.Size, time);
+                sample = fOut;
                 return true;
             }
 

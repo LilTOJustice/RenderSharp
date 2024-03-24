@@ -4,6 +4,16 @@ namespace RenderSharp.Render3d
 {
     internal struct Box
     {
+        public enum Face
+        {
+            PosX,
+            NegX,
+            PosY,
+            NegY,
+            PosZ,
+            NegZ
+        }
+
         private FVec3 position;
         private FVec3 size;
         private FVec3 size2;
@@ -64,7 +74,7 @@ namespace RenderSharp.Render3d
             return Transforms.GetValidIntersection(a, b, c, minDepth, out depth);
         }
 
-        public bool Intersects(in FVec3 test, in FVec3 cameraPos, double minDepth, out double depth)
+        public bool Intersects(in FVec3 test, in FVec3 cameraPos, double minDepth, out double depth, out Face face)
         {
             FVec3 p = position - cameraPos;
             if (TestX(test, cameraPos, minDepth, out depth))
@@ -74,6 +84,7 @@ namespace RenderSharp.Render3d
                 if (EpsilonCheck(resultX, 1) && resultX > Math.Abs(rotated.Y) / size.Y
                     && resultX > Math.Abs(rotated.Z) / size.Z)
                 {
+                    face = rotated.X > 0 ? Face.PosX : Face.NegX;
                     return true;
                 }
             }
@@ -85,6 +96,7 @@ namespace RenderSharp.Render3d
                 if (EpsilonCheck(resultY, 1) && resultY > Math.Abs(rotated.X) / size.X
                     && resultY > Math.Abs(rotated.Z) / size.Z)
                 {
+                    face = rotated.Y > 0 ? Face.PosY : Face.NegY;
                     return true;
                 }
             }
@@ -96,11 +108,13 @@ namespace RenderSharp.Render3d
                 if (EpsilonCheck(resultZ, 1) && resultZ > Math.Abs(rotated.X) / size.X
                     && resultZ > Math.Abs(rotated.Y) / size.Y)
                 {
+                    face = rotated.Z > 0 ? Face.PosZ : Face.NegZ;
                     return true;
                 }
             }
 
             depth = -1;
+            face = Face.PosX;
             return false;
         }
     }
