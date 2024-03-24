@@ -109,7 +109,7 @@ namespace RenderSharp.Render3d
                 throw new Exception("Attempted to render a movie on a static scene.");
             }
 
-            Console.Write("Simulating... ");
+            Console.Write($"Simulating  {Scene.Actors.Count} actors...");
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             Movie movie = new(Width, Height, Scene.Framerate);
@@ -140,12 +140,14 @@ namespace RenderSharp.Render3d
             }
 
             stopwatch = Stopwatch.StartNew();
-            Console.WriteLine($"Waiting for {threads.Count} threads...");
+            int instanceCount = instances.Count;
+            Console.WriteLine($"Waiting for {threads.Count} threads to render {instanceCount} frames at {Width}x{Height}@{Scene.Framerate}...");
+            Console.WriteLine($"Rendering {Scene.Actors.Count} actors: {Scene.VertexCount} ({Scene.TriangleCount})");
 
-            while (doneCount <= instances.Count)
+            while (doneCount <= instanceCount)
             {
                 PrintBar(doneCount, instances.Count, timeElapsed: stopwatch.Elapsed.ToString());
-                if (doneCount == instances.Count)
+                if (doneCount == instanceCount)
                 {
                     stopwatch.Stop();
                     break;

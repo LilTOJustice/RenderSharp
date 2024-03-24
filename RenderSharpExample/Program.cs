@@ -6,10 +6,10 @@ namespace RenderSharpExample
 {
     internal class Program
     {
-        static readonly int framerate = 60;
-        static readonly int duration = 5;
-        static readonly int resX = 1000;
-        static readonly int resY = 1000;
+        static readonly int framerate = 30;
+        static readonly int duration = 3;
+        static readonly int resX = 500;
+        static readonly int resY = 500;
 
         static void Main()
         {
@@ -38,6 +38,7 @@ namespace RenderSharpExample
                 {
                     //scene["cube"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
                     //scene["sphere"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
+                    scene["car"].Rotation += new RVec3(0, 1 * dt, 0);
                 })
                 .Build();
 
@@ -45,7 +46,7 @@ namespace RenderSharpExample
             Renderer renderer = new(resX, resY, scene);
 
             // Finally render and output the video
-            renderer.RenderFrame(showDepth: false).Output("test");
+            renderer.RenderMovie(showDepth: false).Output("test");
         }
     }
 }

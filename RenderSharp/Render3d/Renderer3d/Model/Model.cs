@@ -30,6 +30,11 @@ namespace RenderSharp.Render3d
             this.triangles = triangles;
         }
 
+        internal Model(Model model, FVec3 size, RVec3 rotation, FVec3 position)
+        {
+            triangles = model.triangles.Select(t => new Triangle(t, size, rotation, position)).ToArray();
+        }
+
         internal bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, double time, out RGBA sample, out double depth)
         {
             foreach (Triangle triangle in triangles)
