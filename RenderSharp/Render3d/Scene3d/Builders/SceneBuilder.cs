@@ -1,5 +1,4 @@
 ﻿using MathSharp;
-using System.Net.Http.Headers;
 
 namespace RenderSharp.Render3d
 {
