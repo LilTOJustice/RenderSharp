@@ -20,7 +20,7 @@ namespace RenderSharp.Render3d
             sphere = new Sphere(position, size, rotation);
         }
 
-        internal override bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, out RGBA sample, out double depth)
+        internal override bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, double time, out RGBA sample, out double depth)
         {
             if (sphere.Intersects(worldVec, cameraPos, minDepth, out depth))
             {
@@ -34,7 +34,9 @@ namespace RenderSharp.Render3d
                 FVec2 uv = new FVec2(
                     (theta2 + Math.PI / 2) / Math.PI,
                     (theta1 + Math.PI / 2) / Math.PI);
-                sample = Texture[uv];
+                FRGBA fOut;
+                FragShader(Texture[uv], out fOut, (Vec2)(uv * Texture.Size), Texture.Size, time);
+                sample = fOut;
                 return true;
             }
 

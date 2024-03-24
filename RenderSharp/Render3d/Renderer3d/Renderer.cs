@@ -260,7 +260,7 @@ namespace RenderSharp.Render3d
             {
                 RGBA sample;
                 double sampleDepth;
-                if (actor.Sample(worldVec, cameraPos, minDepth, out sample, out sampleDepth))
+                if (actor.Sample(worldVec, cameraPos, minDepth, scene.Time, out sample, out sampleDepth))
                 {
                     renderQueue.Add((sample, sampleDepth));
                 }

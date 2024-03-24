@@ -1,4 +1,5 @@
 ﻿using MathSharp;
+using RenderSharp;
 using RenderSharp.Render3d;
 
 namespace RenderSharpExample
@@ -17,17 +18,20 @@ namespace RenderSharpExample
                 .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
-                .WithActor("box", new BoxActorBuilder()
-                   .WithPosition(new FVec3(0, 0, 4))
-                   .WithBoundingBoxSize(new FVec3(1, 1, 1))
-                )
+                //.WithActor("box", new BoxActorBuilder()
+                //   .WithPosition(new FVec3(0, 0, 4))
+                //   .WithBoundingBoxSize(new FVec3(1, 1, 1))
+                //   .WithTexture(new Texture("C:\\Users\\muian\\OneDrive\\Pictures\\freeman_201412170241332.jpg"))
+                //)
                 .WithActor("sphere", new SphereActorBuilder()
                     .WithPosition(new FVec3(0, 0, 4))
-                    .WithBoundingBoxSize(new FVec3(2, 1, 1))
+                    .WithBoundingBoxSize(new FVec3(1, 1, 1))
+                    .WithTexture(new Texture("C:\\Users\\muian\\OneDrive\\Pictures\\freeman_201412170241332.jpg"))
+                    .WithShader(ExampleShaders.Psychedelic)
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    scene["box"].Rotation += new RVec3(0, 1 * dt, 0);
+                    //scene["box"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
                     scene["sphere"].Rotation += new RVec3(0, 1 * dt, 0);
                 })
                 .Build();

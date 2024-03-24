@@ -21,11 +21,15 @@ namespace RenderSharp.Render3d
             box = new Box(position, size, rotation);
         }
 
-        internal override bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, out RGBA sample, out double depth)
+        internal override bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, double time, out RGBA sample, out double depth)
         {
             if (box.Intersects(worldVec, cameraPos, minDepth, out depth))
             {
-                sample = new RGBA(0, 0, 255, 128);
+                FVec3 fromCenter = (worldVec * depth - (Position - cameraPos)).Rotate(Rotation) / BoundingBoxSize;
+                FVec2 uv = new FVec2(
+                    Operations.Mod((fromCenter.X + 1) / 2, 1),
+                    1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                sample = Texture[uv];
                 return true;
             }
 
