@@ -18,20 +18,20 @@ namespace RenderSharpExample
                 .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
-                .WithActor("box", new BoxActorBuilder()
+                .WithActor("cube", new CubeActorBuilder()
                    .WithPosition(new FVec3(0, 0, 4))
-                   .WithBoundingBoxSize(new FVec3(1, 1, 1))
+                   .WithSize(new FVec3(1, 1, 1))
                    .WithColor(new RGBA(255, 0, 0, 128))
                    .WithShader(ExampleShaders.Psychedelic)
                 )
                 .WithActor("sphere", new SphereActorBuilder()
                     .WithPosition(new FVec3(0, 0, 4))
-                    .WithBoundingBoxSize(new FVec3(1, 1, 1))
+                    .WithSize(new FVec3(1, 1, 1))
                     .WithTexture(new Texture("..\\..\\..\\assets\\gordon.jpg"))
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    scene["box"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
+                    scene["cube"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
                     scene["sphere"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
                 })
                 .Build();

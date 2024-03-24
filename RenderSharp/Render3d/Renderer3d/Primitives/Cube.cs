@@ -2,7 +2,7 @@
 
 namespace RenderSharp.Render3d
 {
-    internal struct Box
+    internal struct Cube
     {
         public enum Face
         {
@@ -20,7 +20,7 @@ namespace RenderSharp.Render3d
         private RVec3 rotation;
         private RotorTransform rotorTransform;
 
-        public Box(in FVec3 position, in FVec3 size, in RVec3 rotation)
+        public Cube(in FVec3 position, in FVec3 size, in RVec3 rotation)
         {
             this.position = position;
             this.size = size;

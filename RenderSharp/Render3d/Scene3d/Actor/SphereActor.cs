@@ -47,7 +47,7 @@ namespace RenderSharp.Render3d
         internal override Actor Copy()
         {
             return new SphereActor(
-                BoundingBoxSize,
+                Size,
                 Rotation,
                 Position,
                 Texture,

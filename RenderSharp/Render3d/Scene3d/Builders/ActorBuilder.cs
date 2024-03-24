@@ -8,8 +8,8 @@ namespace RenderSharp.Render3d
     /// </summary>
     public class ActorBuilder
     {
-        /// <inheritdoc cref="Actor.BoundingBoxSize"/>
-        protected FVec3? boundingBoxSize;
+        /// <inheritdoc cref="Actor.Size"/>
+        protected FVec3? size;
 
         /// <inheritdoc cref="Actor.Rotation"/>
         protected RVec3? rotation;
@@ -28,10 +28,10 @@ namespace RenderSharp.Render3d
         /// <inheritdoc cref="Actor.FragShader"/>
         protected FragShader? fragShader;
 
-        /// <inheritdoc cref="Actor.BoundingBoxSize"/>
-        public ActorBuilder WithBoundingBoxSize(in FVec3 boundingBoxSize)
+        /// <inheritdoc cref="Actor.Size"/>
+        public ActorBuilder WithSize(in FVec3 size)
         {
-            this.boundingBoxSize = boundingBoxSize;
+            this.size = size;
             return this;
         }
 
@@ -72,12 +72,12 @@ namespace RenderSharp.Render3d
 
         internal virtual Actor Build()
         {
-            boundingBoxSize ??= new FVec3(1, 1, 1);
+            size ??= new FVec3(1, 1, 1);
             rotation ??= new RVec3();
             texture ??= new Texture(1, 1, color);
             position ??= new FVec3();
             fragShader ??= ((FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            return new Actor((FVec3)boundingBoxSize, (RVec3)rotation, (FVec3)position, texture, fragShader);
+            return new Actor((FVec3)size, (RVec3)rotation, (FVec3)position, texture, fragShader);
         }
     }
 }

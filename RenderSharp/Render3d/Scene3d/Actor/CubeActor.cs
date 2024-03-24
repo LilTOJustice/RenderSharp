@@ -3,13 +3,13 @@
 namespace RenderSharp.Render3d
 {
     /// <summary>
-    /// Actor representing a box in 3D space.
+    /// Actor representing a cube in 3D space.
     /// </summary>
-    public class BoxActor : Actor
+    public class CubeActor : Actor
     {
-        private Box box;
+        private Cube cube;
 
-        internal BoxActor(
+        internal CubeActor(
             in FVec3 size,
             in RVec3 rotation,
             in FVec3 position,
@@ -17,44 +17,45 @@ namespace RenderSharp.Render3d
             FragShader fragShader)
             : base(size, rotation, position, texture, fragShader)
         {
-            box = new Box(position, size, rotation);
+            cube = new Cube(position, size, rotation);
         }
 
         internal override bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, double time, out RGBA sample, out double depth)
         {
-            Box.Face face;
-            if (box.Intersects(worldVec, cameraPos, minDepth, out depth, out face))
+            Cube.Face face;
+            if (cube.Intersects(worldVec, cameraPos, minDepth, out depth, out face))
             {
-                FVec3 fromCenter = (worldVec * depth - (Position - cameraPos)).Rotate(Rotation) / BoundingBoxSize;
+                FVec3 fromCenter = (worldVec * depth - (Position - cameraPos)).Rotate(Rotation) / Size;
                 FVec2 uv;
-            switch (face)
+
+                switch (face)
                 {
-                    case Box.Face.PosX:
+                    case Cube.Face.PosX:
                         uv = new FVec2(
                             1 - Operations.Mod((fromCenter.Z + 1) / 2, 1),
                             1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
                         break;
-                    case Box.Face.NegX:
+                    case Cube.Face.NegX:
                         uv = new FVec2(
                             Operations.Mod((fromCenter.Z + 1) / 2, 1),
                             1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
                         break;
-                    case Box.Face.PosY:
+                    case Cube.Face.PosY:
                         uv = new FVec2(
                             Operations.Mod((fromCenter.X + 1) / 2, 1),
                             1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
                         break;
-                    case Box.Face.NegY:
+                    case Cube.Face.NegY:
                         uv = new FVec2(
                             1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
                             1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
                         break;
-                    case Box.Face.NegZ:
+                    case Cube.Face.NegZ:
                         uv = new FVec2(
                             Operations.Mod((fromCenter.X + 1) / 2, 1),
                             1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
                         break;
-                    case Box.Face.PosZ:
+                    case Cube.Face.PosZ:
                         uv = new FVec2(
                             1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
                             1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
@@ -76,8 +77,8 @@ namespace RenderSharp.Render3d
 
         internal override Actor Copy()
         {
-            return new BoxActor(
-                BoundingBoxSize,
+            return new CubeActor(
+                Size,
                 Rotation,
                 Position,
                 Texture,
