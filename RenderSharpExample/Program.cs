@@ -18,21 +18,26 @@ namespace RenderSharpExample
                 .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
-                .WithActor("cube", new CubeActorBuilder()
-                   .WithPosition(new FVec3(0, 0, 4))
-                   .WithSize(new FVec3(1, 1, 1))
-                   .WithColor(new RGBA(255, 0, 0, 128))
-                   .WithShader(ExampleShaders.Psychedelic)
-                )
-                .WithActor("sphere", new SphereActorBuilder()
+                //.WithActor("cube", new CubeActorBuilder()
+                //   .WithPosition(new FVec3(0, 0, 4))
+                //   .WithSize(new FVec3(1, 1, 1))
+                //   .WithColor(new RGBA(255, 0, 0, 128))
+                //   .WithShader(ExampleShaders.Psychedelic)
+                //)
+                //.WithActor("sphere", new SphereActorBuilder()
+                //    .WithPosition(new FVec3(0, 0, 4))
+                //    .WithSize(new FVec3(1, 1, 1))
+                //    .WithTexture(new Texture("..\\..\\..\\assets\\gordon.jpg"))
+                //)
+                .WithActor("car", new ModelActorBuilder()
+                    .WithModel(Model.FromFile("..\\..\\..\\assets\\Car.obj"))
                     .WithPosition(new FVec3(0, 0, 4))
                     .WithSize(new FVec3(1, 1, 1))
-                    .WithTexture(new Texture("..\\..\\..\\assets\\gordon.jpg"))
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    scene["cube"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
-                    scene["sphere"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
+                    //scene["cube"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
+                    //scene["sphere"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
                 })
                 .Build();
 
@@ -40,7 +45,7 @@ namespace RenderSharpExample
             Renderer renderer = new(resX, resY, scene);
 
             // Finally render and output the video
-            renderer.RenderMovie(showDepth: false).Output("test");
+            renderer.RenderFrame(showDepth: false).Output("test");
         }
     }
 }

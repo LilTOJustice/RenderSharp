@@ -23,8 +23,9 @@ namespace RenderSharp.Render3d
             d = -unitNorm.Dot(v0);
         }
 
-        private bool Intersects(in FVec3 test)
+        public bool Intersects(in FVec3 test, in FVec3 cameraPos, double minDepth, out double depth)
         {
+            depth = -1;
             double dot = test.Dot(unitNorm);
 
             // Check if we are facing the triangle side-on
@@ -33,24 +34,20 @@ namespace RenderSharp.Render3d
                 return false;
             }
 
-            double t = - d / dot;
+            depth = - d / dot;
 
             // Check if the intersection is behind the near plane.
-            if (t < 0)
+            if (depth < 0)
             {
+                depth = -1;
                 return false;
             }
             
-            FVec3 intersection = test * t;
+            FVec3 intersection = test * depth;
 
             return v01.Cross(intersection - v0).Dot(unitNorm) <= 0 &&
                    v12.Cross(intersection - v1).Dot(unitNorm) <= 0 &&
                    v20.Cross(intersection - v2).Dot(unitNorm) <= 0;
-        }
-
-        public RGBA Sample(in FVec3 worldVec)
-        {
-            return Intersects(worldVec) ? new RGBA(255, 255, 255, 255) : new RGBA();
         }
     }
 }

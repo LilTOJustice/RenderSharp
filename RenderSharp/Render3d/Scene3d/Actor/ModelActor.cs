@@ -17,12 +17,18 @@ namespace RenderSharp.Render3d
 
         internal override bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, double time, out RGBA sample, out double depth)
         {
-            throw new NotImplementedException();
+            return model.Sample(worldVec, cameraPos, minDepth, time, out sample, out depth);
         }
 
         internal override Actor Copy()
         {
-            throw new NotImplementedException();
+            return new ModelActor(
+               Size,
+               Rotation,
+               Position,
+               Texture,
+               FragShader,
+               model);
         }
     }
 }
