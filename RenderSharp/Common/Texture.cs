@@ -87,5 +87,10 @@ namespace RenderSharp
         {
             get { return y < Height && x < Width ? _texture[y, x] : new RGBA(); }
         }
+
+        internal RGBA this[FVec2 uv]
+        {
+            get { return this[(int)(uv.X * Width), (int)(uv.Y * Height)]; }
+        }
     }
 }

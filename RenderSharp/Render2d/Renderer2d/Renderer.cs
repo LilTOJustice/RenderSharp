@@ -263,8 +263,8 @@ namespace RenderSharp.Render2d
                 //: Transforms.WorldToBgTexture2(worldLoc, scene.BgTexture.Size, scene.BgTextureWorldSize);
             Scene.BgCoordShader(bgTextureInd, out bgTextureInd, Resolution, scene.Time);
             RGBA outColor = scene.BgTexture[
-                Operations.Mod(bgTextureInd.X, scene.BgTexture.Width),
-                Operations.Mod(bgTextureInd.Y, scene.BgTexture.Height)];
+                (int)Operations.Mod(bgTextureInd.X, scene.BgTexture.Width),
+                (int)Operations.Mod(bgTextureInd.Y, scene.BgTexture.Height)];
 
             FRGBA fOut = outColor;
             Scene.BgFragShader(fOut, out fOut, bgTextureInd, scene.BgTexture.Size, scene.Time);

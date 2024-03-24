@@ -10,24 +10,24 @@ namespace RenderSharp.Render3d
         /// <summary>
         /// World space bounding box size of the actor.
         /// The actor's center is at the origin of the bounding box, and the actor's rotation is about the center.
-        /// The actor's rendered size is determined by this value.
+        /// The actor's rendered scale is determined by this value.
         /// </summary>
-        public FVec3 BoundingBoxSize { get; set; }
+        public FVec3 Size { get; set; }
         
         /// <summary>
-        /// World space width of the actor's collision box.
+        /// World space width of the actor's bounding box.
         /// </summary>
-        public double Width { get { return BoundingBoxSize.X; } }
+        public double Width { get { return Size.X; } }
 
         /// <summary>
-        /// World space height of the actor's collision box.
+        /// World space height of the actor's bounding box.
         /// </summary>
-        public double Height { get { return BoundingBoxSize.Y; } }
+        public double Height { get { return Size.Y; } }
 
         /// <summary>
-        /// World space depth of the actor's collision box.
+        /// World space depth of the actor's bounding box.
         /// </summary>
-        public double Depth { get { return BoundingBoxSize.Z; } }
+        public double Depth { get { return Size.Z; } }
         
         /// <summary>
         /// World space position of the actor's center.
@@ -58,7 +58,7 @@ namespace RenderSharp.Render3d
         {
             Texture = texture;
             Position = position;
-            BoundingBoxSize = size;
+            Size = size;
             Rotation = rotation;
             FragShader = fragShader;
         }
@@ -80,7 +80,7 @@ namespace RenderSharp.Render3d
         }
 
         // TODO: Implement
-        internal virtual bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, out RGBA sample, out double depth)
+        internal virtual bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, double time, out RGBA sample, out double depth)
         {
             depth = 0;
             throw new NotImplementedException();
@@ -93,7 +93,7 @@ namespace RenderSharp.Render3d
         internal virtual Actor Copy()
         {
             return new Actor(
-                BoundingBoxSize,
+                Size,
                 Rotation,
                 Position,
                 Texture,

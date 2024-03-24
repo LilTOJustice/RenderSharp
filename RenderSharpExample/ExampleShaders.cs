@@ -69,7 +69,7 @@ namespace RenderSharp
 
         public static void Psychedelic(FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time)
         {
-            HSV hsv = (HSV)fragIn;
+            HSVA hsv = (HSVA)fragIn;
             hsv.H = (time * 360) % 360;
             fragOut = hsv;
         }
