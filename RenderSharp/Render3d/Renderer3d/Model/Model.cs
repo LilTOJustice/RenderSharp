@@ -7,9 +7,7 @@ namespace RenderSharp.Render3d
     /// </summary>
     public class Model
     {
-        private readonly Triangle[] triangles;
-
-        internal int TriangleCount => triangles.Length;
+        private readonly Face[] faces;
 
         /// <summary>
         /// Create a new model from a file.
@@ -21,32 +19,42 @@ namespace RenderSharp.Render3d
             switch (file.Extension)
             {
                 case ".obj":
-                    return new OBJReader().Read(file);
+                    return new OBJReader().Read(file).MakeModel();
                 default:
                     throw new ArgumentException($"Unsupported file type, {file.Extension}");
             }
         }
 
-        internal Model(Triangle[] triangles)
+        internal Model(Face[] faces)
         {
-            this.triangles = triangles;
+            this.faces = faces;
         }
 
         internal Model(Model model, FVec3 size, RVec3 rotation, FVec3 position, FVec3? cameraPos = null)
         {
-            triangles = model.triangles.Select(t => new Triangle(t, size, rotation, position, cameraPos)).ToArray();
+            faces = model.faces.Select(f => new Face()
+            {
+                Material = f.Material,
+                Triangles = f.Triangles.Select(t => new Triangle(t, size, rotation, position, cameraPos)).ToArray()
+            }).ToArray();
         }
 
         internal bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
         {
             double outDepth = double.MaxValue;
             sample = new RGBA();
-            foreach (Triangle triangle in triangles)
+            foreach (Face face in faces)
             {
-                if (triangle.Intersects(worldVec, minDepth, out depth))
+                foreach (Triangle triangle in face.Triangles)
                 {
-                    sample = new RGBA(255, 255, 255, 255);
-                    outDepth = Math.Min(outDepth, depth);
+                    if (triangle.Intersects(worldVec, minDepth, out depth))
+                    {
+                        if (depth < outDepth)
+                        {
+                            outDepth = depth;
+                            sample = face.Material[0, 0];
+                        }
+                    }
                 }
             }
 

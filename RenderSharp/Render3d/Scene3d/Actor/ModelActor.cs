@@ -10,10 +10,6 @@ namespace RenderSharp.Render3d
         private Model origModel;
         private Model model;
 
-        internal int VertexCount => model.TriangleCount + 2;
-
-        internal int TriangleCount => model.TriangleCount;
-
         internal ModelActor(FVec3 size, RVec3 rotation, FVec3 position, Texture texture, FragShader fragShader, Model model)
             : base(size, rotation, position, texture, fragShader)
         {

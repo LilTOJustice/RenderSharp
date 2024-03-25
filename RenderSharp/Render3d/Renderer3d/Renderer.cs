@@ -140,7 +140,7 @@ namespace RenderSharp.Render3d
 
             stopwatch = Stopwatch.StartNew();
             int instanceCount = instances.Count;
-            Console.WriteLine($"Waiting for {threads.Count} threads to render {instanceCount} frames at {Width}x{Height}@{Scene.Framerate}...");
+            Console.WriteLine($"Waiting for {threads.Count} threads to render {instanceCount} frames at {Width}x{Height} @ {Scene.Framerate} fps...");
 
             while (doneCount <= instanceCount)
             {
@@ -196,7 +196,6 @@ namespace RenderSharp.Render3d
             if (verbose)
             {
                 Console.WriteLine($"Beginning render on {scene.Actors.Count} at {Width}x{Height}...");
-                Console.WriteLine($"Rendering {scene.VertexCount} vertices ({scene.TriangleCount} triangles).");
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
