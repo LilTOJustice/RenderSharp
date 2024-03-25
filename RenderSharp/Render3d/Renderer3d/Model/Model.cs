@@ -7,7 +7,9 @@ namespace RenderSharp.Render3d
     /// </summary>
     public class Model
     {
-        private Triangle[] triangles;
+        private readonly Triangle[] triangles;
+
+        internal int TriangleCount => triangles.Length;
 
         /// <summary>
         /// Create a new model from a file.
@@ -30,24 +32,31 @@ namespace RenderSharp.Render3d
             this.triangles = triangles;
         }
 
-        internal Model(Model model, FVec3 size, RVec3 rotation, FVec3 position)
+        internal Model(Model model, FVec3 size, RVec3 rotation, FVec3 position, FVec3? cameraPos = null)
         {
-            triangles = model.triangles.Select(t => new Triangle(t, size, rotation, position)).ToArray();
+            triangles = model.triangles.Select(t => new Triangle(t, size, rotation, position, cameraPos)).ToArray();
         }
 
-        internal bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, double time, out RGBA sample, out double depth)
+        internal bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
         {
+            double outDepth = double.MaxValue;
+            sample = new RGBA();
             foreach (Triangle triangle in triangles)
             {
-                if (triangle.Intersects(worldVec, cameraPos, minDepth, out depth))
+                if (triangle.Intersects(worldVec, minDepth, out depth))
                 {
                     sample = new RGBA(255, 255, 255, 255);
-                    return true;
+                    outDepth = Math.Min(outDepth, depth);
                 }
             }
 
+            if (outDepth != double.MaxValue)
+            {
+                depth = outDepth;
+                return true;
+            }
+
             depth = -1;
-            sample = new RGBA();
             return false;
         }
     }

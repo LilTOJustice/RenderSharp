@@ -46,7 +46,7 @@ namespace RenderSharpExample
             Renderer renderer = new(resX, resY, scene);
 
             // Finally render and output the video
-            renderer.RenderMovie(showDepth: false).Output("test");
+            renderer.RenderMovie(showDepth: true).Output("test");
         }
     }
 }

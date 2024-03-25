@@ -36,6 +36,38 @@
 
         internal Dictionary<string, Actor> Actors { get; set; }
 
+        internal int VertexCount
+        {
+            get
+            {
+                return Actors.Values.Sum(actor =>
+                {
+                    if (actor is ModelActor)
+                    {
+                        return ((ModelActor)actor).VertexCount;
+                    }
+
+                    return 0;
+                });
+            }
+        }
+
+        internal int TriangleCount
+        {
+            get
+            {
+                return Actors.Values.Sum(actor =>
+                {
+                    if (actor is ModelActor)
+                    {
+                        return ((ModelActor)actor).TriangleCount;
+                    }
+
+                    return 0;
+                });
+            }
+        }
+
         internal SceneInstance(Scene scene)
         {
             Cameras = new Dictionary<string, Camera>(
