@@ -8,13 +8,13 @@ namespace RenderSharp.Render3d
 
         private (FVec2, FVec2, FVec2) uv;
 
-        public FaceTriangle(Triangle triangle, (FVec2, FVec2, FVec2) uv)
+        public FaceTriangle(in Triangle triangle, in (FVec2, FVec2, FVec2) uv)
         {
             this.triangle = triangle;
             this.uv = uv;
         }
 
-        public FaceTriangle(FaceTriangle t, FVec3 size, RVec3 rotation, FVec3 position)
+        public FaceTriangle(in FaceTriangle t, in FVec3 size, in RVec3 rotation, in FVec3 position)
         {
             triangle = new Triangle(t.triangle, size, rotation, position);
             uv = t.uv;

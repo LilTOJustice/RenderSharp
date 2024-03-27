@@ -45,10 +45,14 @@ namespace RenderSharp.Render3d
             this.triangles = triangles;
         }
 
-        public Face(Face f, FVec3 size, RVec3 rotation, FVec3 position)
+        public Face(in Face f, in FVec3 size, in RVec3 rotation, in FVec3 position)
         {
             material = f.material;
-            triangles = f.triangles.Select(t => new FaceTriangle(t, size, rotation, position)).ToArray();
+            triangles = new FaceTriangle[f.triangles.Length];
+            for (int i = 0; i < f.triangles.Length; i++)
+            {
+                triangles[i] = new FaceTriangle(f.triangles[i], size, rotation, position);
+            }
         }
     }
 }

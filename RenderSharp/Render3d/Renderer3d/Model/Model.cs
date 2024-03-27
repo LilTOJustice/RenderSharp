@@ -30,9 +30,13 @@ namespace RenderSharp.Render3d
             this.faces = faces;
         }
 
-        internal Model(Model model, FVec3 size, RVec3 rotation, FVec3 position)
+        internal Model(in Model model, in FVec3 size, in RVec3 rotation, in FVec3 position)
         {
-            faces = model.faces.Select(f => new Face(f, size, rotation, position)).ToArray();
+            faces = new Face[model.faces.Length];
+            for (int i = 0; i < model.faces.Length; i++)
+            {
+                faces[i] = new Face(model.faces[i], size, rotation, position);
+            }
         }
 
         internal bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
