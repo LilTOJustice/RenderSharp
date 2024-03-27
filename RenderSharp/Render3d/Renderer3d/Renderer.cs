@@ -195,7 +195,7 @@ namespace RenderSharp.Render3d
 
             if (verbose)
             {
-                Console.WriteLine($"Beginning render on {scene.Actors.Count} at {Width}x{Height}...");
+                Console.WriteLine($"Beginning render on {scene.Actors.Count} actor(s) at {Width}x{Height}...");
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -240,7 +240,6 @@ namespace RenderSharp.Render3d
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
             FVec3 worldVec = Transforms.ScreenToWorldVec(screenPos, Resolution, scene.Camera);
             double minDepth = scene.Camera.FocalLength == 0 ? 0 : worldVec.Mag();
-            FVec3 cameraPos = scene.Camera.Position;
             if (scene.Camera.FocalLength != 0)
             {
                 worldVec = worldVec / minDepth;
@@ -248,7 +247,6 @@ namespace RenderSharp.Render3d
             else
             {
                 worldVec.Z = 0;
-                cameraPos += worldVec;
                 worldVec = new FVec3(0, 0, 1).Rotate(scene.Camera.Rotation);
             }
 
@@ -260,7 +258,7 @@ namespace RenderSharp.Render3d
             {
                 RGBA sample;
                 double sampleDepth;
-                if (actor.Sample(worldVec, cameraPos, minDepth, scene.Time, out sample, out sampleDepth))
+                if (actor.Sample(worldVec, minDepth, scene.Time, out sample, out sampleDepth))
                 {
                     renderQueue.Add((sample, sampleDepth));
                 }

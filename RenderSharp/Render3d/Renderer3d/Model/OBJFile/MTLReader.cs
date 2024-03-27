@@ -5,28 +5,39 @@ namespace RenderSharp.Render3d
     internal class MTLReader
     {
         Dictionary<string, Material> materials = new();
+        DirectoryInfo directory;
+
+        public MTLReader(DirectoryInfo directory)
+        {
+            this.directory = directory;
+        }
 
         private Material ParseMaterial(StreamReader reader)
         {
             string? line;
-            RGBA color = new();
+            Texture diffuse = new(1, 1);
             while (reader.Peek() != 'n' && (line = reader.ReadLine()) != null)
             {
-                string start = line.Split(' ')[0];
-                switch (start)
+                string[] parts = line.Split(' ');
+                switch (parts[0])
                 {
                     case "Kd":
-                        string[] parts = line.Split(' ');
-                        color = new FRGBA(
-                            float.Parse(parts[1]),
-                            float.Parse(parts[2]),
-                            float.Parse(parts[3]),
-                            1);
+                        diffuse = new Texture(
+                            1,
+                            1,
+                            new FRGBA(
+                                float.Parse(parts[1]),
+                                float.Parse(parts[2]),
+                                float.Parse(parts[3]),
+                            1));
+                        break;
+                    case "map_Kd":
+                        diffuse = new Texture(directory.FullName + '/' + parts[1]);
                         break;
                 }
             }
 
-            return new Material(new Texture(1, 1, color));
+            return new Material(diffuse);
         }
 
         public MTLReader Read(FileInfo file)

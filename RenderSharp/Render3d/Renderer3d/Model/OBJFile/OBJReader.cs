@@ -6,7 +6,9 @@ namespace RenderSharp.Render3d
     internal class OBJReader : ModelReader
     {
         private List<FVec3> vertices = new();
-        private List<Face> faceElements = new();
+        private List<FVec3> vertexNormals = new();
+        private List<FVec2> textureVertices = new();
+        private List<Face> faces = new();
         private Dictionary<string, Material> materials = new();
 
         private enum FaceType
@@ -25,43 +27,60 @@ namespace RenderSharp.Render3d
                 Console.WriteLine($"Warning: File \"{file}\" does not exist. Skipping...");
                 return this;
             }
-
+            
             Console.WriteLine($"Loading object from file {file}");
             DirectoryInfo directory = file.Directory!;
 
             List<string> requiredMaterials = ParseRequiredMaterials(file);
-            Console.WriteLine($"Found {requiredMaterials.Count} required materials. Loading...");
-            MTLReader mtlReader = new();
+            Console.WriteLine($"\tFound {requiredMaterials.Count} required materials. Loading...");
+            MTLReader mtlReader = new(directory);
             foreach (string requiredMaterial in requiredMaterials)
             {
                 FileInfo matFile = directory.EnumerateFiles().FirstOrDefault(f => f.Name == requiredMaterial)!;
                 mtlReader.Read(matFile);
             }
+            materials = mtlReader.MakeMaterials();
+            Console.WriteLine($"\tLoaded {materials.Count} materials.");
 
-            Dictionary<string, Material> newMaterials = mtlReader.MakeMaterials();
-            List<FVec3> newVertices = ParseVertices(file);
-            List<Face> newFaceElements = ParseFaces(file, newVertices, newMaterials);
-
-            materials = materials.Concat(newMaterials)
-                .ToDictionary(kv => kv.Key, kv => kv.Value);
-            vertices.AddRange(newVertices);
-            faceElements.AddRange(newFaceElements);
-
-            Console.WriteLine($"Loaded {newMaterials.Count} new materials, " +
-                $"{newVertices.Count} new vertices, " +
-                $"{newFaceElements.Count} new faces, " +
-                $"and {newFaceElements.Sum(f => f.Triangles.Count())} new triangles.");
-            Console.WriteLine($"Total: {materials.Count} materials, " +
-                $"{vertices.Count} vertices, " +
-                $"{faceElements.Count} faces, " +
-                $"and {faceElements.Sum(f => f.Triangles.Count())} triangles.");
+            vertices = ParseVertices(file);
+            Console.WriteLine($"\tLoaded {vertices.Count} vertices.");
+            vertexNormals = ParseVertexNormals(file);
+            Console.WriteLine($"\tLoaded {vertexNormals.Count} vertex normals.");
+            textureVertices = ParseTextureVertices(file);
+            Console.WriteLine($"\tLoaded {textureVertices.Count} texture vertices.");
+            faces = ParseFaces(file);
+            Console.WriteLine($"\tLoaded {faces.Count} faces.");
 
             return this;
         }
 
         public override Model MakeModel()
         {
-            return new Model(faceElements.ToArray());
+            return new Model(faces.ToArray());
+        }
+
+        private void Parse(FileInfo file, Dictionary<string, Action<string>> targetLineActions)
+        {
+            string? line;
+            StreamReader reader = file.OpenText();
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (targetLineActions.Any(kv => line.StartsWith(kv.Key)))
+                {
+                    targetLineActions.First(kv => line.StartsWith(kv.Key)).Value(line);
+                }
+            }
+            reader.Close();
+        }
+
+        private void Parse(FileInfo file, Action<string> action, string targetLineStart)
+        {
+            Parse(
+                file,
+                new Dictionary<string, Action<string>>()
+                {
+                    { targetLineStart, action }
+                });
         }
         
         private FaceType GetFaceType(string face)
@@ -82,38 +101,22 @@ namespace RenderSharp.Render3d
 
         private List<string> ParseRequiredMaterials(FileInfo file)
         {
-            StreamReader reader = file.OpenText();
             List<string> requiredMaterials = new();
-            string? line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                if (line.StartsWith("mtllib "))
-                {
-                    requiredMaterials.Add(line[7..]);
-                }
-            }
-            reader.Close();
-
+            Parse(file, (string line) => requiredMaterials.Add(line[7..]), "mtllib ");
             return requiredMaterials;
         }
 
         private List<FVec3> ParseVertices(FileInfo file)
         {
-            StreamReader reader = file.OpenText();
             List<FVec3> vertices = new();
-            string? line;
-            while ((line = reader.ReadLine()) != null)
+            Parse(file, (string line) =>
             {
-                if (line.StartsWith("v "))
-                {
-                    string[] coords = line[2..].Split(' ');
-                    vertices.Add(new FVec3(
-                       float.Parse(coords[0]),
-                       float.Parse(coords[1]),
-                       float.Parse(coords[2])));
-                }
-            }
-            reader.Close();
+                string[] coords = line[2..].Split(' ');
+                vertices.Add(new FVec3(
+                    float.Parse(coords[0]),
+                    float.Parse(coords[1]),
+                    float.Parse(coords[2])));
+            }, "v ");
 
             double minX = vertices.Min(v => v.X);
             double maxX = vertices.Max(v => v.X);
@@ -129,66 +132,106 @@ namespace RenderSharp.Render3d
             return vertices.Select(v => v - center).ToList();
         }
 
-        private List<Face> ParseFaces(FileInfo file, List<FVec3> newVertices, Dictionary<string, Material> newMaterials)
-        {
-            StreamReader reader = file.OpenText();
-            List<Face> faceElements = new();
-            string? line;
-            Material? currentMaterial = null;
-            while ((line = reader.ReadLine()) != null)
-            {
-                if (line.StartsWith("f "))
-                {
-                    string[] face = line[2..].Split(' ');
-                    faceElements.Add(new Face()
-                    {
-                        Material = currentMaterial ?? new Material(new Texture(1, 1, new RGBA())),
-                        Triangles = MakeTriangles(face.Select(f =>
-                        {
-                            switch (GetFaceType(f))
-                            {
-                                case FaceType.Vertex:
-                                    return newVertices[int.Parse(f) - 1];
-                                case FaceType.VertexTextureCoord:
-                                    return newVertices[int.Parse(f.Split('/')[0]) - 1];
-                                case FaceType.VertexNormal:
-                                    return newVertices[int.Parse(f.Split('/')[0]) - 1];
-                                case FaceType.VertexNormalNoTextureCoord:
-                                    return newVertices[int.Parse(f.Split('/')[0]) - 1];
-                                default:
-                                    throw new Exception("Invalid face type");
-                            }
-                        }).ToList()).ToArray()
-                    });
-                }
-                else if (line.StartsWith("usemtl "))
-                {
-                    string materialName = line[7..];
-                    if (!newMaterials.ContainsKey(materialName))
-                    {
-                        Console.WriteLine($"Warning: Referenced material \"{materialName}\" not found.");
-                    }
-                    else
-                    {
-                        currentMaterial = newMaterials[materialName];
-                    }
-                }
-            }
-            reader.Close();
 
-            return faceElements;
+        private List<FVec3> ParseVertexNormals(FileInfo file)
+        {
+            List<FVec3> vertexNormals = new();
+            Parse(file, (string line) =>
+            {
+                string[] coords = line[3..].Split(' ');
+                vertexNormals.Add(new FVec3(
+                    float.Parse(coords[0]),
+                    float.Parse(coords[1]),
+                    float.Parse(coords[2])));
+            }, "vn ");
+
+            return vertexNormals;
         }
 
-        private List<Triangle> MakeTriangles(List<FVec3> vertices)
+        private List<FVec2> ParseTextureVertices(FileInfo file)
         {
-            List<Triangle> triangles = new();
-            int vertexCount = vertices.Count;
+            List<FVec2> textureVertices = new();
+            Parse(file, (string line) =>
+            {
+                string[] coords = line[3..].Split(' ');
+                textureVertices.Add(new FVec2(
+                    float.Parse(coords[0]),
+                    coords.Length > 1 ? float.Parse(coords[1]) : 0));
+            }, "vt ");
+
+            return textureVertices;
+        }
+
+        private FVec2 GetTextureVertex(string face)
+        {
+            return GetFaceType(face) switch
+                {
+                    FaceType.VertexTextureCoord => textureVertices[int.Parse(face.Split('/')[1]) - 1],
+                    FaceType.VertexNormal => textureVertices[int.Parse(face.Split('/')[1]) - 1],
+                    _ => new FVec2()
+                };
+        }
+
+        private List<FaceTriangle> MakeTriangles(List<string> faceVertexIndices)
+        {
+            List<FaceTriangle> triangles = new();
+            int vertexCount = faceVertexIndices.Count;
             for (int i = 2; i < vertexCount; i++)
             {
-                triangles.Add(new Triangle(vertices[0], vertices[i - 1], vertices[i]));
+                triangles.Add(
+                    new FaceTriangle(
+                        new Triangle(
+                            vertices[int.Parse(faceVertexIndices[0].Split('/')[0]) - 1],
+                            vertices[int.Parse(faceVertexIndices[i - 1].Split('/')[0]) - 1],
+                            vertices[int.Parse(faceVertexIndices[i].Split('/')[0]) - 1]),
+                        ( // Rotate the texture vertices by 1 to work with the renderer.
+                            GetTextureVertex(faceVertexIndices[i]),
+                            GetTextureVertex(faceVertexIndices[0]),
+                            GetTextureVertex(faceVertexIndices[i - 1])
+                        )));
             }
 
             return triangles;
+        }
+
+        private Face ParseFace(Material material, List<string> faceVertexIndices)
+        {
+            return new Face(
+                material,
+                MakeTriangles(faceVertexIndices).ToArray());
+        }
+
+        private List<Face> ParseFaces(FileInfo file)
+        {
+            List<Face> faces = new();
+            Material? currentMaterial = null;
+            Parse(file, new Dictionary<string, Action<string>>()
+            {
+                { "f ", (string line) =>
+                    {
+                        List<string> faceVertexIndices = line[2..].Split(' ').ToList();
+                        faces.Add(
+                            ParseFace(
+                                currentMaterial ?? new Material(new Texture(1, 1, new RGBA())),
+                                faceVertexIndices));
+                    }
+                },
+                { "usemtl ", (string line) =>
+                    {
+                        string materialName = line[7..];
+                        if (!materials.ContainsKey(materialName))
+                        {
+                            Console.WriteLine($"Warning: Referenced material \"{materialName}\" not found.");
+                        }
+                        else
+                        {
+                            currentMaterial = materials[materialName];
+                        }
+                    }
+                }
+            });
+
+            return faces;
         }
     }
 }

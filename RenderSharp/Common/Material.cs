@@ -8,30 +8,18 @@ namespace RenderSharp.Common
     /// </summary>
     public class Material
     {
-        Texture texture;
-
         /// <summary>
-        /// Width of the underlying texture.
+        /// The diffuse texture of the material.
         /// </summary>
-        public int Width => texture.Width;
-
-        /// <summary>
-        /// Height of the underlying texture.
-        /// </summary>
-        public int Height => texture.Height;
+        public Texture Diffuse { get; }
 
         /// <summary>
         /// Construct a new material.
         /// </summary>
-        /// <param name="texture"></param>
-        public Material(Texture texture)
+        public Material(Texture diffuse)
         {
-            this.texture = texture;
+            this.Diffuse = diffuse;
         }
-
-        internal RGBA this[int x, int y] => texture[y, x];
-
-        internal RGBA this[FVec2 uv] => texture[uv];
 
         /// <summary>
         /// Info about the material as a string.
@@ -39,7 +27,7 @@ namespace RenderSharp.Common
         /// <returns></returns>
         public override string ToString()
         {
-            return $"Texture: {texture.Size}\nDiffuse color: {texture[0, 0]}";
+            return $"Diffuse: {Diffuse.Size}";
         }
     }
 }

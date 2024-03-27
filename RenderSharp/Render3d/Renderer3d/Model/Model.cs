@@ -5,7 +5,7 @@ namespace RenderSharp.Render3d
     /// <summary>
     /// Model for use in <see cref="ModelActor"/>.
     /// </summary>
-    public class Model
+    public struct Model
     {
         private readonly Face[] faces;
 
@@ -30,33 +30,28 @@ namespace RenderSharp.Render3d
             this.faces = faces;
         }
 
-        internal Model(Model model, FVec3 size, RVec3 rotation, FVec3 position, FVec3? cameraPos = null)
+        internal Model(Model model, FVec3 size, RVec3 rotation, FVec3 position)
         {
-            faces = model.faces.Select(f => new Face()
-            {
-                Material = f.Material,
-                Triangles = f.Triangles.Select(t => new Triangle(t, size, rotation, position, cameraPos)).ToArray()
-            }).ToArray();
+            faces = model.faces.Select(f => new Face(f, size, rotation, position)).ToArray();
         }
 
         internal bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
         {
             double outDepth = double.MaxValue;
-            sample = new RGBA();
+            RGBA outSample = new RGBA();
             foreach (Face face in faces)
             {
-                foreach (Triangle triangle in face.Triangles)
+                if (face.Sample(worldVec, minDepth, out sample, out depth))
                 {
-                    if (triangle.Intersects(worldVec, minDepth, out depth))
+                    if (depth < outDepth)
                     {
-                        if (depth < outDepth)
-                        {
-                            outDepth = depth;
-                            sample = face.Material[0, 0];
-                        }
+                        outSample = sample;
+                        outDepth = depth;
                     }
                 }
             }
+
+            sample = outSample;
 
             if (outDepth != double.MaxValue)
             {

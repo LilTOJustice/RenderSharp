@@ -19,7 +19,7 @@ namespace RenderSharpExample
                 .WithFramerate(framerate)
                 .WithDuration(duration)
                 .WithActor("car", new ModelActorBuilder()
-                    .WithModel(Model.FromFile("..\\..\\..\\assets\\Car.obj"))
+                    .WithModel(Model.FromFile("..\\..\\..\\assets\\car_bebo.obj"))
                     .WithPosition(new FVec3(0, 0, 4))
                     .WithSize(new FVec3(1, 1, 1))
                 )
@@ -33,7 +33,7 @@ namespace RenderSharpExample
             Renderer renderer = new(resX, resY, scene);
 
             // Finally render and output the video
-            renderer.RenderMovie(showDepth: false).Output("test");
+            renderer.RenderFrame(showDepth: false).Output("test");
         }
     }
 }

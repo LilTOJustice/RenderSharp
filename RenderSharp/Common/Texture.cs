@@ -90,7 +90,7 @@ namespace RenderSharp
 
         internal RGBA this[FVec2 uv]
         {
-            get { return this[(int)(uv.X * Width), (int)(uv.Y * Height)]; }
+            get { return Height == 1 && Width == 1 ? this[0, 0] : this[(int)(uv.X * Width), (int)((1 - uv.Y) * Height)]; }
         }
     }
 }
