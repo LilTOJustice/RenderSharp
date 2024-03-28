@@ -1,5 +1,6 @@
 ﻿using MathSharp;
 using RenderSharp.Common;
+using System.Diagnostics;
 
 namespace RenderSharp.Render3d
 {
@@ -29,6 +30,8 @@ namespace RenderSharp.Render3d
             }
             
             Console.WriteLine($"Loading object from file {file}");
+            Stopwatch sw = Stopwatch.StartNew();
+
             DirectoryInfo directory = file.Directory!;
 
             List<string> requiredMaterials = ParseRequiredMaterials(file);
@@ -50,7 +53,9 @@ namespace RenderSharp.Render3d
             Console.WriteLine($"\tLoaded {textureVertices.Count} texture vertices.");
             faces = ParseFaces(file);
             Console.WriteLine($"\tLoaded {faces.Count} faces.");
-
+            
+            sw.Stop();
+            Console.WriteLine($"Loaded object in {sw.Elapsed}.");
             return this;
         }
 
