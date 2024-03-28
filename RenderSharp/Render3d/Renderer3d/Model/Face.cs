@@ -7,7 +7,7 @@ namespace RenderSharp.Render3d
     {
         private Material material;
 
-        private FaceTriangle[] triangles;
+        public readonly FaceTriangle[] triangles;
 
         public bool Sample(in FVec3 worldVec, double minDepth, out RGBA sample, out double depth)
         {

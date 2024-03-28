@@ -25,7 +25,7 @@ namespace RenderSharpExample
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    scene["car"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
+                    //scene["car"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
                 })
                 .Build();
 

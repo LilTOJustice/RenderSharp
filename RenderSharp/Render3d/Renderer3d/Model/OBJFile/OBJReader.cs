@@ -118,6 +118,7 @@ namespace RenderSharp.Render3d
                     float.Parse(coords[2])));
             }, "v ");
 
+            // Center the vertices
             double minX = vertices.Min(v => v.X);
             double maxX = vertices.Max(v => v.X);
             double minY = vertices.Min(v => v.Y);
@@ -129,7 +130,12 @@ namespace RenderSharp.Render3d
                 (minY + maxY) / 2,
                 (minZ + maxZ) / 2);
 
-            return vertices.Select(v => v - center).ToList();
+            List<FVec3> centered = vertices.Select(v => v - center).ToList();
+            
+            // Normalize the vertices
+            double max = centered.Max(v => Math.Max(Math.Max(Math.Abs(v.X), Math.Abs(v.Y)), Math.Abs(v.Z)));
+
+            return centered.Select(v => v / max).ToList();
         }
 
 

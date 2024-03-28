@@ -4,7 +4,7 @@ namespace RenderSharp.Render3d
 {
     internal struct Triangle
     {
-        private FVec3 v0, v1, v2;
+        public readonly FVec3 v0, v1, v2;
         private FVec3 v01, v12, v20, unitNorm;
         private double d;
 
