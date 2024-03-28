@@ -4,7 +4,7 @@ namespace RenderSharp.Render3d
 {
     internal struct Sphere
     {
-        private FVec3 position;
+        public FVec3 position;
         private FVec3 radii2;
         private RotorTransform rotorTransform;
         private double c;

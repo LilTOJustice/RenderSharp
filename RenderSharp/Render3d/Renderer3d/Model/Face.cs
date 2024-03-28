@@ -5,7 +5,7 @@ namespace RenderSharp.Render3d
 {
     internal struct Face
     {
-        private Material material;
+        public readonly Material material;
 
         public readonly FaceTriangle[] triangles;
 

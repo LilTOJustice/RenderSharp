@@ -7,8 +7,8 @@ namespace RenderSharp.Render3d
     /// </summary>
     public struct Model
     {
-        private readonly Face[] faces;
-        private readonly BoundingBox boundingBox;
+        internal readonly Face[] faces;
+        internal readonly BoundingBox boundingBox;
 
         /// <summary>
         /// Create a new model from a file.
@@ -37,9 +37,9 @@ namespace RenderSharp.Render3d
             double maxX = faces.Max(f => f.triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.X, t.triangle.v1.X), t.triangle.v2.X)));
             double maxY = faces.Max(f => f.triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.Y, t.triangle.v1.Y), t.triangle.v2.Y)));
             double maxZ = faces.Max(f => f.triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.Z, t.triangle.v1.Z), t.triangle.v2.Z)));
-            FVec3 min = (new FVec3(minX, minY, minZ) * s).Rotate(r) + p;
-            FVec3 max = (new FVec3(maxX, maxY, maxZ) * s).Rotate(r) + p;
-            return new BoundingBox(min, max);
+            FVec3 min = (new FVec3(minX, minY, minZ) * s) + p;
+            FVec3 max = (new FVec3(maxX, maxY, maxZ) * s) + p;
+            return new BoundingBox(min, max, r);
         }
 
         internal Model(Face[] faces)
@@ -61,9 +61,8 @@ namespace RenderSharp.Render3d
 
         internal bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
         {
-            if (!boundingBox.Intersects(worldVec)) // TODO: Check if we don't intersect bounding box
+            if (!boundingBox.Intersects(worldVec))
             {
-                Console.WriteLine("No intersection");
                 sample = new RGBA();
                 depth = -1;
                 return false;

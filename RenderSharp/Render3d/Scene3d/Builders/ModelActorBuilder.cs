@@ -11,7 +11,7 @@ namespace RenderSharp.Render3d
         /// <summary>
         /// Model used by the actor.
         /// </summary>
-        public FinalStep WithModel(Model model)
+        public FinalStep WithModel(in Model model)
         {
             return new FinalStep(model);
         }

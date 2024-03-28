@@ -6,7 +6,7 @@ namespace RenderSharp.Render3d
     {
         public readonly Triangle triangle;
 
-        private (FVec2, FVec2, FVec2) uv;
+        public readonly (FVec2, FVec2, FVec2) uv;
 
         public FaceTriangle(in Triangle triangle, in (FVec2, FVec2, FVec2) uv)
         {

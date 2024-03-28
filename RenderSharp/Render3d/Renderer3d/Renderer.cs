@@ -109,6 +109,8 @@ namespace RenderSharp.Render3d
                 throw new Exception("Attempted to render a movie on a static scene.");
             }
 
+            Console.Write("Simulating scene...");
+
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             Movie movie = new(Width, Height, Scene.Framerate);
