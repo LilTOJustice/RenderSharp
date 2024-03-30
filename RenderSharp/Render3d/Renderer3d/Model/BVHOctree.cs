@@ -1,6 +1,6 @@
 ﻿using MathSharp;
 
-namespace RenderSharp.Render3d.Renderer3d.Model
+namespace RenderSharp.Render3d
 {
     internal class BVHOctree
     {
