@@ -10,6 +10,7 @@ namespace RenderSharp.Render3d
     {
         internal override Actor Build()
         {
+            color ??= new RGBA(255, 255, 255, 255);
             size ??= new FVec3(1, 1, 1);
             rotation ??= new RVec3();
             texture ??= new Texture(1, 1, color);

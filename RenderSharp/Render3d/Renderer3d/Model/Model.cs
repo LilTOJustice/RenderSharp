@@ -26,20 +26,17 @@ namespace RenderSharp.Render3d
             }
         }
 
-        private BoundingBox GetBoundingBox(Face[] faces, in FVec3? size = null, in RVec3? rotation = null, in FVec3? position = null)
+        private BoundingBox GetBoundingBox(Face[] faces)
         {
-            FVec3 s = size ?? new FVec3(1, 1, 1);
-            RVec3 r = rotation ?? new RVec3();
-            FVec3 p = position ?? new FVec3();
             double minX = faces.Min(f => f.triangles.Min(t => Math.Min(Math.Min(t.triangle.v0.X, t.triangle.v1.X), t.triangle.v2.X)));
             double minY = faces.Min(f => f.triangles.Min(t => Math.Min(Math.Min(t.triangle.v0.Y, t.triangle.v1.Y), t.triangle.v2.Y)));
             double minZ = faces.Min(f => f.triangles.Min(t => Math.Min(Math.Min(t.triangle.v0.Z, t.triangle.v1.Z), t.triangle.v2.Z)));
             double maxX = faces.Max(f => f.triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.X, t.triangle.v1.X), t.triangle.v2.X)));
             double maxY = faces.Max(f => f.triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.Y, t.triangle.v1.Y), t.triangle.v2.Y)));
             double maxZ = faces.Max(f => f.triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.Z, t.triangle.v1.Z), t.triangle.v2.Z)));
-            FVec3 min = (new FVec3(minX, minY, minZ) * s) + p;
-            FVec3 max = (new FVec3(maxX, maxY, maxZ) * s) + p;
-            return new BoundingBox(min, max, r);
+            FVec3 min = new FVec3(minX, minY, minZ);
+            FVec3 max = new FVec3(maxX, maxY, maxZ);
+            return new BoundingBox(min, max);
         }
 
         internal Model(Face[] faces)
@@ -56,42 +53,46 @@ namespace RenderSharp.Render3d
                 faces[i] = new Face(model.faces[i], size, rotation, position);
             }
 
-            boundingBox = GetBoundingBox(model.faces, size, rotation, position);
+            boundingBox = GetBoundingBox(faces);
         }
 
         internal bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
         {
+            List<(RGBA, double)> renderQueue = new();
+            sample = new RGBA();
+            depth = -1;
+
             if (!boundingBox.Intersects(worldVec))
             {
-                sample = new RGBA();
-                depth = -1;
                 return false;
             }
+            else
+            {
+                renderQueue.Add((new RGBA(255, 255, 255, 128), 0));
+            }
 
-            double outDepth = double.MaxValue;
-            RGBA outSample = new RGBA();
             foreach (Face face in faces)
             {
                 if (face.Sample(worldVec, minDepth, out sample, out depth))
                 {
-                    if (depth < outDepth)
-                    {
-                        outSample = sample;
-                        outDepth = depth;
-                    }
+                    renderQueue.Add((sample, depth));
                 }
             }
 
-            sample = outSample;
-
-            if (outDepth != double.MaxValue)
+            if (renderQueue.Count == 0)
             {
-                depth = outDepth;
-                return true;
+                return false;
             }
 
-            depth = -1;
-            return false;
+            renderQueue.Sort((a, b)  => b.Item2.CompareTo(a.Item2));
+            depth = renderQueue.Last().Item2;
+
+            foreach ((RGBA s, _) in renderQueue)
+            {
+                sample = ColorFunctions.AlphaBlend(s, sample);
+            }
+
+            return true;
         }
     }
 }

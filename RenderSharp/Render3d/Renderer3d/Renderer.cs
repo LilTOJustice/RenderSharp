@@ -258,21 +258,19 @@ namespace RenderSharp.Render3d
         
             foreach (Actor actor in scene.Actors.Values)
             {
-                RGBA sample;
                 double sampleDepth;
-                if (actor.Sample(worldVec, minDepth, scene.Time, out sample, out sampleDepth))
+                if (actor.Sample(worldVec, minDepth, scene.Time, out outColor, out sampleDepth))
                 {
-                    renderQueue.Add((sample, sampleDepth));
+                    renderQueue.Add((outColor, sampleDepth));
                 }
             }
 
             renderQueue.Sort((a, b)  => b.Item2.CompareTo(a.Item2));
-            depth = -1;
+            depth = renderQueue.Count > 0 ? renderQueue.Last().Item2 : -1;
 
-            foreach ((RGBA sample, double d) in renderQueue)
+            foreach ((RGBA sample, _) in renderQueue)
             {
                 outColor = ColorFunctions.AlphaBlend(sample, outColor);
-                depth = d;
             }
 
             return ScreenSpaceShaderPass(scene, screenPos, outColor);

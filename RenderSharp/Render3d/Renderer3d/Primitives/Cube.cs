@@ -30,7 +30,7 @@ namespace RenderSharp.Render3d
             rotorTransform = new RotorTransform(rotation);
             ref FVec3 p = ref this.position;
             ref RotorTransform rt = ref rotorTransform;
-            cX = rt.A2 * p.X * p.X + rt.B2 * p.Y * p.Y + rt.C2 * p.Z * p.Z +
+            cX = rt.A2 * p.X * p.X + rt.B2 * p.Y * p.Y + rt.C2 * p.Z * p.Z + 
                 2 * rt.AB * p.X * p.Y + 2 * rt.AC * p.X * p.Z + 2 * rt.BC * p.Y * p.Z - size2.X;
             cY = rt.D2 * p.X * p.X + rt.E2 * p.Y * p.Y + rt.F2 * p.Z * p.Z +
                 2 * rt.DE * p.X * p.Y + 2 * rt.DF * p.X * p.Z + 2 * rt.EF * p.Y * p.Z - size2.Y;
