@@ -54,7 +54,7 @@ namespace RenderSharp
         /// <param name="ext">Optional extension, must be supported by <see href="https://imagemagick.org"/>.</param>
         public void Output(string filename, string ext = "png")
         {
-            string fullname = filename + "." + ext;
+            string fullname = Path.GetFullPath(filename + "." + ext);
             var settings = new MagickReadSettings();
             settings.Format = MagickFormat.Rgba;
             settings.Width = Width;

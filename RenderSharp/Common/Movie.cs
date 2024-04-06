@@ -30,7 +30,7 @@ namespace RenderSharp
             Size = new Vec2(width, height);
             Framerate = framerate;
             MovieID = _nextId++;
-            TempDir = $"{Directory.GetCurrentDirectory()}\\temp_{MovieID}";
+            TempDir = Path.GetFullPath($"{Directory.GetCurrentDirectory()}\\temp_{MovieID}");
             try
             {
                 Directory.Delete(TempDir, true);
@@ -48,7 +48,7 @@ namespace RenderSharp
         /// <param name="transparency">Whether to export with transparency. Will export in webm if true, otherwise mp4.</param>
         public void Output(string filename, bool transparency = false)
         {
-            string fullName = filename;
+            string fullName = Path.GetFullPath(filename);
 
             if (!File.Exists("ffmpeg.exe"))
             {
@@ -77,7 +77,7 @@ namespace RenderSharp
 
         internal void WriteFrame(Frame frame, int frameInd)
         {
-            string filename = $"{TempDir}\\{frameInd}";
+            string filename = Path.GetFullPath($"{TempDir}\\{frameInd}");
             frame.Output(filename, "bmp");
         }
 
