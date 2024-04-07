@@ -27,7 +27,7 @@ namespace RenderSharpExample
                 .WithActor("sphere", new SphereActorBuilder()
                     .WithPosition(new FVec3(0, 0, 4))
                     .WithSize(new FVec3(1, 1, 1))
-                    .WithTexture(new Texture("..\\..\\..\\assets\\gordon.jpg"))
+                    .WithTexture(new Texture("../../../assets/gordon.jpg"))
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {

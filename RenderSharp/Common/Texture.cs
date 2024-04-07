@@ -47,7 +47,7 @@ namespace RenderSharp
         /// <param name="filename">Path to the image.</param>
         public Texture(string filename)
         {
-            var image = new MagickImage(Path.GetFullPath(filename));
+            var image = new MagickImage(filename);
             var bmp = image.ToByteArray(MagickFormat.Rgba);
 
             Size = new Vec2(image.Width, image.Height);
