@@ -30,7 +30,7 @@ namespace RenderSharp
             Size = new Vec2(width, height);
             Framerate = framerate;
             MovieID = _nextId++;
-            TempDir = $"{Directory.GetCurrentDirectory()}\\temp_{MovieID}";
+            TempDir = $"{Directory.GetCurrentDirectory()}/temp_{MovieID}";
             try
             {
                 Directory.Delete(TempDir, true);
@@ -59,25 +59,28 @@ namespace RenderSharp
 
             Console.WriteLine($"Exporting as {fullName}...");
 
-            string cmd = $"-y -v -8 -framerate {Framerate} -f image2 -i temp_{MovieID}/%d.bmp "
+            string args = $"-y -v -8 -framerate {Framerate} -f image2 -i temp_{MovieID}/%d.bmp "
                 + (transparency ?
-                $"-c:v vp9 -pix_fmt yuva420p -b:v 32768k {fullName}.webm" :
-                $"-c:v h264 -pix_fmt yuv420p -b:v 32768k {fullName}.mp4");
+                $"-c:v vp9 -pix_fmt yuva420p -b:v 32768k {Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}{fullName}.webm" :
+                $"-c:v h264 -pix_fmt yuv420p -b:v 32768k {Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}{fullName}.mp4");
 
-            Console.WriteLine(cmd);
+            Console.WriteLine("ffmpeg " + args);
 
-            if (Process.Start(".\\ffmpeg", cmd) == null)
+            Process? p = Process.Start("./ffmpeg", args);
+            if (p == null)
             {
                 Console.WriteLine("Error outputting file!");
                 return;
             }
+
+            p.WaitForExit();
 
             Console.WriteLine("Done.");
         }
 
         internal void WriteFrame(Frame frame, int frameInd)
         {
-            string filename = $"{TempDir}\\{frameInd}";
+            string filename = $"{TempDir}/{frameInd}";
             frame.Output(filename, "bmp");
         }
 
