@@ -61,10 +61,10 @@ namespace RenderSharp
 
             string cmd = $"-y -v -8 -framerate {Framerate} -f image2 -i temp_{MovieID}/%d.bmp "
                 + (transparency ?
-                $"ffmpeg -c:v vp9 -pix_fmt yuva420p -b:v 32768k {Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}{fullName}.webm" :
-                $"ffmpeg -c:v h264 -pix_fmt yuv420p -b:v 32768k {Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}{fullName}.mp4");
+                $"-c:v vp9 -pix_fmt yuva420p -b:v 32768k {Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}{fullName}.webm" :
+                $"-c:v h264 -pix_fmt yuv420p -b:v 32768k {Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}{fullName}.mp4");
 
-            Console.WriteLine(cmd);
+            Console.WriteLine("ffmpeg " + cmd);
 
             if (Process.Start("./ffmpeg", cmd) == null)
             {
