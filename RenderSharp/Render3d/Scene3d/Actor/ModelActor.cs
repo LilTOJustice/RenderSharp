@@ -8,6 +8,8 @@ namespace RenderSharp.Render3d
     public class ModelActor : Actor
     {
         private Model origModel, model;
+        private FVec3 origSize, origPosition;
+        private RVec3 origRotation;
         private FVec3 cameraRelPosition;
 
         internal ModelActor(
@@ -17,12 +19,16 @@ namespace RenderSharp.Render3d
             Texture texture,
             FragShader fragShader,
             Model model,
-            FVec3? cameraPos = null)
+            FVec3? cameraPos = null,
+            bool newModel = true)
             : base(size, rotation, position, texture, fragShader)
         {
+            origSize = size;
+            origPosition = position;
+            origRotation = rotation;
             cameraRelPosition = position - cameraPos ?? new FVec3();
             origModel = model;
-            this.model = new Model(model, size, rotation, cameraRelPosition);
+            this.model = newModel ? new Model(model, size, rotation, cameraRelPosition) : model;
         }
 
         internal override bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
@@ -32,6 +38,7 @@ namespace RenderSharp.Render3d
 
         internal override Actor Copy(in FVec3 cameraPos)
         {
+            bool newModel = cameraPos != cameraRelPosition || Size != origSize || Rotation != origRotation || Position != origPosition;
             return new ModelActor(
                Size,
                Rotation,
@@ -39,7 +46,8 @@ namespace RenderSharp.Render3d
                Texture,
                FragShader,
                origModel,
-               cameraPos);
+               cameraPos,
+               newModel);
         }
     }
 }
