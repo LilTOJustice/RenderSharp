@@ -11,6 +11,8 @@ namespace RenderSharp.Render3d
             Z
         }
 
+        private FaceTriangle[] allTriangles;
+
         private BVHOctree? left, right;
 
         private BoundingBox boundingBox;
@@ -18,58 +20,81 @@ namespace RenderSharp.Render3d
         private FaceTriangle? triangle;
 
         public BVHOctree(FaceTriangle[] triangles, Dim sortDim = Dim.X)
-        {
-            boundingBox = GetBoundingBox(triangles);
+            : this(
+                  triangles,
+                  triangles.OrderBy(t => t.triangle.centroid.X).Select(t => t.GetHashCode()).ToList(),
+                  triangles.OrderBy(t => t.triangle.centroid.Y).Select(t => t.GetHashCode()).ToList(),
+                  triangles.OrderBy(t => t.triangle.centroid.Z).Select(t => t.GetHashCode()).ToList(),
+                  sortDim)
+        { }
 
-            if (triangles.Length == 1)
+        public BVHOctree(FaceTriangle[] triangles, List<int> sortedX, List<int> sortedY, List<int> sortedZ, Dim splitDim)
+        {
+            allTriangles = triangles;
+            boundingBox = GetBoundingBox(sortedX);
+
+            int sortedXCount = sortedX.Count();
+            int sortedYCount = sortedY.Count();
+            int sortedZCount = sortedZ.Count();
+
+            if (sortedXCount == 1)
             {
-                triangle = triangles[0];
+                triangle = triangles[sortedX.First()];
                 return;
             }
 
-            switch (sortDim)
+            switch (splitDim)
             {
                 case Dim.X:
-                    List<FaceTriangle> toSortX = triangles.ToList();
-                    toSortX.Sort((a, b) => a.triangle.centroid.X.CompareTo(b.triangle.centroid.X));
-                    triangles = toSortX.ToArray();
+                    List<int> leftTrianglesX = sortedX.Take(sortedXCount / 2).ToList();
+                    List<int> rightTrianglesX = sortedX.TakeLast(sortedXCount / 2 + sortedXCount % 2).ToList();
 
-                    double centerX = triangles[triangles.Length / 2].triangle.centroid.X;
-
-                    FaceTriangle[] leftTrianglesX = triangles.Take(triangles.Length / 2).ToArray();
-
-                    FaceTriangle[] rightTrianglesX = triangles.TakeLast(triangles.Length / 2 + triangles.Length % 2).ToArray();
-
-                    left = new BVHOctree(leftTrianglesX, Dim.Y);
-                    right = new BVHOctree(rightTrianglesX, Dim.Y);
+                    left = new BVHOctree(
+                        triangles,
+                        leftTrianglesX,
+                        sortedY.Intersect(leftTrianglesX).ToList(),
+                        sortedZ.Intersect(leftTrianglesX).ToList(),
+                        Dim.Y);
+                    right = new BVHOctree(
+                        triangles,
+                        rightTrianglesX,
+                        sortedY.Intersect(rightTrianglesX).ToList(),
+                        sortedZ.Intersect(rightTrianglesX).ToList(),
+                        Dim.Y);
                     break;
                 case Dim.Y:
-                    List<FaceTriangle> toSortY = triangles.ToList();
-                    toSortY.Sort((a, b) => a.triangle.centroid.Y.CompareTo(b.triangle.centroid.Y));
-                    triangles = toSortY.ToArray();
+                    List<int> leftTrianglesY = sortedY.Take(sortedYCount / 2).ToList();
+                    List<int> rightTrianglesY = sortedY.TakeLast(sortedYCount / 2 + sortedYCount % 2).ToList();
 
-                    double centerY = triangles[triangles.Length / 2].triangle.centroid.Y;
-
-                    FaceTriangle[] leftTrianglesY = triangles.Take(triangles.Length / 2).ToArray();
-
-                    FaceTriangle[] rightTrianglesY = triangles.TakeLast(triangles.Length / 2 + triangles.Length % 2).ToArray();
-
-                    left = new BVHOctree(leftTrianglesY, Dim.Z);
-                    right = new BVHOctree(rightTrianglesY, Dim.Z);
+                    left = new BVHOctree(
+                        triangles,
+                        sortedX.Intersect(leftTrianglesY).ToList(),
+                        leftTrianglesY,
+                        sortedZ.Intersect(leftTrianglesY).ToList(),
+                        Dim.Z);
+                    right = new BVHOctree(
+                        triangles,
+                        sortedX.Intersect(rightTrianglesY).ToList(),
+                        rightTrianglesY,
+                        sortedZ.Intersect(rightTrianglesY).ToList(),
+                        Dim.Z);
                     break;
                 case Dim.Z:
-                    List<FaceTriangle> toSortZ = triangles.ToList();
-                    toSortZ.Sort((a, b) => a.triangle.centroid.Z.CompareTo(b.triangle.centroid.Z));
-                    triangles = toSortZ.ToArray();
+                    List<int> leftTrianglesZ = sortedZ.Take(sortedZCount / 2).ToList();
+                    List<int> rightTrianglesZ = sortedZ.TakeLast(sortedZCount / 2 + sortedZCount % 2).ToList();
 
-                    double centerZ = triangles[triangles.Length / 2].triangle.centroid.Z;
-
-                    FaceTriangle[] leftTrianglesZ = triangles.Take(triangles.Length / 2).ToArray();
-
-                    FaceTriangle[] rightTrianglesZ = triangles.TakeLast(triangles.Length / 2 + triangles.Length % 2).ToArray();
-
-                    left = new BVHOctree(leftTrianglesZ, Dim.X);
-                    right = new BVHOctree(rightTrianglesZ, Dim.X);
+                    left = new BVHOctree(
+                        triangles,
+                        sortedX.Intersect(leftTrianglesZ).ToList(),
+                        sortedY.Intersect(leftTrianglesZ).ToList(),
+                        leftTrianglesZ,
+                        Dim.X);
+                    right = new BVHOctree(
+                        triangles,
+                        sortedX.Intersect(rightTrianglesZ).ToList(),
+                        sortedY.Intersect(rightTrianglesZ).ToList(),
+                        rightTrianglesZ,
+                        Dim.X);
                     break;
             }
         }
@@ -92,8 +117,9 @@ namespace RenderSharp.Render3d
             return triangles;
         }
 
-        private static BoundingBox GetBoundingBox(FaceTriangle[] triangles)
+        private BoundingBox GetBoundingBox(List<int> ids)
         {
+            List<FaceTriangle> triangles = ids.Select(id => allTriangles[id]).ToList();
             return new BoundingBox(
                 new FVec3(
                     triangles.Min(t => Math.Min(Math.Min(t.triangle.v0.X, t.triangle.v1.X), t.triangle.v2.X)),
