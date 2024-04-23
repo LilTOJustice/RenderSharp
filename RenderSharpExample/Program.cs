@@ -7,8 +7,8 @@ namespace RenderSharpExample
     {
         static readonly int framerate = 60;
         static readonly int duration = 5;
-        static readonly int resX = 100;
-        static readonly int resY = 100;
+        static readonly int resX = 1000;
+        static readonly int resY = 1000;
 
         static void Main()
         {
@@ -38,7 +38,7 @@ namespace RenderSharpExample
             Renderer renderer = new(resX, resY, scene);
 
             // Finally render and output the video
-            renderer.RenderFrame(showDepth: false).Output("test");
+            renderer.RenderMovie(showDepth: false).Output("test");
         }
     }
 }
