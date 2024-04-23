@@ -5,7 +5,7 @@ namespace RenderSharp.Render3d
     /// <summary>
     /// An object to be rendered from within a scene.
     /// </summary>
-    public class Actor
+    public abstract class Actor
     {
         /// <summary>
         /// World space bounding box size of the actor.
@@ -79,26 +79,8 @@ namespace RenderSharp.Render3d
             ClearFragShaders();
         }
 
-        // TODO: Implement
-        internal virtual bool Sample(in FVec3 worldVec, in FVec3 cameraPos, double minDepth, double time, out RGBA sample, out double depth)
-        {
-            depth = 0;
-            throw new NotImplementedException();
-        }
+        internal abstract bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth);
 
-        /// <summary>
-        /// Creates a deep copy of the actor.
-        /// </summary>
-        /// <returns>An actor with the same properties but non-referential to the original object.</returns>
-        internal virtual Actor Copy()
-        {
-            return new Actor(
-                Size,
-                Rotation,
-                Position,
-                Texture,
-                FragShader
-            );
-        }
+        internal abstract Actor Copy(in FVec3 cameraPos);
     }
 }

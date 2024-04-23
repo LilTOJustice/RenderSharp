@@ -1,5 +1,4 @@
 ﻿using MathSharp;
-using RenderSharp;
 using RenderSharp.Render3d;
 
 namespace RenderSharpExample
@@ -18,21 +17,14 @@ namespace RenderSharpExample
                 .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
-                .WithActor("cube", new CubeActorBuilder()
-                   .WithPosition(new FVec3(0, 0, 4))
-                   .WithSize(new FVec3(1, 1, 1))
-                   .WithColor(new RGBA(255, 0, 0, 128))
-                   .WithShader(ExampleShaders.Psychedelic)
-                )
-                .WithActor("sphere", new SphereActorBuilder()
-                    .WithPosition(new FVec3(0, 0, 4))
+                .WithActor("car", new ModelActorBuilder()
+                    .WithModel(Model.FromFile("../../../assets/car_bebo.obj"))
                     .WithSize(new FVec3(1, 1, 1))
-                    .WithTexture(new Texture("../../../assets/gordon.jpg"))
+                    .WithPosition(new FVec3(0, 0, 3))
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    scene["cube"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
-                    scene["sphere"].Rotation += new RVec3(0, 1 * dt, 2 * dt);
+                    scene["car"].Rotation += new RVec3(0, dt, dt);
                 })
                 .Build();
 
