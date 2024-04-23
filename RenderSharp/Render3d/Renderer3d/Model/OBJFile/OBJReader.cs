@@ -11,6 +11,7 @@ namespace RenderSharp.Render3d
         private List<FVec2> textureVertices = new();
         private List<Face> faces = new();
         private Dictionary<string, Material> materials = new();
+        private int currentTriangleId = 0;
 
         private enum FaceType
         {
@@ -23,6 +24,7 @@ namespace RenderSharp.Render3d
 
         public override OBJReader Read(FileInfo file)
         {
+            currentTriangleId = 0;
             if (!file.Exists)
             {
                 Console.WriteLine($"Warning: File \"{file}\" does not exist. Skipping...");
@@ -53,6 +55,7 @@ namespace RenderSharp.Render3d
             Console.WriteLine($"\tLoaded {textureVertices.Count} texture vertices.");
             faces = ParseFaces(file);
             Console.WriteLine($"\tLoaded {faces.Count} faces.");
+            Console.WriteLine($"\tLoaded {faces.Select(f => f.triangles.Length).Sum()} triangles.");
             
             sw.Stop();
             Console.WriteLine($"Loaded object in {sw.Elapsed}.");
@@ -183,7 +186,7 @@ namespace RenderSharp.Render3d
                 };
         }
 
-        private List<FaceTriangle> MakeTriangles(List<string> faceVertexIndices)
+        private List<FaceTriangle> MakeTriangles(List<string> faceVertexIndices, Material material)
         {
             List<FaceTriangle> triangles = new();
             int vertexCount = faceVertexIndices.Count;
@@ -195,25 +198,25 @@ namespace RenderSharp.Render3d
                             vertices[int.Parse(faceVertexIndices[0].Split('/')[0]) - 1],
                             vertices[int.Parse(faceVertexIndices[i - 1].Split('/')[0]) - 1],
                             vertices[int.Parse(faceVertexIndices[i].Split('/')[0]) - 1]),
+                        material,
                         ( // Rotate the texture vertices by 1 to work with the renderer.
                             GetTextureVertex(faceVertexIndices[i]),
                             GetTextureVertex(faceVertexIndices[0]),
                             GetTextureVertex(faceVertexIndices[i - 1])
-                        )));
+                        ), currentTriangleId++));
             }
 
             return triangles;
         }
 
-        private Face ParseFace(Material material, List<string> faceVertexIndices)
+        private Face ParseFace(Material material, List<string> faceVertexIndices, int index)
         {
-            return new Face(
-                material,
-                MakeTriangles(faceVertexIndices).ToArray());
+            return new Face(MakeTriangles(faceVertexIndices, material).ToArray(), index);
         }
 
         private List<Face> ParseFaces(FileInfo file)
         {
+            int faceIndex = 1;
             List<Face> faces = new();
             Material? currentMaterial = null;
             Parse(file, new Dictionary<string, Action<string>>()
@@ -224,7 +227,7 @@ namespace RenderSharp.Render3d
                         faces.Add(
                             ParseFace(
                                 currentMaterial ?? new Material(new Texture(1, 1, new RGBA())),
-                                faceVertexIndices));
+                                faceVertexIndices, faceIndex++));
                     }
                 },
                 { "usemtl ", (string line) =>

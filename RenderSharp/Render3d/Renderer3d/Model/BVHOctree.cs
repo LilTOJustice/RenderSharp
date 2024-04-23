@@ -4,100 +4,107 @@ namespace RenderSharp.Render3d
 {
     internal class BVHOctree
     {
-        private (
-            BVHOctree o1, BVHOctree o2, BVHOctree o3, BVHOctree o4,
-            BVHOctree o5, BVHOctree o6, BVHOctree o7, BVHOctree o8) children;
+        public enum Dim
+        {
+            X,
+            Y,
+            Z
+        }
+
+        private BVHOctree? left, right;
 
         private BoundingBox boundingBox;
 
-        private Face[] faces;
+        private FaceTriangle? triangle;
 
-        private bool isLeaf;
-
-        private static bool Within(FVec3 test, FVec3 min, FVec3 max)
+        public BVHOctree(FaceTriangle[] triangles, Dim sortDim = Dim.X)
         {
-            return test.X >= min.X &&
-                test.Y >= min.Y &&
-                test.Z >= min.Z &&
-                test.X <= max.X &&
-                test.Y <= max.Y &&
-                test.Z <= max.Z;  
-        }
+            boundingBox = GetBoundingBox(triangles);
 
-        public BVHOctree(BoundingBox boundingBox, Face[] faces)
-        {
-            this.boundingBox = boundingBox;
-            this.faces = faces;
-            isLeaf = false;
-
-            if (faces.Length <= 1)
+            if (triangles.Length == 1)
             {
-                isLeaf = true;
+                triangle = triangles[0];
                 return;
             }
 
-            FVec3 min = boundingBox.min;
-            FVec3 max = boundingBox.max;
-            FVec3 mid = (max - min) / 2 + min;
+            switch (sortDim)
+            {
+                case Dim.X:
+                    List<FaceTriangle> toSortX = triangles.ToList();
+                    toSortX.Sort((a, b) => a.triangle.centroid.X.CompareTo(b.triangle.centroid.X));
+                    triangles = toSortX.ToArray();
 
-            BoundingBox bbo1 = new BoundingBox(min, mid);
-            BoundingBox bbo2 = new BoundingBox(new FVec3(mid.X, min.Y, min.Z), new FVec3(max.X, mid.Y, mid.Z));
-            BoundingBox bbo3 = new BoundingBox(new FVec3(mid.X, min.Y, mid.Z), new FVec3(max.X, mid.Y, max.Z));
-            BoundingBox bbo4 = new BoundingBox(new FVec3(min.X, min.Y, mid.Z), new FVec3(mid.X, mid.Y, max.Z));
-            BoundingBox bbo5 = new BoundingBox(new FVec3(min.X, mid.Y, min.Z), new FVec3(mid.X, max.Y, mid.Z));
-            BoundingBox bbo6 = new BoundingBox(new FVec3(mid.X, mid.Y, min.Z), new FVec3(max.X, max.Y, mid.Z));
-            BoundingBox bbo7 = new BoundingBox(mid, max);
-            BoundingBox bbo8 = new BoundingBox(new FVec3(min.X, mid.Y, mid.Z), new FVec3(mid.X, max.Y, max.Z));
+                    double centerX = triangles[triangles.Length / 2].triangle.centroid.X;
 
-            Face[] facesO1 = faces.Where(f => f.triangles.Any(t =>
-                Within(t.triangle.v0, bbo1.min, bbo1.max) ||
-                Within(t.triangle.v1, bbo1.min, bbo1.max) ||
-                Within(t.triangle.v2, bbo1.min, bbo1.max))).ToArray();
+                    FaceTriangle[] leftTrianglesX = triangles.Take(triangles.Length / 2).ToArray();
 
-            Face[] facesO2 = faces.Where(f => f.triangles.Any(t =>
-                Within(t.triangle.v0, bbo2.min, bbo2.max) ||
-                Within(t.triangle.v1, bbo2.min, bbo2.max) ||
-                Within(t.triangle.v2, bbo2.min, bbo2.max))).ToArray();
+                    FaceTriangle[] rightTrianglesX = triangles.TakeLast(triangles.Length / 2 + triangles.Length % 2).ToArray();
 
-            Face[] facesO3 = faces.Where(f => f.triangles.Any(t =>
-                Within(t.triangle.v0, bbo3.min, bbo3.max) ||
-                Within(t.triangle.v1, bbo3.min, bbo3.max) ||
-                Within(t.triangle.v2, bbo3.min, bbo3.max))).ToArray();
+                    left = new BVHOctree(leftTrianglesX, Dim.Y);
+                    right = new BVHOctree(rightTrianglesX, Dim.Y);
+                    break;
+                case Dim.Y:
+                    List<FaceTriangle> toSortY = triangles.ToList();
+                    toSortY.Sort((a, b) => a.triangle.centroid.Y.CompareTo(b.triangle.centroid.Y));
+                    triangles = toSortY.ToArray();
 
-            Face[] facesO4 = faces.Where(f => f.triangles.Any(t =>
-                Within(t.triangle.v0, bbo4.min, bbo4.max) ||
-                Within(t.triangle.v1, bbo4.min, bbo4.max) ||
-                Within(t.triangle.v2, bbo4.min, bbo4.max))).ToArray();
+                    double centerY = triangles[triangles.Length / 2].triangle.centroid.Y;
 
-            Face[] facesO5 = faces.Where(f => f.triangles.Any(t =>
-                Within(t.triangle.v0, bbo5.min, bbo5.max) ||
-                Within(t.triangle.v1, bbo5.min, bbo5.max) ||
-                Within(t.triangle.v2, bbo5.min, bbo5.max))).ToArray();
+                    FaceTriangle[] leftTrianglesY = triangles.Take(triangles.Length / 2).ToArray();
 
-            Face[] facesO6 = faces.Where(f => f.triangles.Any(t =>
-                Within(t.triangle.v0, bbo6.min, bbo6.max) ||
-                Within(t.triangle.v1, bbo6.min, bbo6.max) ||
-                Within(t.triangle.v2, bbo6.min, bbo6.max))).ToArray();
+                    FaceTriangle[] rightTrianglesY = triangles.TakeLast(triangles.Length / 2 + triangles.Length % 2).ToArray();
 
-            Face[] facesO7 = faces.Where(f => f.triangles.Any(t =>
-                Within(t.triangle.v0, bbo7.min, bbo7.max) ||
-                Within(t.triangle.v1, bbo7.min, bbo7.max) ||
-                Within(t.triangle.v2, bbo7.min, bbo7.max))).ToArray();
+                    left = new BVHOctree(leftTrianglesY, Dim.Z);
+                    right = new BVHOctree(rightTrianglesY, Dim.Z);
+                    break;
+                case Dim.Z:
+                    List<FaceTriangle> toSortZ = triangles.ToList();
+                    toSortZ.Sort((a, b) => a.triangle.centroid.Z.CompareTo(b.triangle.centroid.Z));
+                    triangles = toSortZ.ToArray();
 
-            Face[] facesO8 = faces.Where(f => f.triangles.Any(t =>
-                Within(t.triangle.v0, bbo8.min, bbo8.max) ||
-                Within(t.triangle.v1, bbo8.min, bbo8.max) ||
-                Within(t.triangle.v2, bbo8.min, bbo8.max))).ToArray();
+                    double centerZ = triangles[triangles.Length / 2].triangle.centroid.Z;
 
-            children = (
-                new BVHOctree(bbo1, facesO1),
-                new BVHOctree(bbo2, facesO2),
-                new BVHOctree(bbo3, facesO3),
-                new BVHOctree(bbo4, facesO4),
-                new BVHOctree(bbo5, facesO5),
-                new BVHOctree(bbo6, facesO6),
-                new BVHOctree(bbo7, facesO7),
-                new BVHOctree(bbo8, facesO8));
+                    FaceTriangle[] leftTrianglesZ = triangles.Take(triangles.Length / 2).ToArray();
+
+                    FaceTriangle[] rightTrianglesZ = triangles.TakeLast(triangles.Length / 2 + triangles.Length % 2).ToArray();
+
+                    left = new BVHOctree(leftTrianglesZ, Dim.X);
+                    right = new BVHOctree(rightTrianglesZ, Dim.X);
+                    break;
+            }
+        }
+
+        public HashSet<FaceTriangle> GetPotentialIntersectingTriangles(in FVec3 worldVec)
+        {
+            if (!boundingBox.Intersects(worldVec))
+            {
+                return new();
+            }
+
+            if (triangle != null)
+            {
+                return new() { (FaceTriangle)triangle };
+            }
+
+            HashSet<FaceTriangle> triangles = new();
+            triangles.UnionWith(left!.GetPotentialIntersectingTriangles(worldVec));
+            triangles.UnionWith(right!.GetPotentialIntersectingTriangles(worldVec));
+            return triangles;
+        }
+
+        private static BoundingBox GetBoundingBox(FaceTriangle[] triangles)
+        {
+            return new BoundingBox(
+                new FVec3(
+                    triangles.Min(t => Math.Min(Math.Min(t.triangle.v0.X, t.triangle.v1.X), t.triangle.v2.X)),
+                    triangles.Min(t => Math.Min(Math.Min(t.triangle.v0.Y, t.triangle.v1.Y), t.triangle.v2.Y)),
+                    triangles.Min(t => Math.Min(Math.Min(t.triangle.v0.Z, t.triangle.v1.Z), t.triangle.v2.Z))
+                    ),
+                new FVec3(
+                    triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.X, t.triangle.v1.X), t.triangle.v2.X)),
+                    triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.Y, t.triangle.v1.Y), t.triangle.v2.Y)),
+                    triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.Z, t.triangle.v1.Z), t.triangle.v2.Z))
+                    ));
         }
     }
 }

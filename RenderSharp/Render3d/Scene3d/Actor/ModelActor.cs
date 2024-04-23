@@ -27,7 +27,7 @@ namespace RenderSharp.Render3d
 
         internal override bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
         {
-            return model.Sample(worldVec, minDepth, time, out sample, out depth);
+            return model.Sample(worldVec, minDepth, out sample, out depth);
         }
 
         internal override Actor Copy(in FVec3 cameraPos)

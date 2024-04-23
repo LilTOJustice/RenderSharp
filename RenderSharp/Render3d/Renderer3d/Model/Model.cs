@@ -8,7 +8,8 @@ namespace RenderSharp.Render3d
     public struct Model
     {
         internal readonly Face[] faces;
-        internal readonly BoundingBox boundingBox;
+
+        private BVHOctree bvh;
 
         /// <summary>
         /// Create a new model from a file.
@@ -26,23 +27,10 @@ namespace RenderSharp.Render3d
             }
         }
 
-        private BoundingBox GetBoundingBox(Face[] faces)
-        {
-            double minX = faces.Min(f => f.triangles.Min(t => Math.Min(Math.Min(t.triangle.v0.X, t.triangle.v1.X), t.triangle.v2.X)));
-            double minY = faces.Min(f => f.triangles.Min(t => Math.Min(Math.Min(t.triangle.v0.Y, t.triangle.v1.Y), t.triangle.v2.Y)));
-            double minZ = faces.Min(f => f.triangles.Min(t => Math.Min(Math.Min(t.triangle.v0.Z, t.triangle.v1.Z), t.triangle.v2.Z)));
-            double maxX = faces.Max(f => f.triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.X, t.triangle.v1.X), t.triangle.v2.X)));
-            double maxY = faces.Max(f => f.triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.Y, t.triangle.v1.Y), t.triangle.v2.Y)));
-            double maxZ = faces.Max(f => f.triangles.Max(t => Math.Max(Math.Max(t.triangle.v0.Z, t.triangle.v1.Z), t.triangle.v2.Z)));
-            FVec3 min = new FVec3(minX, minY, minZ);
-            FVec3 max = new FVec3(maxX, maxY, maxZ);
-            return new BoundingBox(min, max);
-        }
-
         internal Model(Face[] faces)
         {
             this.faces = faces;
-            boundingBox = GetBoundingBox(faces);
+            bvh = new BVHOctree(faces.SelectMany(f => f.triangles).ToArray());
         }
 
         internal Model(in Model model, in FVec3 size, in RVec3 rotation, in FVec3 position)
@@ -53,29 +41,22 @@ namespace RenderSharp.Render3d
                 faces[i] = new Face(model.faces[i], size, rotation, position);
             }
 
-            boundingBox = GetBoundingBox(faces);
+            bvh = new BVHOctree(faces.SelectMany(f => f.triangles).ToArray());
         }
 
-        internal bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
+        internal bool Sample(in FVec3 worldVec, double minDepth, out RGBA sample, out double depth)
         {
             List<(RGBA, double)> renderQueue = new();
             sample = new RGBA();
             depth = -1;
 
-            if (!boundingBox.Intersects(worldVec))
-            {
-                return false;
-            }
-            else
-            {
-                renderQueue.Add((new RGBA(255, 255, 255, 128), 0));
-            }
+            HashSet<FaceTriangle> potentialTriangles = bvh.GetPotentialIntersectingTriangles(worldVec);
 
-            foreach (Face face in faces)
+            foreach (FaceTriangle triangle in potentialTriangles)
             {
-                if (face.Sample(worldVec, minDepth, out sample, out depth))
+                if (triangle.Intersects(worldVec, minDepth, out FVec2 uv, out double d))
                 {
-                    renderQueue.Add((sample, depth));
+                    renderQueue.Add((triangle.material.Diffuse[uv], d));
                 }
             }
 

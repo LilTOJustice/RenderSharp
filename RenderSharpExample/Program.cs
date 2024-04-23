@@ -7,8 +7,8 @@ namespace RenderSharpExample
     {
         static readonly int framerate = 60;
         static readonly int duration = 5;
-        static readonly int resX = 1000;
-        static readonly int resY = 1000;
+        static readonly int resX = 100;
+        static readonly int resY = 100;
 
         static void Main()
         {
@@ -17,6 +17,7 @@ namespace RenderSharpExample
                 .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
+                //.WithCamera("main", fov: new DVec2(30, 30))
                 .WithActor("car", new ModelActorBuilder()
                     .WithModel(Model.FromFile("..\\..\\..\\assets\\car_bebo.obj"))
                     .WithSize(new FVec3(1, 1, 1))
@@ -37,7 +38,7 @@ namespace RenderSharpExample
             Renderer renderer = new(resX, resY, scene);
 
             // Finally render and output the video
-            renderer.RenderMovie(showDepth: false).Output("test");
+            renderer.RenderFrame(showDepth: false).Output("test");
         }
     }
 }
