@@ -17,20 +17,14 @@ namespace RenderSharpExample
                 .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
-                //.WithCamera("main", fov: new DVec2(30, 30))
                 .WithActor("car", new ModelActorBuilder()
-                    .WithModel(Model.FromFile("..\\..\\..\\assets\\car_bebo.obj"))
+                    .WithModel(Model.FromFile("../../../assets/car_bebo.obj"))
                     .WithSize(new FVec3(1, 1, 1))
                     .WithPosition(new FVec3(0, 0, 3))
                 )
-                //.WithActor("cube", new CubeActorBuilder()
-                //    .WithSize(new FVec3(1, 1, 1.60))
-                //    .WithPosition(new FVec3(0, 0, 4))
-                //)
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
                     scene["car"].Rotation += new RVec3(0, dt, dt);
-                    //scene["cube"].Rotation += new RVec3(0, dt, dt);
                 })
                 .Build();
 
