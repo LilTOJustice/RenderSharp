@@ -39,7 +39,7 @@ namespace RenderSharp.Render3d
             sample = new RGBA();
 
             renderQueue.Sort((a, b) => b.Item4.CompareTo(a.Item4));
-            depth = renderQueue.LastOrDefault().Item4;
+            depth = renderQueue.LastOrDefault((default, default, default!, double.PositiveInfinity)).Item4;
 
             foreach ((RGBA s, FVec2 uv, Material mat, _) in renderQueue)
             {
