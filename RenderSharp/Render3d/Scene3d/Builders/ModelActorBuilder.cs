@@ -23,6 +23,8 @@ namespace RenderSharp.Render3d
         /// <inheritdoc cref="ModelActor.model"/>
         private Model model;
 
+        private VertexShader? vertexShader;
+
         internal FinalStep(Model model)
         {
             this.model = model;
@@ -38,6 +40,13 @@ namespace RenderSharp.Render3d
         /// </summary>
         public new ActorBuilder WithColor(in RGBA color) => throw new NotImplementedException("WithTexture not supported for ModelActor.");
 
+        /// <inheritdoc cref="ModelActor.VertexShader"/>
+        public FinalStep WithVertexShader(VertexShader vertexShader)
+        {
+            this.vertexShader = vertexShader;
+            return this;
+        }
+
         internal override Actor Build()
         {
             size ??= new FVec3(1, 1, 1);
@@ -45,7 +54,8 @@ namespace RenderSharp.Render3d
             texture ??= new Texture(1, 1, color);
             position ??= new FVec3();
             fragShader ??= ((FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
-            return new ModelActor((FVec3)size, (RVec3)rotation, (FVec3)position, texture, fragShader, model);
+            vertexShader ??= ((FVec3 vertIn, out FVec3 vertOut, double time) => { vertOut = vertIn; });
+            return new ModelActor((FVec3)size, (RVec3)rotation, (FVec3)position, texture, fragShader, vertexShader, model);
         }
     }
 }

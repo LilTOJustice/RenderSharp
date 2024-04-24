@@ -12,6 +12,11 @@ namespace RenderSharp.Render3d
         private FVec3 origSize, origPosition;
         private RVec3 origRotation;
         private FVec3 cameraRelPosition;
+        
+        /// <summary>
+        /// Shader to be applied to every vertex of the actor's model.
+        /// </summary>
+        public VertexShader VertexShader { get; set; }
 
         internal ModelActor(
             FVec3 size,
@@ -19,11 +24,13 @@ namespace RenderSharp.Render3d
             FVec3 position,
             Texture texture,
             FragShader fragShader,
+            VertexShader vertexShader,
             Model model,
             FVec3? cameraPos = null,
             bool newModel = true)
             : base(size, rotation, position, texture, fragShader)
         {
+            VertexShader = vertexShader;
             origSize = size;
             origPosition = position;
             origRotation = rotation;
@@ -58,6 +65,7 @@ namespace RenderSharp.Render3d
            Position,
            Texture,
            FragShader,
+           VertexShader,
            origModel,
            cameraPos,
            newModel);
