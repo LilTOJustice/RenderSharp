@@ -35,7 +35,7 @@ namespace RenderSharp.Render3d
             // Check if we are facing the triangle side-on
             if (dot == 0)
             {
-                depth = -1;
+                depth = double.PositiveInfinity;
                 barycentric = new FVec3();
                 return false;
             }

@@ -1,4 +1,5 @@
 ﻿using MathSharp;
+using RenderSharp.Common;
 
 namespace RenderSharp.Render3d
 {
@@ -31,23 +32,35 @@ namespace RenderSharp.Render3d
             this.model = newModel ? new Model(model, size, rotation, cameraRelPosition) : model;
         }
 
-        internal override bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
+        internal override void Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
         {
-            return model.Sample(worldVec, minDepth, out sample, out depth);
+            List<(RGBA, FVec2, Material, double)> renderQueue;
+            model.Sample(worldVec, minDepth, out renderQueue, out depth);
+            sample = new RGBA();
+
+            renderQueue.Sort((a, b) => b.Item4.CompareTo(a.Item4));
+            depth = renderQueue.LastOrDefault().Item4;
+
+            foreach ((RGBA s, FVec2 uv, Material mat, _) in renderQueue)
+            {
+                FRGBA fOut;
+                FragShader(s, out fOut, (Vec2)(uv * mat.Diffuse.Size), mat.Diffuse.Size, time);
+                sample = ColorFunctions.AlphaBlend(fOut, sample);
+            }
         }
 
-        internal override Actor Copy(in FVec3 cameraPos)
-        {
-            bool newModel = cameraPos != cameraRelPosition || Size != origSize || Rotation != origRotation || Position != origPosition;
-            return new ModelActor(
-               Size,
-               Rotation,
-               Position,
-               Texture,
-               FragShader,
-               origModel,
-               cameraPos,
-               newModel);
-        }
+    internal override Actor Copy(in FVec3 cameraPos)
+    {
+        bool newModel = cameraPos != cameraRelPosition || Size != origSize || Rotation != origRotation || Position != origPosition;
+        return new ModelActor(
+           Size,
+           Rotation,
+           Position,
+           Texture,
+           FragShader,
+           origModel,
+           cameraPos,
+           newModel);
     }
+}
 }

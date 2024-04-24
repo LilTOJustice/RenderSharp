@@ -45,7 +45,7 @@ namespace RenderSharp.Render3d
             }
             else
             {
-                depth = -1;
+                depth = double.PositiveInfinity;
                 uv = new FVec2();
                 return false;
             }

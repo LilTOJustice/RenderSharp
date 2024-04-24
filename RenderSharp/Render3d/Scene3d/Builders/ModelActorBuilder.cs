@@ -28,6 +28,16 @@ namespace RenderSharp.Render3d
             this.model = model;
         }
 
+        /// <summary>
+        /// <b>UNSUPPORTED.</b>
+        /// </summary>
+        public new ActorBuilder WithTexture(Texture texture) => throw new NotImplementedException("WithTexture not supported for ModelActor.");
+
+        /// <summary>
+        /// <b>UNSUPPORTED.</b>
+        /// </summary>
+        public new ActorBuilder WithColor(in RGBA color) => throw new NotImplementedException("WithTexture not supported for ModelActor.");
+
         internal override Actor Build()
         {
             size ??= new FVec3(1, 1, 1);

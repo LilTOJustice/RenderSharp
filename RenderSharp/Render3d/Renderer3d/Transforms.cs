@@ -19,17 +19,28 @@ namespace RenderSharp.Render3d
             ).Rotate(camera.Rotation);
         }
 
-        public static bool GetValidIntersection(double a, double b, double c, double minDepth, out double depth)
+        public static void GetValidIntersection(double a, double b, double c, double minDepth, out (double, double) closeFar)
         {
-            double minusRoot;
-            if (!Operations.SolveQuadratic(a, b, c, out _, out minusRoot) || minusRoot < minDepth)
+            double plusRoot, minusRoot;
+            closeFar = (double.PositiveInfinity, double.PositiveInfinity);
+            if (!Operations.SolveQuadratic(a, b, c, out plusRoot, out minusRoot))
             {
-                depth = -1;
-                return false;
+                return;
             }
 
-            depth = minusRoot;
-            return true;
+            if (plusRoot < minDepth)
+            {
+                return;
+            }
+            
+            closeFar.Item2 = plusRoot;
+
+            if (minusRoot < minDepth)
+            {
+                return;
+            }
+
+            closeFar.Item1 = minusRoot;
         }
     }
 }

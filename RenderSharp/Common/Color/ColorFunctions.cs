@@ -11,7 +11,7 @@
         /// <param name="top">The color on "top" i.e. closer to the camera.</param>
         /// <param name="bottom">The color on "bottom" i.e. farther from the camera.</param>
         /// <returns>The resulting blended color (<see href="https://en.wikipedia.org/wiki/Alpha_compositing"/>).</returns>
-        public static RGBA AlphaBlend(FRGBA top, FRGBA bottom)
+        public static RGBA AlphaBlend(in FRGBA top, in FRGBA bottom)
         {
             return (FRGB)top * top.A + (FRGB)bottom * (1d - top.A);
         }

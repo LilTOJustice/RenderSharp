@@ -22,7 +22,7 @@ namespace RenderSharp.Render3d
                 (rt.G2 * p.X * p.X + rt.H2 * p.Y * p.Y + rt.I2 * p.Z * p.Z + 2 * rt.GH * p.X * p.Y + 2 * rt.GI * p.X * p.Z + 2 * rt.HI * p.Y * p.Z) / radii2.Z - 1;
         }
 
-        public bool Intersects(in FVec3 s, double minDepth, out double depth)
+        public bool Intersects(in FVec3 s, double minDepth, out (double, double) depthCloseFar)
         {
             ref FVec3 p = ref position;
             ref RotorTransform rt = ref rotorTransform;
@@ -35,7 +35,8 @@ namespace RenderSharp.Render3d
                 (rt.D2 * s.X * p.X + rt.E2 * s.Y * p.Y + rt.F2 * s.Z * p.Z + rt.DE * (s.X * p.Y + s.Y * p.X) + rt.DF * (s.X * p.Z + s.Z * p.X) + rt.EF * (s.Y * p.Z + s.Z * p.Y)) / radii2.Y +
                 (rt.G2 * s.X * p.X + rt.H2 * s.Y * p.Y + rt.I2 * s.Z * p.Z + rt.GH * (s.X * p.Y + s.Y * p.X) + rt.GI * (s.X * p.Z + s.Z * p.X) + rt.HI * (s.Y * p.Z + s.Z * p.Y)) / radii2.Z);
 
-            return Transforms.GetValidIntersection(a, b, c, minDepth, out depth);
+            Transforms.GetValidIntersection(a, b, c, minDepth, out depthCloseFar);
+            return depthCloseFar.Item2 != double.PositiveInfinity;
         }
     }
 }

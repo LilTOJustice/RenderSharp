@@ -1,4 +1,5 @@
 ﻿using MathSharp;
+using RenderSharp.Common;
 
 namespace RenderSharp.Render3d
 {
@@ -9,7 +10,7 @@ namespace RenderSharp.Render3d
     {
         internal readonly Face[] faces;
 
-        private BVHOctree bvh;
+        private BVH bvh;
 
         /// <summary>
         /// Create a new model from a file.
@@ -30,7 +31,7 @@ namespace RenderSharp.Render3d
         internal Model(Face[] faces)
         {
             this.faces = faces;
-            bvh = new BVHOctree(faces.SelectMany(f => f.triangles).ToArray());
+            bvh = new BVH(faces.SelectMany(f => f.triangles).ToArray());
         }
 
         internal Model(in Model model, in FVec3 size, in RVec3 rotation, in FVec3 position)
@@ -41,14 +42,13 @@ namespace RenderSharp.Render3d
                 faces[i] = new Face(model.faces[i], size, rotation, position);
             }
 
-            bvh = new BVHOctree(faces.SelectMany(f => f.triangles).ToArray());
+            bvh = new BVH(faces.SelectMany(f => f.triangles).ToArray());
         }
 
-        internal bool Sample(in FVec3 worldVec, double minDepth, out RGBA sample, out double depth)
+        internal void Sample(in FVec3 worldVec, double minDepth, out List<(RGBA, FVec2, Material, double)> renderQueue, out double depth)
         {
-            List<(RGBA, double)> renderQueue = new();
-            sample = new RGBA();
-            depth = -1;
+            renderQueue = new();
+            depth = double.PositiveInfinity;
 
             HashSet<FaceTriangle> potentialTriangles = bvh.GetPotentialIntersectingTriangles(worldVec);
 
@@ -56,24 +56,9 @@ namespace RenderSharp.Render3d
             {
                 if (triangle.Intersects(worldVec, minDepth, out FVec2 uv, out double d))
                 {
-                    renderQueue.Add((triangle.material.Diffuse[uv], d));
+                    renderQueue.Add((triangle.material.Diffuse[uv], uv, triangle.material, d));
                 }
             }
-
-            if (renderQueue.Count == 0)
-            {
-                return false;
-            }
-
-            renderQueue.Sort((a, b)  => b.Item2.CompareTo(a.Item2));
-            depth = renderQueue.Last().Item2;
-
-            foreach ((RGBA s, _) in renderQueue)
-            {
-                sample = ColorFunctions.AlphaBlend(s, sample);
-            }
-
-            return true;
         }
     }
 }
