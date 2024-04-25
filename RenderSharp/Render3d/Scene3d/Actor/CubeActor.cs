@@ -67,28 +67,28 @@ namespace RenderSharp.Render3d
             {
                 case Cube.Face.PosX:
                     return new FVec2(
-                        1 - Operations.Mod((fromCenter.Z + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Z + 1) / 2, 1),
+                        Operations.Mod((fromCenter.Y + 1) / 2, 1));
                 case Cube.Face.NegX:
                     return new FVec2(
-                        Operations.Mod((fromCenter.Z + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        1 - Operations.Mod((fromCenter.Z + 1) / 2, 1),
+                        Operations.Mod((fromCenter.Y + 1) / 2, 1));
                 case Cube.Face.PosY:
                     return new FVec2(
                         Operations.Mod((fromCenter.X + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Z + 1) / 2, 1));
                 case Cube.Face.NegY:
                     return new FVec2(
                         1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Z + 1) / 2, 1));
                 case Cube.Face.PosZ:
                     return new FVec2(
                         1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Y + 1) / 2, 1));
                 case Cube.Face.NegZ:
                     return new FVec2(
                         Operations.Mod((fromCenter.X + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Y + 1) / 2, 1));
                 default:
                     return new FVec2();
             }
