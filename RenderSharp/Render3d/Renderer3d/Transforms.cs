@@ -42,5 +42,12 @@ namespace RenderSharp.Render3d
 
             closeFar.Item1 = minusRoot;
         }
+
+        public static Quaternion RotationToQuaternion(in RVec3 rotation)
+        {
+            double mag = Math.Sqrt((rotation.X * rotation.X + rotation.Y * rotation.Y + rotation.Z * rotation.Z).Radians);
+            RVec3 norm = rotation / mag;
+            return new Quaternion(new Radian(mag), new FVec3(norm.X.Radians, norm.Y.Radians, norm.Z.Radians));
+        }
     }
 }

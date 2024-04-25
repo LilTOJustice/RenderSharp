@@ -40,7 +40,6 @@ namespace RenderSharpExample
                 {
                     scene.GetAllActors().ForEach(actor =>
                     {
-                        actor.Rotation += new RVec3(0, dt, dt);
                     });
                 })
                 .Build();
