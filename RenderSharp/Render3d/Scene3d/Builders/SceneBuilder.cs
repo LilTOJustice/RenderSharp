@@ -119,7 +119,7 @@ namespace RenderSharp.Render3d
                         cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value)))),
                     think,
                     new Dictionary<string, Actor>(
-                        actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy(cameras.First().Value.Position)))));
+                        actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy()))));
             }
         }
 

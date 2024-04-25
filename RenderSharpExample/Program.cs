@@ -22,7 +22,7 @@ namespace RenderSharpExample
                     .WithModel(Model.FromFile("../../../assets/car_bebo.obj"))
                     .WithSize(new FVec3(1, 1, 1))
                     .WithPosition(new FVec3(0, 0, 6))
-                    .WithShader(ExampleShaders.Ghostly)
+                    //.WithShader(ExampleShaders.Ghostly)
                 )*/
                 .WithActor("sphere", new SphereActorBuilder()
                     .WithTexture(new Texture("../../../assets/gordon.jpg"))
@@ -37,6 +37,7 @@ namespace RenderSharpExample
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
+                    scene.Camera.Position += new FVec3(1, 1, 0) * dt;
                 })
                 .Build();
 
@@ -44,7 +45,7 @@ namespace RenderSharpExample
             Renderer renderer = new(resX, resY, scene);
 
             // Finally render and output the video
-            renderer.RenderFrame(showDepth: false).Output("test");
+            renderer.RenderMovie(showDepth: false).Output("test");
         }
     }
 }

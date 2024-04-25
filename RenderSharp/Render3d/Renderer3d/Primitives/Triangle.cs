@@ -6,7 +6,6 @@ namespace RenderSharp.Render3d
     {
         public readonly FVec3 v0, v1, v2, centroid;
         private FVec3 v01, v12, v20, unitNorm;
-        private double d;
 
         public Triangle(in FVec3 v0, in FVec3 v1, in FVec3 v2)
         {
@@ -18,7 +17,6 @@ namespace RenderSharp.Render3d
             v12 = v2 - v1;
             v20 = v0 - v2;
             unitNorm = (v2 - v0).Cross(v01).Norm();
-            d = -unitNorm.Dot(v0);
         }
 
         public Triangle(in Triangle t, in FVec3 size, in RVec3 rotation, in FVec3 position)
@@ -28,9 +26,9 @@ namespace RenderSharp.Render3d
                 t.v2.Rotate(rotation) * size + position)
         {}
 
-        public bool Intersects(in FVec3 test, double minDepth, out double depth, out FVec3 barycentric)
+        public bool Intersects(in Ray ray, double minDepth, out double depth, out FVec3 barycentric)
         {
-            double dot = test.Dot(unitNorm);
+            double dot = ray.direction.Dot(unitNorm);
 
             // Check if we are facing the triangle side-on
             if (dot == 0)
@@ -39,8 +37,8 @@ namespace RenderSharp.Render3d
                 barycentric = new FVec3();
                 return false;
             }
-
-            depth = -d / dot;
+            
+            depth = unitNorm.Dot(v0 - ray.origin) / dot;
 
             // Check if the intersection is behind the near plane.
             if (depth < minDepth)
@@ -49,7 +47,7 @@ namespace RenderSharp.Render3d
                 return false;
             }
             
-            FVec3 intersection = test * depth;
+            FVec3 intersection = ray.origin + ray.direction * depth;
             FVec3 v = v01.Cross(intersection - v0);
             FVec3 w = v12.Cross(intersection - v1);
             FVec3 u = v20.Cross(intersection - v2);

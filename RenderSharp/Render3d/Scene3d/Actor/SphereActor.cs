@@ -8,30 +8,28 @@ namespace RenderSharp.Render3d
     public class SphereActor : Actor
     {
         private Sphere sphere;
-        FVec3 cameraRelPosition;
 
         internal SphereActor(
+            in FVec3 position,
             in FVec3 size,
             in RVec3 rotation,
-            in FVec3 position,
             Texture texture,
-            FragShader fragShader,
-            in FVec3? cameraPos = null)
-            : base(size, rotation, position, texture, fragShader)
+            FragShader fragShader)
+            : base(position, size, rotation, texture, fragShader)
         {
-            cameraRelPosition = position - cameraPos ?? new FVec3();
-            sphere = new Sphere(cameraRelPosition, size, rotation);
+            sphere = new Sphere(position, size, rotation);
         }
 
-        internal override void Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
+        internal override void Sample(in Ray ray, double minDepth, double time, out RGBA sample, out double depth)
         {
             (double, double) closeFar;
             sample = new RGBA();
             depth = double.PositiveInfinity;
-            if (sphere.Intersects(worldVec, minDepth, out closeFar))
+            FVec3 relPosition = Position - ray.origin;
+            if (sphere.Intersects(ray, minDepth, out closeFar))
             {
                 FRGBA fOut;
-                FVec2 uvFar = GetUV((worldVec * closeFar.Item2 - cameraRelPosition).Rotate(Rotation));
+                FVec2 uvFar = GetUV((ray.direction * closeFar.Item2 - relPosition).Rotate(Rotation));
                 FragShader(Texture[uvFar], out fOut, (Vec2)(uvFar * Texture.Size), Texture.Size, time);
                 sample = ColorFunctions.AlphaBlend(fOut, sample);
                 depth = closeFar.Item2;
@@ -41,22 +39,21 @@ namespace RenderSharp.Render3d
                     return;
                 }
 
-                FVec2 uvClose = GetUV((worldVec * closeFar.Item1 - cameraRelPosition).Rotate(Rotation));
+                FVec2 uvClose = GetUV((ray.direction * closeFar.Item1 - relPosition).Rotate(Rotation));
                 FragShader(Texture[uvClose], out fOut, (Vec2)(uvClose * Texture.Size), Texture.Size, time);
                 sample = ColorFunctions.AlphaBlend(fOut, sample);
                 depth = closeFar.Item1;
             }
         }
 
-        internal override Actor Copy(in FVec3 cameraPos)
+        internal override Actor Copy()
         {
             return new SphereActor(
+                Position,
                 Size,
                 Rotation,
-                Position,
                 Texture,
-                FragShader,
-                cameraPos);
+                FragShader);
         }
 
         private static FVec2 GetUV(in FVec3 fromCenter)

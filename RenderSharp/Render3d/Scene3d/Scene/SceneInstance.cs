@@ -43,7 +43,7 @@
             primaryCameraKey = Cameras.Keys.First();
             Camera = Cameras[primaryCameraKey];
             Actors = new Dictionary<string, Actor>(
-                scene.Actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy(Camera.Position))));
+                scene.Actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy())));
             Time = 0;
             Index = 0;
             Think = scene.Think;
@@ -56,7 +56,7 @@
             primaryCameraKey = scene.primaryCameraKey;
             Camera = Cameras[primaryCameraKey];
             Actors = new Dictionary<string, Actor>(
-                scene.Actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy(Camera.Position))));
+                scene.Actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy())));
             Time = time;
             Index = index;
             Think = scene.Think;

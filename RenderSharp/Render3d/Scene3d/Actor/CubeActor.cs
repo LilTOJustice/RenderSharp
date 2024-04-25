@@ -9,31 +9,29 @@ namespace RenderSharp.Render3d
     public class CubeActor : Actor
     {
         private Cube cube;
-        private FVec3 cameraRelPosition;
 
         internal CubeActor(
+            in FVec3 position,
             in FVec3 size,
             in RVec3 rotation,
-            in FVec3 position,
             Texture texture,
-            FragShader fragShader,
-            in FVec3? cameraPos = null)
-            : base(size, rotation, position, texture, fragShader)
+            FragShader fragShader)
+            : base(position, size, rotation, texture, fragShader)
         {
-            cameraRelPosition = position - cameraPos ?? new FVec3();
-            cube = new Cube(cameraRelPosition, size, rotation);
+            cube = new Cube(position, size, rotation);
         }
 
-        internal override void Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
+        internal override void Sample(in Ray ray, double minDepth, double time, out RGBA sample, out double depth)
         {
             (Cube.Face, Cube.Face) faceCloseFar;
             (double, double) closeFar;
             sample = new RGBA();
             depth = double.PositiveInfinity;
-            if (cube.Intersects(worldVec, minDepth, out closeFar, out faceCloseFar))
+            FVec3 relPosition = Position - ray.origin;
+            if (cube.Intersects(ray, minDepth, out closeFar, out faceCloseFar))
             {
                 FRGBA fOut;
-                FVec2 uvFar = GetUV(faceCloseFar.Item2, (worldVec * closeFar.Item2 - cameraRelPosition).Rotate(Rotation) / Size);
+                FVec2 uvFar = GetUV(faceCloseFar.Item2, (ray.direction * closeFar.Item2 - relPosition).Rotate(Rotation) / Size);
                 FragShader(Texture[uvFar], out fOut, (Vec2)(uvFar * Texture.Size), Texture.Size, time);
                 sample = ColorFunctions.AlphaBlend(fOut, sample);
                 depth = closeFar.Item2;
@@ -43,22 +41,21 @@ namespace RenderSharp.Render3d
                     return;
                 }
 
-                FVec2 uvClose = GetUV(faceCloseFar.Item1, (worldVec * closeFar.Item1 - cameraRelPosition).Rotate(Rotation) / Size);
+                FVec2 uvClose = GetUV(faceCloseFar.Item1, (ray.direction * closeFar.Item1 - relPosition).Rotate(Rotation) / Size);
                 FragShader(Texture[uvClose], out fOut, (Vec2)(uvClose * Texture.Size), Texture.Size, time);
                 sample = ColorFunctions.AlphaBlend(fOut, sample);
                 depth = closeFar.Item1;
             }
         }
 
-        internal override Actor Copy(in FVec3 cameraPos)
+        internal override Actor Copy()
         {
             return new CubeActor(
+                Position,
                 Size,
                 Rotation,
-                Position,
                 Texture,
-                FragShader,
-                cameraPos);
+                FragShader);
         }
 
         private static FVec2 GetUV(Cube.Face face, in FVec3 fromCenter)

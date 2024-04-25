@@ -117,7 +117,7 @@ namespace RenderSharp.Render3d
             List<SceneInstance> instances = Scene.Simulate();
 
             stopwatch.Stop();
-            Console.WriteLine($"Finished in {stopwatch.Elapsed}");
+            Console.WriteLine($" Finished in {stopwatch.Elapsed}.");
 
             int numThreads = Environment.ProcessorCount;
             List<Thread> threads = new();
@@ -240,16 +240,11 @@ namespace RenderSharp.Render3d
         {
             Vec2 screenPos = new(x, y);
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
-            FVec3 worldVec = Transforms.ScreenToWorldVec(screenPos, Resolution, scene.Camera);
-            double minDepth = scene.Camera.FocalLength == 0 ? 0 : worldVec.Mag();
+            Ray ray = Transforms.ScreenToRay(screenPos, Resolution, scene.Camera);
+            double minDepth = scene.Camera.FocalLength == 0 ? 0 : ray.direction.Mag();
             if (scene.Camera.FocalLength != 0)
             {
-                worldVec = worldVec / minDepth;
-            }
-            else
-            {
-                worldVec.Z = 0;
-                worldVec = new FVec3(0, 0, 1).Rotate(scene.Camera.Rotation);
+                ray = new Ray(ray.origin, ray.direction / minDepth);
             }
 
             RGBA outColor = new();
@@ -259,7 +254,7 @@ namespace RenderSharp.Render3d
             foreach (Actor actor in scene.Actors.Values)
             {
                 double sampleDepth;
-                actor.Sample(worldVec, minDepth, scene.Time, out outColor, out sampleDepth);
+                actor.Sample(ray, minDepth, scene.Time, out outColor, out sampleDepth);
                 renderQueue.Add((outColor, sampleDepth));
             }
 

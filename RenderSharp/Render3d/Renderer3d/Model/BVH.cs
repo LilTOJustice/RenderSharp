@@ -99,9 +99,9 @@ namespace RenderSharp.Render3d
             }
         }
 
-        public HashSet<FaceTriangle> GetPotentialIntersectingTriangles(in FVec3 worldVec)
+        public HashSet<FaceTriangle> GetPotentialIntersectingTriangles(in Ray ray)
         {
-            if (!boundingBox.Intersects(worldVec))
+            if (!boundingBox.Intersects(ray))
             {
                 return new();
             }
@@ -112,8 +112,8 @@ namespace RenderSharp.Render3d
             }
 
             HashSet<FaceTriangle> triangles = new();
-            triangles.UnionWith(left!.GetPotentialIntersectingTriangles(worldVec));
-            triangles.UnionWith(right!.GetPotentialIntersectingTriangles(worldVec));
+            triangles.UnionWith(left!.GetPotentialIntersectingTriangles(ray));
+            triangles.UnionWith(right!.GetPotentialIntersectingTriangles(ray));
             return triangles;
         }
 
