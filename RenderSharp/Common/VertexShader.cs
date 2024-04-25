@@ -3,6 +3,7 @@
 namespace RenderSharp
 {
     /// <summary>
+    /// UNIMPLEMENTED.
     /// Delegate type for coordinate shaders. Which are shaders purely used to transform coordinates.
     /// </summary>
     /// <param name="vertIn">Input vertex for the shader.</param>

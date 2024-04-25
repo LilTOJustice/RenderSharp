@@ -14,7 +14,7 @@ namespace RenderSharp.Render3d
         private FVec3 cameraRelPosition;
         
         /// <summary>
-        /// Shader to be applied to every vertex of the actor's model.
+        /// UNIMPLEMENTED. Shader to be applied to every vertex of the actor's model.
         /// </summary>
         public VertexShader VertexShader { get; set; }
 
