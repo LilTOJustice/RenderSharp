@@ -79,7 +79,7 @@ namespace RenderSharp.Render3d
             ClearFragShaders();
         }
 
-        internal abstract bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth);
+        internal abstract void Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth);
 
         internal abstract Actor Copy(in FVec3 cameraPos);
     }

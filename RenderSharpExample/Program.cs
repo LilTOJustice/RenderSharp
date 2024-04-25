@@ -1,4 +1,5 @@
 ﻿using MathSharp;
+using RenderSharp;
 using RenderSharp.Render3d;
 
 namespace RenderSharpExample
@@ -20,11 +21,27 @@ namespace RenderSharpExample
                 .WithActor("car", new ModelActorBuilder()
                     .WithModel(Model.FromFile("../../../assets/car_bebo.obj"))
                     .WithSize(new FVec3(1, 1, 1))
-                    .WithPosition(new FVec3(0, 0, 3))
+                    .WithPosition(new FVec3(0, 0, 6))
+                    .WithShader(ExampleShaders.Ghostly)
+                )
+                .WithActor("sphere", new SphereActorBuilder()
+                    .WithTexture(new Texture("../../../assets/gordon.jpg"))
+                    .WithShader(ExampleShaders.Ghostly)
+                    .WithSize(new FVec3(1, 1, 1))
+                    .WithPosition(new FVec3(3, 0, 6))
+                )
+                .WithActor("cube", new CubeActorBuilder()
+                    .WithTexture(new Texture("../../../assets/gordon.jpg"))
+                    .WithShader(ExampleShaders.Ghostly)
+                    .WithSize(new FVec3(1, 1, 1))
+                    .WithPosition(new FVec3(-3, 0, 6))
                 )
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    scene["car"].Rotation += new RVec3(0, dt, dt);
+                    scene.GetAllActors().ForEach(actor =>
+                    {
+                        actor.Rotation += new RVec3(0, dt, dt);
+                    });
                 })
                 .Build();
 

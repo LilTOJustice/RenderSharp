@@ -63,6 +63,14 @@
         }
 
         /// <summary>
+        /// Returns a list of all actors in the scene.
+        /// </summary>
+        public List<Actor> GetAllActors()
+        {
+            return Actors.Values.ToList();
+        }
+
+        /// <summary>
         /// Removes the actor from all planes that have it in <see cref="Actors"/>.
         /// </summary>
         /// <param name="actorId">Id for looking up the actor.</param>

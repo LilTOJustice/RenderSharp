@@ -2,7 +2,7 @@
 
 namespace RenderSharp.Render3d
 {
-    internal class BVHOctree
+    internal class BVH
     {
         public enum Dim
         {
@@ -13,13 +13,13 @@ namespace RenderSharp.Render3d
 
         private FaceTriangle[] allTriangles;
 
-        private BVHOctree? left, right;
+        private BVH? left, right;
 
         private BoundingBox boundingBox;
 
         private FaceTriangle? triangle;
 
-        public BVHOctree(FaceTriangle[] triangles, Dim sortDim = Dim.X)
+        public BVH(FaceTriangle[] triangles, Dim sortDim = Dim.X)
             : this(
                   triangles,
                   triangles.OrderBy(t => t.triangle.centroid.X).Select(t => t.GetHashCode()).ToList(),
@@ -28,7 +28,7 @@ namespace RenderSharp.Render3d
                   sortDim)
         { }
 
-        public BVHOctree(FaceTriangle[] triangles, List<int> sortedX, List<int> sortedY, List<int> sortedZ, Dim splitDim)
+        public BVH(FaceTriangle[] triangles, List<int> sortedX, List<int> sortedY, List<int> sortedZ, Dim splitDim)
         {
             allTriangles = triangles;
             boundingBox = GetBoundingBox(sortedX);
@@ -49,13 +49,13 @@ namespace RenderSharp.Render3d
                     List<int> leftTrianglesX = sortedX.Take(sortedXCount / 2).ToList();
                     List<int> rightTrianglesX = sortedX.TakeLast(sortedXCount / 2 + sortedXCount % 2).ToList();
 
-                    left = new BVHOctree(
+                    left = new BVH(
                         triangles,
                         leftTrianglesX,
                         sortedY.Intersect(leftTrianglesX).ToList(),
                         sortedZ.Intersect(leftTrianglesX).ToList(),
                         Dim.Y);
-                    right = new BVHOctree(
+                    right = new BVH(
                         triangles,
                         rightTrianglesX,
                         sortedY.Intersect(rightTrianglesX).ToList(),
@@ -66,13 +66,13 @@ namespace RenderSharp.Render3d
                     List<int> leftTrianglesY = sortedY.Take(sortedYCount / 2).ToList();
                     List<int> rightTrianglesY = sortedY.TakeLast(sortedYCount / 2 + sortedYCount % 2).ToList();
 
-                    left = new BVHOctree(
+                    left = new BVH(
                         triangles,
                         sortedX.Intersect(leftTrianglesY).ToList(),
                         leftTrianglesY,
                         sortedZ.Intersect(leftTrianglesY).ToList(),
                         Dim.Z);
-                    right = new BVHOctree(
+                    right = new BVH(
                         triangles,
                         sortedX.Intersect(rightTrianglesY).ToList(),
                         rightTrianglesY,
@@ -83,13 +83,13 @@ namespace RenderSharp.Render3d
                     List<int> leftTrianglesZ = sortedZ.Take(sortedZCount / 2).ToList();
                     List<int> rightTrianglesZ = sortedZ.TakeLast(sortedZCount / 2 + sortedZCount % 2).ToList();
 
-                    left = new BVHOctree(
+                    left = new BVH(
                         triangles,
                         sortedX.Intersect(leftTrianglesZ).ToList(),
                         sortedY.Intersect(leftTrianglesZ).ToList(),
                         leftTrianglesZ,
                         Dim.X);
-                    right = new BVHOctree(
+                    right = new BVH(
                         triangles,
                         sortedX.Intersect(rightTrianglesZ).ToList(),
                         sortedY.Intersect(rightTrianglesZ).ToList(),

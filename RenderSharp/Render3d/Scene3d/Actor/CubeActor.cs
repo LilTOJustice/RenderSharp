@@ -1,4 +1,5 @@
 ﻿using MathSharp;
+using System.Linq.Expressions;
 
 namespace RenderSharp.Render3d
 {
@@ -23,59 +24,30 @@ namespace RenderSharp.Render3d
             cube = new Cube(cameraRelPosition, size, rotation);
         }
 
-        internal override bool Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
+        internal override void Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
         {
-            Cube.Face face;
-            if (cube.Intersects(worldVec, minDepth, out depth, out face))
+            (Cube.Face, Cube.Face) faceCloseFar;
+            (double, double) closeFar;
+            sample = new RGBA();
+            depth = double.PositiveInfinity;
+            if (cube.Intersects(worldVec, minDepth, out closeFar, out faceCloseFar))
             {
-                FVec3 fromCenter = (worldVec * depth - cameraRelPosition).Rotate(Rotation) / Size;
-                FVec2 uv;
+                FRGBA fOut;
+                FVec2 uvFar = GetUV(faceCloseFar.Item2, (worldVec * closeFar.Item2 - cameraRelPosition).Rotate(Rotation) / Size);
+                FragShader(Texture[uvFar], out fOut, (Vec2)(uvFar * Texture.Size), Texture.Size, time);
+                sample = ColorFunctions.AlphaBlend(fOut, sample);
+                depth = closeFar.Item2;
 
-                switch (face)
+                if (closeFar.Item1 == double.PositiveInfinity)
                 {
-                    case Cube.Face.PosX:
-                        uv = new FVec2(
-                            1 - Operations.Mod((fromCenter.Z + 1) / 2, 1),
-                            1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
-                        break;
-                    case Cube.Face.NegX:
-                        uv = new FVec2(
-                            Operations.Mod((fromCenter.Z + 1) / 2, 1),
-                            1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
-                        break;
-                    case Cube.Face.PosY:
-                        uv = new FVec2(
-                            Operations.Mod((fromCenter.X + 1) / 2, 1),
-                            1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
-                        break;
-                    case Cube.Face.NegY:
-                        uv = new FVec2(
-                            1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
-                            1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
-                        break;
-                    case Cube.Face.NegZ:
-                        uv = new FVec2(
-                            Operations.Mod((fromCenter.X + 1) / 2, 1),
-                            1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
-                        break;
-                    case Cube.Face.PosZ:
-                        uv = new FVec2(
-                            1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
-                            1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
-                        break;
-                    default:
-                        uv = new FVec2();
-                        break;
+                    return;
                 }
 
-                FRGBA fOut;
-                FragShader(Texture[uv], out fOut, (Vec2)(uv * Texture.Size), Texture.Size, time);
-                sample = fOut;
-                return true;
+                FVec2 uvClose = GetUV(faceCloseFar.Item1, (worldVec * closeFar.Item1 - cameraRelPosition).Rotate(Rotation) / Size);
+                FragShader(Texture[uvClose], out fOut, (Vec2)(uvClose * Texture.Size), Texture.Size, time);
+                sample = ColorFunctions.AlphaBlend(fOut, sample);
+                depth = closeFar.Item1;
             }
-
-            sample = new RGBA();
-            return false;
         }
 
         internal override Actor Copy(in FVec3 cameraPos)
@@ -87,6 +59,39 @@ namespace RenderSharp.Render3d
                 Texture,
                 FragShader,
                 cameraPos);
+        }
+
+        private static FVec2 GetUV(Cube.Face face, in FVec3 fromCenter)
+        {
+            switch (face)
+            {
+                case Cube.Face.PosX:
+                    return new FVec2(
+                        1 - Operations.Mod((fromCenter.Z + 1) / 2, 1),
+                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                case Cube.Face.NegX:
+                    return new FVec2(
+                        Operations.Mod((fromCenter.Z + 1) / 2, 1),
+                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                case Cube.Face.PosY:
+                    return new FVec2(
+                        Operations.Mod((fromCenter.X + 1) / 2, 1),
+                        1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
+                case Cube.Face.NegY:
+                    return new FVec2(
+                        1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
+                        1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
+                case Cube.Face.PosZ:
+                    return new FVec2(
+                        1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
+                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                case Cube.Face.NegZ:
+                    return new FVec2(
+                        Operations.Mod((fromCenter.X + 1) / 2, 1),
+                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                default:
+                    return new FVec2();
+            }
         }
     }
 }

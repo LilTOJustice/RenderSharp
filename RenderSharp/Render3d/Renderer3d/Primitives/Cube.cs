@@ -30,7 +30,7 @@ namespace RenderSharp.Render3d
             rotorTransform = new RotorTransform(rotation);
             ref FVec3 p = ref this.position;
             ref RotorTransform rt = ref rotorTransform;
-            cX = rt.A2 * p.X * p.X + rt.B2 * p.Y * p.Y + rt.C2 * p.Z * p.Z + 
+            cX = rt.A2 * p.X * p.X + rt.B2 * p.Y * p.Y + rt.C2 * p.Z * p.Z +
                 2 * rt.AB * p.X * p.Y + 2 * rt.AC * p.X * p.Z + 2 * rt.BC * p.Y * p.Z - size2.X;
             cY = rt.D2 * p.X * p.X + rt.E2 * p.Y * p.Y + rt.F2 * p.Z * p.Z +
                 2 * rt.DE * p.X * p.Y + 2 * rt.DF * p.X * p.Z + 2 * rt.EF * p.Y * p.Z - size2.Y;
@@ -43,7 +43,7 @@ namespace RenderSharp.Render3d
             return Math.Abs(a - b) <= 0.001;
         }
 
-        private bool TestX(in FVec3 s, double minDepth, out double depth)
+        private bool TestX(in FVec3 s, double minDepth, out (double, double) closeFar)
         {
             ref FVec3 p = ref position;
             ref RotorTransform rt = ref rotorTransform;
@@ -51,10 +51,11 @@ namespace RenderSharp.Render3d
                 2 * rt.AB * s.X * s.Y + 2 * rt.AC * s.X * s.Z + 2 * rt.BC * s.Y * s.Z;
             double b = -2 * (rt.A2 * s.X * p.X + rt.B2 * s.Y * p.Y + rt.C2 * s.Z * p.Z +
                 rt.AB * (s.X * p.Y + s.Y * p.X) + rt.AC * (s.X * p.Z + s.Z * p.X) + rt.BC * (s.Y * p.Z + s.Z * p.Y));
-            return Transforms.GetValidIntersection(a, b, cX, minDepth, out depth);
+            Transforms.GetValidIntersection(a, b, cX, minDepth, out closeFar);
+            return closeFar.Item2 != double.PositiveInfinity;
         }
 
-        private bool TestY(in FVec3 s, double minDepth, out double depth)
+        private bool TestY(in FVec3 s, double minDepth, out (double, double) closeFar)
         {
             ref FVec3 p = ref position;
             ref RotorTransform rt = ref rotorTransform;
@@ -62,10 +63,11 @@ namespace RenderSharp.Render3d
                 2 * rt.DE * s.X * s.Y + 2 * rt.DF * s.X * s.Z + 2 * rt.EF * s.Y * s.Z;
             double b = -2 * (rt.D2 * s.X * p.X + rt.E2 * s.Y * p.Y + rt.F2 * s.Z * p.Z +
                 rt.DE * (s.X * p.Y + s.Y * p.X) + rt.DF * (s.X * p.Z + s.Z * p.X) + rt.EF * (s.Y * p.Z + s.Z * p.Y));
-            return Transforms.GetValidIntersection(a, b, cY, minDepth, out depth);
+            Transforms.GetValidIntersection(a, b, cY, minDepth, out closeFar);
+            return closeFar.Item2 != double.PositiveInfinity;
         }
 
-        private bool TestZ(in FVec3 s, double minDepth, out double depth)
+        private bool TestZ(in FVec3 s, double minDepth, out (double, double) closeFar)
         {
             ref FVec3 p = ref position;
             ref RotorTransform rt = ref rotorTransform;
@@ -73,49 +75,102 @@ namespace RenderSharp.Render3d
                 2 * rt.GH * s.X * s.Y + 2 * rt.GI * s.X * s.Z + 2 * rt.HI * s.Y * s.Z;
             double b = -2 * (rt.G2 * s.X * p.X + rt.H2 * s.Y * p.Y + rt.I2 * s.Z * p.Z +
                 rt.GH * (s.X * p.Y + s.Y * p.X) + rt.GI * (s.X * p.Z + s.Z * p.X) + rt.HI * (s.Y * p.Z + s.Z * p.Y));
-            return Transforms.GetValidIntersection(a, b, cZ, minDepth, out depth);
+            Transforms.GetValidIntersection(a, b, cZ, minDepth, out closeFar);
+            return closeFar.Item2 != double.PositiveInfinity;
         }
 
-        public bool Intersects(in FVec3 test, double minDepth, out double depth, out Face face)
+        public bool Intersects(in FVec3 test, double minDepth, out (double, double) closeFar, out (Face, Face) faceCloseFar)
         {
-            if (TestX(test, minDepth, out depth))
+            faceCloseFar = (Face.PosX, Face.PosX);
+            closeFar = (double.PositiveInfinity, double.PositiveInfinity);
+            (double, double) tempCloseFar;
+            if (TestX(test, minDepth, out tempCloseFar))
             {
-                FVec3 rotated = (test * depth - position).Rotate(rotation);
+                FVec3 rotated = (test * tempCloseFar.Item2 - position).Rotate(rotation);
                 double resultX = Math.Abs(rotated.X) / size.X;
                 if (EpsilonCheck(resultX, 1) && resultX > Math.Abs(rotated.Y) / size.Y
                     && resultX > Math.Abs(rotated.Z) / size.Z)
                 {
-                    face = rotated.X > 0 ? Face.PosX : Face.NegX;
+                    faceCloseFar.Item2 = rotated.X > 0 ? Face.PosX : Face.NegX;
+                    closeFar.Item2 = tempCloseFar.Item2;
+                }
+
+                if (tempCloseFar.Item1 != double.PositiveInfinity)
+                {
+                    rotated = (test * tempCloseFar.Item1 - position).Rotate(rotation);
+                    resultX = Math.Abs(rotated.X) / size.X;
+                    if (EpsilonCheck(resultX, 1) && resultX > Math.Abs(rotated.Y) / size.Y
+                        && resultX > Math.Abs(rotated.Z) / size.Z)
+                    {
+                        faceCloseFar.Item1 = rotated.X > 0 ? Face.PosX : Face.NegX;
+                        closeFar.Item1 = tempCloseFar.Item1;
+                    }
+                }
+
+                if (closeFar.Item1 != double.PositiveInfinity && closeFar.Item2 != double.PositiveInfinity)
+                {
                     return true;
                 }
             }
 
-            if (TestY(test, minDepth, out depth))
+            if (TestY(test, minDepth, out tempCloseFar))
             {
-                FVec3 rotated = (test * depth - position).Rotate(rotation);
+                FVec3 rotated = (test * tempCloseFar.Item2 - position).Rotate(rotation);
                 double resultY = Math.Abs(rotated.Y) / size.Y;
                 if (EpsilonCheck(resultY, 1) && resultY > Math.Abs(rotated.X) / size.X
                     && resultY > Math.Abs(rotated.Z) / size.Z)
                 {
-                    face = rotated.Y > 0 ? Face.PosY : Face.NegY;
-                    return true;
+                    faceCloseFar.Item2 = rotated.Y > 0 ? Face.PosY : Face.NegY;
+                    closeFar.Item2 = tempCloseFar.Item2;
                 }
-            }
-            
-            if (TestZ(test, minDepth, out depth))
-            {
-                FVec3 rotated = (test * depth - position).Rotate(rotation);
-                double resultZ = Math.Abs(rotated.Z) / size.Z;
-                if (EpsilonCheck(resultZ, 1) && resultZ > Math.Abs(rotated.X) / size.X
-                    && resultZ > Math.Abs(rotated.Y) / size.Y)
+
+                if (tempCloseFar.Item1 != double.PositiveInfinity)
                 {
-                    face = rotated.Z > 0 ? Face.PosZ : Face.NegZ;
+                    rotated = (test * tempCloseFar.Item1 - position).Rotate(rotation);
+                    resultY = Math.Abs(rotated.Y) / size.Y;
+                    if (EpsilonCheck(resultY, 1) && resultY > Math.Abs(rotated.X) / size.X
+                        && resultY > Math.Abs(rotated.Z) / size.Z)
+                    {
+                        faceCloseFar.Item1 = rotated.Y > 0 ? Face.PosY : Face.NegY;
+                        closeFar.Item1 = tempCloseFar.Item1;
+                    }
+                }
+
+                if (closeFar.Item1 != double.PositiveInfinity && closeFar.Item2 != double.PositiveInfinity)
+                {
                     return true;
                 }
             }
 
-            depth = -1;
-            face = Face.PosX;
+            if (TestZ(test, minDepth, out tempCloseFar))
+            {
+                FVec3 rotated = (test * tempCloseFar.Item2 - position).Rotate(rotation);
+                double resultZ = Math.Abs(rotated.Z) / size.Z;
+                if (EpsilonCheck(resultZ, 1) && resultZ > Math.Abs(rotated.X) / size.X
+                    && resultZ > Math.Abs(rotated.Y) / size.Y)
+                {
+                    faceCloseFar.Item2 = rotated.Z > 0 ? Face.PosZ : Face.NegZ;
+                    closeFar.Item2 = tempCloseFar.Item2;
+                }
+
+                if (tempCloseFar.Item1 != double.PositiveInfinity)
+                {
+                    rotated = (test * tempCloseFar.Item1 - position).Rotate(rotation);
+                    resultZ = Math.Abs(rotated.Z) / size.Z;
+                    if (EpsilonCheck(resultZ, 1) && resultZ > Math.Abs(rotated.X) / size.X
+                        && resultZ > Math.Abs(rotated.Y) / size.Y)
+                    {
+                        faceCloseFar.Item1 = rotated.Z > 0 ? Face.PosZ : Face.NegZ;
+                        closeFar.Item1 = tempCloseFar.Item1;
+                    }
+                }
+
+                if (closeFar.Item1 != double.PositiveInfinity && closeFar.Item2 != double.PositiveInfinity)
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
     }

@@ -208,7 +208,7 @@ namespace RenderSharp.Render3d
                 {
                     double depth;
                     output[x, y] = RenderPixel(scene, x, y, out depth);
-                    maxDepth = Math.Max(maxDepth, depth);
+                    maxDepth = depth != double.PositiveInfinity ? Math.Max(maxDepth, depth) : maxDepth;
                     depthBuffer[x, y] = depth;
                 }
             }
@@ -219,7 +219,7 @@ namespace RenderSharp.Render3d
                 {
                     for (int x = 0; x < Width; x++)
                     {
-                        double scaled = depthBuffer[x, y] == -1 || maxDepth == 0 ?
+                        double scaled = depthBuffer[x, y] == double.PositiveInfinity || maxDepth == 0 ?
                             0 : 1 - depthBuffer[x, y] / maxDepth;
                         output[x, y] = new FRGB(scaled, scaled, scaled);
                     }
@@ -259,14 +259,12 @@ namespace RenderSharp.Render3d
             foreach (Actor actor in scene.Actors.Values)
             {
                 double sampleDepth;
-                if (actor.Sample(worldVec, minDepth, scene.Time, out outColor, out sampleDepth))
-                {
-                    renderQueue.Add((outColor, sampleDepth));
-                }
+                actor.Sample(worldVec, minDepth, scene.Time, out outColor, out sampleDepth);
+                renderQueue.Add((outColor, sampleDepth));
             }
 
             renderQueue.Sort((a, b)  => b.Item2.CompareTo(a.Item2));
-            depth = renderQueue.Count > 0 ? renderQueue.Last().Item2 : -1;
+            depth = renderQueue.Count > 0 ? renderQueue.Last().Item2 : double.PositiveInfinity;
 
             foreach ((RGBA sample, _) in renderQueue)
             {
