@@ -8,8 +8,8 @@ namespace RenderSharpExample
     {
         static readonly int framerate = 60;
         static readonly int duration = 5;
-        static readonly int resX = 1000;
-        static readonly int resY = 1000;
+        static readonly int resX = 1280;
+        static readonly int resY = 720;
 
         static void Main()
         {
