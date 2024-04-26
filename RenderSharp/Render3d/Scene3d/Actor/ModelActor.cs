@@ -16,6 +16,7 @@ namespace RenderSharp.Render3d
         public VertexShader VertexShader { get; set; }
 
         internal ModelActor(
+            string id,
             FVec3 position,
             FVec3 size,
             RVec3 rotation,
@@ -23,17 +24,17 @@ namespace RenderSharp.Render3d
             FragShader fragShader,
             VertexShader vertexShader,
             Model model)
-            : base(position, size, rotation, texture, fragShader)
+            : base(id, position, size, rotation, texture, fragShader)
         {
             VertexShader = vertexShader;
             origModel = model;
             this.model = new Model(origModel, size, rotation, position);
         }
 
-        internal override void Sample(in Ray ray, double minDepth, double time, out RGBA sample, out double depth)
+        internal override void Sample(in Ray ray, double time, out RGBA sample, out double depth)
         {
             List<(RGBA, FVec2, Material, double)> renderQueue;
-            model.Sample(ray, minDepth, out renderQueue, out depth);
+            model.Sample(ray, out renderQueue, out depth);
             sample = new RGBA();
 
             renderQueue.Sort((a, b) => b.Item4.CompareTo(a.Item4));
@@ -50,6 +51,7 @@ namespace RenderSharp.Render3d
     internal override Actor Copy()
     {
         return new ModelActor(
+           Id,
            Position,
            Size,
            Rotation,

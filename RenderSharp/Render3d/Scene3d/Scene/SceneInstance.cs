@@ -36,6 +36,8 @@
 
         internal Dictionary<string, Actor> Actors { get; set; }
 
+        internal Dictionary<string, PointLight> Lights { get; set; }
+
         internal SceneInstance(Scene scene)
         {
             Cameras = new Dictionary<string, Camera>(
@@ -44,6 +46,8 @@
             Camera = Cameras[primaryCameraKey];
             Actors = new Dictionary<string, Actor>(
                 scene.Actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy())));
+            Lights = new Dictionary<string, PointLight>(
+                scene.Lights.Select(pair => new KeyValuePair<string, PointLight>(pair.Key, new PointLight(pair.Value.Position))));
             Time = 0;
             Index = 0;
             Think = scene.Think;
@@ -57,6 +61,8 @@
             Camera = Cameras[primaryCameraKey];
             Actors = new Dictionary<string, Actor>(
                 scene.Actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy())));
+            Lights = new Dictionary<string, PointLight>(
+                scene.Lights.Select(pair => new KeyValuePair<string, PointLight>(pair.Key, new PointLight(pair.Value.Position))));
             Time = time;
             Index = index;
             Think = scene.Think;
@@ -147,6 +153,14 @@
         public Actor GetActor(string actorId)
         {
             return this[actorId];
+        }
+        
+        /// <summary>
+        /// Gets a point light from the scene.
+        /// </summary>
+        public PointLight GetLight(string lightId)
+        {
+            return Lights[lightId];
         }
     }
 }

@@ -11,24 +11,25 @@ namespace RenderSharp.Render3d
         private Cube cube;
 
         internal CubeActor(
+            string id,
             in FVec3 position,
             in FVec3 size,
             in RVec3 rotation,
             Texture texture,
             FragShader fragShader)
-            : base(position, size, rotation, texture, fragShader)
+            : base(id, position, size, rotation, texture, fragShader)
         {
             cube = new Cube(position, size, rotation);
         }
 
-        internal override void Sample(in Ray ray, double minDepth, double time, out RGBA sample, out double depth)
+        internal override void Sample(in Ray ray, double time, out RGBA sample, out double depth)
         {
             (Cube.Face, Cube.Face) faceCloseFar;
             (double, double) closeFar;
             sample = new RGBA();
             depth = double.PositiveInfinity;
             FVec3 relPosition = Position - ray.origin;
-            if (cube.Intersects(ray, minDepth, out closeFar, out faceCloseFar))
+            if (cube.Intersects(ray, out closeFar, out faceCloseFar))
             {
                 FRGBA fOut;
                 FVec2 uvFar = GetUV(faceCloseFar.Item2, (ray.direction * closeFar.Item2 - relPosition).Rotate(Rotation) / Size);
@@ -51,6 +52,7 @@ namespace RenderSharp.Render3d
         internal override Actor Copy()
         {
             return new CubeActor(
+                Id,
                 Position,
                 Size,
                 Rotation,

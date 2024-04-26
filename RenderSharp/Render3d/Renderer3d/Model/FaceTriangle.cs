@@ -35,10 +35,10 @@ namespace RenderSharp.Render3d
 
         public override int GetHashCode() => id;
 
-        public bool Intersects(in Ray ray, double minDepth, out FVec2 uv, out double depth)
+        public bool Intersects(in Ray ray, out FVec2 uv, out double depth)
         {
             FVec3 barycentric;
-            if (triangle.Intersects(ray, minDepth, out depth, out barycentric))
+            if (triangle.Intersects(ray, out depth, out barycentric))
             {
                 uv = this.uv.Item1 * barycentric.X + this.uv.Item2 * barycentric.Y + this.uv.Item3 * barycentric.Z;
                 return true;

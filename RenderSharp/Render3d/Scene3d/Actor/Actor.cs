@@ -49,13 +49,17 @@ namespace RenderSharp.Render3d
         /// </summary>
         public FragShader FragShader { get; set; }
 
+        internal string Id { get; set; }
+
         internal Actor(
+            string id,
             in FVec3 position,
             in FVec3 size,
             in RVec3 rotation,
             Texture texture,
             FragShader fragShader)
         {
+            Id = id;
             Texture = texture;
             Position = position;
             Size = size;
@@ -79,7 +83,7 @@ namespace RenderSharp.Render3d
             ClearFragShaders();
         }
 
-        internal abstract void Sample(in Ray ray, double minDepth, double time, out RGBA sample, out double depth);
+        internal abstract void Sample(in Ray ray, double time, out RGBA sample, out double depth);
 
         internal abstract Actor Copy();
     }

@@ -36,7 +36,7 @@ namespace RenderSharp.Render3d
             return Math.Abs(a - b) <= 0.001;
         }
 
-        private bool TestX(in Ray ray, double minDepth, out (double, double) closeFar)
+        private bool TestX(in Ray ray, out (double, double) closeFar)
         {
             FVec3 p = position - ray.origin;
             FVec3 s = ray.direction;
@@ -47,11 +47,11 @@ namespace RenderSharp.Render3d
                 rt.AB * (s.X * p.Y + s.Y * p.X) + rt.AC * (s.X * p.Z + s.Z * p.X) + rt.BC * (s.Y * p.Z + s.Z * p.Y));
             double c = rt.A2 * p.X * p.X + rt.B2 * p.Y * p.Y + rt.C2 * p.Z * p.Z +
                 2 * rt.AB * p.X * p.Y + 2 * rt.AC * p.X * p.Z + 2 * rt.BC * p.Y * p.Z - size2.X;
-            Transforms.GetValidIntersection(a, b, c, minDepth, out closeFar);
+            Transforms.GetValidIntersection(a, b, c, out closeFar);
             return closeFar.Item2 != double.PositiveInfinity;
         }
 
-        private bool TestY(in Ray ray, double minDepth, out (double, double) closeFar)
+        private bool TestY(in Ray ray, out (double, double) closeFar)
         {
             FVec3 p = position - ray.origin;
             FVec3 s = ray.direction;
@@ -62,11 +62,11 @@ namespace RenderSharp.Render3d
                 rt.DE * (s.X * p.Y + s.Y * p.X) + rt.DF * (s.X * p.Z + s.Z * p.X) + rt.EF * (s.Y * p.Z + s.Z * p.Y));
             double c = rt.D2 * p.X * p.X + rt.E2 * p.Y * p.Y + rt.F2 * p.Z * p.Z +
                 2 * rt.DE * p.X * p.Y + 2 * rt.DF * p.X * p.Z + 2 * rt.EF * p.Y * p.Z - size2.Y;
-            Transforms.GetValidIntersection(a, b, c, minDepth, out closeFar);
+            Transforms.GetValidIntersection(a, b, c, out closeFar);
             return closeFar.Item2 != double.PositiveInfinity;
         }
 
-        private bool TestZ(in Ray ray, double minDepth, out (double, double) closeFar)
+        private bool TestZ(in Ray ray, out (double, double) closeFar)
         {
             FVec3 p = position - ray.origin;
             FVec3 s = ray.direction;
@@ -77,17 +77,17 @@ namespace RenderSharp.Render3d
                 rt.GH * (s.X * p.Y + s.Y * p.X) + rt.GI * (s.X * p.Z + s.Z * p.X) + rt.HI * (s.Y * p.Z + s.Z * p.Y));
             double c = rt.G2 * p.X * p.X + rt.H2 * p.Y * p.Y + rt.I2 * p.Z * p.Z +
                 2 * rt.GH * p.X * p.Y + 2 * rt.GI * p.X * p.Z + 2 * rt.HI * p.Y * p.Z - size2.Z;
-            Transforms.GetValidIntersection(a, b, c, minDepth, out closeFar);
+            Transforms.GetValidIntersection(a, b, c, out closeFar);
             return closeFar.Item2 != double.PositiveInfinity;
         }
 
-        public bool Intersects(in Ray ray, double minDepth, out (double, double) closeFar, out (Face, Face) faceCloseFar)
+        public bool Intersects(in Ray ray, out (double, double) closeFar, out (Face, Face) faceCloseFar)
         {
             faceCloseFar = (Face.PosX, Face.PosX);
             closeFar = (double.PositiveInfinity, double.PositiveInfinity);
             (double, double) tempCloseFar;
             FVec3 relPosition = position - ray.origin;
-            if (TestX(ray, minDepth, out tempCloseFar))
+            if (TestX(ray, out tempCloseFar))
             {
                 FVec3 rotated = (ray.direction * tempCloseFar.Item2 - relPosition).Rotate(rotation);
                 double resultX = Math.Abs(rotated.X) / size.X;
@@ -116,7 +116,7 @@ namespace RenderSharp.Render3d
                 }
             }
 
-            if (TestY(ray, minDepth, out tempCloseFar))
+            if (TestY(ray, out tempCloseFar))
             {
                 FVec3 rotated = (ray.direction * tempCloseFar.Item2 - relPosition).Rotate(rotation);
                 double resultY = Math.Abs(rotated.Y) / size.Y;
@@ -145,7 +145,7 @@ namespace RenderSharp.Render3d
                 }
             }
 
-            if (TestZ(ray, minDepth, out tempCloseFar))
+            if (TestZ(ray, out tempCloseFar))
             {
                 FVec3 rotated = (ray.direction * tempCloseFar.Item2 - relPosition).Rotate(rotation);
                 double resultZ = Math.Abs(rotated.Z) / size.Z;

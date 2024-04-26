@@ -55,7 +55,7 @@ namespace RenderSharp.Render3d
             position ??= new FVec3();
             fragShader ??= ((FRGBA fragIn, out FRGBA fragOut, Vec2 fragCoord, Vec2 res, double time) => { fragOut = fragIn; });
             vertexShader ??= ((FVec3 vertIn, out FVec3 vertOut, double time) => { vertOut = vertIn; });
-            return new ModelActor((FVec3)position, (FVec3)size, (RVec3)rotation, texture, fragShader, vertexShader, model);
+            return new ModelActor(string.Empty, (FVec3)position, (FVec3)size, (RVec3)rotation, texture, fragShader, vertexShader, model);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace RenderSharp.Render3d
             bvh = new BVH(faces.SelectMany(f => f.triangles).ToArray());
         }
 
-        internal void Sample(in Ray ray, double minDepth, out List<(RGBA, FVec2, Material, double)> renderQueue, out double depth)
+        internal void Sample(in Ray ray, out List<(RGBA, FVec2, Material, double)> renderQueue, out double depth)
         {
             renderQueue = new();
             depth = double.PositiveInfinity;
@@ -54,7 +54,7 @@ namespace RenderSharp.Render3d
 
             foreach (FaceTriangle triangle in potentialTriangles)
             {
-                if (triangle.Intersects(ray, minDepth, out FVec2 uv, out double d))
+                if (triangle.Intersects(ray, out FVec2 uv, out double d))
                 {
                     renderQueue.Add((triangle.material.Diffuse[uv], uv, triangle.material, d));
                 }

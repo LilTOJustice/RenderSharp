@@ -26,11 +26,10 @@ namespace RenderSharp.Render3d
                 t.v2.Rotate(rotation) * size + position)
         {}
 
-        public bool Intersects(in Ray ray, double minDepth, out double depth, out FVec3 barycentric)
+        public bool Intersects(in Ray ray, out double depth, out FVec3 barycentric)
         {
             double dot = ray.direction.Dot(unitNorm);
 
-            // Check if we are facing the triangle side-on
             if (dot == 0)
             {
                 depth = double.PositiveInfinity;
@@ -40,8 +39,7 @@ namespace RenderSharp.Render3d
             
             depth = unitNorm.Dot(v0 - ray.origin) / dot;
 
-            // Check if the intersection is behind the near plane.
-            if (depth < minDepth)
+            if (depth < 0)
             {
                 barycentric = new FVec3();
                 return false;

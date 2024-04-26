@@ -241,11 +241,6 @@ namespace RenderSharp.Render3d
             Vec2 screenPos = new(x, y);
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
             Ray ray = Transforms.ScreenToRay(screenPos, Resolution, scene.Camera);
-            double minDepth = scene.Camera.FocalLength == 0 ? 0 : ray.direction.Mag();
-            if (scene.Camera.FocalLength != 0)
-            {
-                ray = new Ray(ray.origin, ray.direction / minDepth);
-            }
 
             RGBA outColor = new();
             
@@ -254,7 +249,23 @@ namespace RenderSharp.Render3d
             foreach (Actor actor in scene.Actors.Values)
             {
                 double sampleDepth;
-                actor.Sample(ray, minDepth, scene.Time, out outColor, out sampleDepth);
+                actor.Sample(ray, scene.Time, out outColor, out sampleDepth);
+                if (sampleDepth != double.PositiveInfinity)
+                {
+                    FVec3 intersection = ray.origin + ray.direction * sampleDepth;
+                    outColor = scene.Lights.Values.Any(light =>
+                    {
+                        Ray bounceRay = new(intersection, (light.Position - intersection).Norm());
+                        double bounceDepth;
+                        return !scene.Actors.Values.Any(a =>
+                            {
+                                a.Sample(bounceRay, scene.Time, out _, out bounceDepth);
+                                return bounceDepth != double.PositiveInfinity && bounceDepth != 0;
+                            });
+                    }
+                        ) ? outColor : new RGB((byte)(outColor.R / 2), (byte)(outColor.G / 2), (byte)(outColor.B / 2));
+                }
+
                 renderQueue.Add((outColor, sampleDepth));
             }
 

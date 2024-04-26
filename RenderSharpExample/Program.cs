@@ -27,7 +27,7 @@ namespace RenderSharpExample
                 .WithActor("sphere", new SphereActorBuilder()
                     .WithTexture(new Texture("../../../assets/gordon.jpg"))
                     .WithSize(new FVec3(1, 1, 1))
-                    .WithPosition(new FVec3(0, 0, 4))
+                    .WithPosition(new FVec3(0, -1, 4))
                 )
                 .WithActor("platform", new CubeActorBuilder()
                     //.WithTexture(new Texture("../../../assets/gordon.jpg"))
@@ -35,9 +35,10 @@ namespace RenderSharpExample
                     .WithSize(new FVec3(10, 1, 10))
                     .WithPosition(new FVec3(0, -2.5, 0))
                 )
+                .WithPointLight("light", new FVec3(2, -0.5, 6))
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    scene.Camera.Position += new FVec3(1, 1, 0) * dt;
+                    scene.GetLight("light").Position += new FVec3(0, 0, -2 * dt);
                 })
                 .Build();
 

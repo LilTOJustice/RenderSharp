@@ -17,7 +17,7 @@ namespace RenderSharp.Render3d
             ref FVec3 p = ref this.position;
         }
 
-        public bool Intersects(in Ray ray, double minDepth, out (double, double) depthCloseFar)
+        public bool Intersects(in Ray ray, out (double, double) depthCloseFar)
         {
             FVec3 p = position - ray.origin;
             FVec3 s = ray.direction;
@@ -35,7 +35,7 @@ namespace RenderSharp.Render3d
                 (rt.D2 * p.X * p.X + rt.E2 * p.Y * p.Y + rt.F2 * p.Z * p.Z + 2 * rt.DE * p.X * p.Y + 2 * rt.DF * p.X * p.Z + 2 * rt.EF * p.Y * p.Z) / radii2.Y +
                 (rt.G2 * p.X * p.X + rt.H2 * p.Y * p.Y + rt.I2 * p.Z * p.Z + 2 * rt.GH * p.X * p.Y + 2 * rt.GI * p.X * p.Z + 2 * rt.HI * p.Y * p.Z) / radii2.Z - 1;
 
-            Transforms.GetValidIntersection(a, b, c, minDepth, out depthCloseFar);
+            Transforms.GetValidIntersection(a, b, c, out depthCloseFar);
             return depthCloseFar.Item2 != double.PositiveInfinity;
         }
     }

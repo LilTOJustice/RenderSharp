@@ -10,23 +10,24 @@ namespace RenderSharp.Render3d
         private Sphere sphere;
 
         internal SphereActor(
+            string id,
             in FVec3 position,
             in FVec3 size,
             in RVec3 rotation,
             Texture texture,
             FragShader fragShader)
-            : base(position, size, rotation, texture, fragShader)
+            : base(id, position, size, rotation, texture, fragShader)
         {
             sphere = new Sphere(position, size, rotation);
         }
 
-        internal override void Sample(in Ray ray, double minDepth, double time, out RGBA sample, out double depth)
+        internal override void Sample(in Ray ray, double time, out RGBA sample, out double depth)
         {
             (double, double) closeFar;
             sample = new RGBA();
             depth = double.PositiveInfinity;
             FVec3 relPosition = Position - ray.origin;
-            if (sphere.Intersects(ray, minDepth, out closeFar))
+            if (sphere.Intersects(ray, out closeFar))
             {
                 FRGBA fOut;
                 FVec2 uvFar = GetUV((ray.direction * closeFar.Item2 - relPosition).Rotate(Rotation));
@@ -49,6 +50,7 @@ namespace RenderSharp.Render3d
         internal override Actor Copy()
         {
             return new SphereActor(
+                Id,
                 Position,
                 Size,
                 Rotation,
