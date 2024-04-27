@@ -44,6 +44,23 @@ namespace RenderSharp.Render3d
         /// </summary>
         public CoordShader CoordShader { get; set; }
 
+        /// ---------------------------------
+        ///         Render Settings
+        /// ---------------------------------
+        
+        /// <summary>
+        /// Shadow bias for the renderer.
+        /// This is used to prevent self-shadowing artifacts (shadow acne) <see href="https://computergraphics.stackexchange.com/questions/2192/cause-of-shadow-acne"/>.
+        /// Default is 0.001.
+        /// </summary>
+        double ShadowBias { get; set; } = 0.001;
+
+        /// ---------------------------------
+        ///         End Render Settings
+        /// ---------------------------------
+
+
+
         /// <inheritdoc cref="Renderer"/>
         public Renderer(int resX, int resY, Scene scene, FragShader? fragShader = null, CoordShader? coordShader = null)
         {
@@ -250,7 +267,7 @@ namespace RenderSharp.Render3d
             {
                 double sampleDepth;
                 actor.Sample(ray, scene.Time, out outColor, out sampleDepth);
-                if (sampleDepth != double.PositiveInfinity)
+                if (scene.Lights.Any() && sampleDepth != double.PositiveInfinity)
                 {
                     FVec3 intersection = ray.origin + ray.direction * sampleDepth;
                     outColor = scene.Lights.Values.Any(light =>
@@ -261,7 +278,7 @@ namespace RenderSharp.Render3d
                         return !scene.Actors.Values.Any(a =>
                             {
                                 a.Sample(bounceRay, scene.Time, out _, out bounceDepth);
-                                return bounceDepth < lightDist;
+                                return bounceDepth > ShadowBias && bounceDepth < lightDist;
                             });
                     }
                         ) ? outColor : new RGB((byte)(outColor.R / 2), (byte)(outColor.G / 2), (byte)(outColor.B / 2));
