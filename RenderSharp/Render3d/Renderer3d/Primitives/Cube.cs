@@ -27,8 +27,6 @@ namespace RenderSharp.Render3d
             size2 = size * size;
             this.rotation = rotation;
             rotorTransform = new RotorTransform(rotation);
-            ref FVec3 p = ref this.position;
-            ref RotorTransform rt = ref rotorTransform;
         }
 
         private bool EpsilonCheck(double a, double b)

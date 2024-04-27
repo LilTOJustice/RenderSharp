@@ -13,8 +13,6 @@ namespace RenderSharp.Render3d
             this.position = position;
             radii2 = radii * radii;
             rotorTransform = new RotorTransform(rotation);
-            ref RotorTransform rt = ref rotorTransform;
-            ref FVec3 p = ref this.position;
         }
 
         public bool Intersects(in Ray ray, out (double, double) depthCloseFar)
