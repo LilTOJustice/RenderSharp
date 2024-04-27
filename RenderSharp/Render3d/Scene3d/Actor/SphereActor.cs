@@ -10,13 +10,12 @@ namespace RenderSharp.Render3d
         private Sphere sphere;
 
         internal SphereActor(
-            string id,
             in FVec3 position,
             in FVec3 size,
             in RVec3 rotation,
             Texture texture,
             FragShader fragShader)
-            : base(id, position, size, rotation, texture, fragShader)
+            : base(position, size, rotation, texture, fragShader)
         {
             sphere = new Sphere(position, size, rotation);
         }
@@ -50,7 +49,6 @@ namespace RenderSharp.Render3d
         internal override Actor Copy()
         {
             return new SphereActor(
-                Id,
                 Position,
                 Size,
                 Rotation,

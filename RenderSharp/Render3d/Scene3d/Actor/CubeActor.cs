@@ -11,13 +11,12 @@ namespace RenderSharp.Render3d
         private Cube cube;
 
         internal CubeActor(
-            string id,
             in FVec3 position,
             in FVec3 size,
             in RVec3 rotation,
             Texture texture,
             FragShader fragShader)
-            : base(id, position, size, rotation, texture, fragShader)
+            : base(position, size, rotation, texture, fragShader)
         {
             cube = new Cube(position, size, rotation);
         }
@@ -52,7 +51,6 @@ namespace RenderSharp.Render3d
         internal override Actor Copy()
         {
             return new CubeActor(
-                Id,
                 Position,
                 Size,
                 Rotation,
@@ -67,27 +65,27 @@ namespace RenderSharp.Render3d
                 case Cube.Face.PosX:
                     return new FVec2(
                         1 - Operations.Mod((fromCenter.Z + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Y + 1) / 2, 1));
                 case Cube.Face.NegX:
                     return new FVec2(
                         Operations.Mod((fromCenter.Z + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Y + 1) / 2, 1));
                 case Cube.Face.PosY:
                     return new FVec2(
                         Operations.Mod((fromCenter.X + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Z + 1) / 2, 1));
                 case Cube.Face.NegY:
                     return new FVec2(
                         1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Z + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Z + 1) / 2, 1));
                 case Cube.Face.PosZ:
                     return new FVec2(
                         1 - Operations.Mod((fromCenter.X + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Y + 1) / 2, 1));
                 case Cube.Face.NegZ:
                     return new FVec2(
                         Operations.Mod((fromCenter.X + 1) / 2, 1),
-                        1 - Operations.Mod((fromCenter.Y + 1) / 2, 1));
+                        Operations.Mod((fromCenter.Y + 1) / 2, 1));
                 default:
                     return new FVec2();
             }

@@ -17,7 +17,7 @@ namespace RenderSharp.Render3d
                 lx * screenPosNorm.X * aspectRatio,
                 ly * screenPosNorm.Y,
                 camera.FocalLength == 0 ? 1 : camera.FocalLength).Rotate(camera.Rotation);
-            return new Ray(camera.Position, cameraToScreen.Norm());
+            return new Ray(camera.Position + cameraToScreen, cameraToScreen.Norm());
         }
 
         public static void GetValidIntersection(double a, double b, double c, out (double, double) closeFar)
@@ -29,14 +29,14 @@ namespace RenderSharp.Render3d
                 return;
             }
 
-            if (plusRoot < 0)
+            if (plusRoot <= 0)
             {
                 return;
             }
             
             closeFar.Item2 = plusRoot;
 
-            if (minusRoot < 0)
+            if (minusRoot <= 0)
             {
                 return;
             }

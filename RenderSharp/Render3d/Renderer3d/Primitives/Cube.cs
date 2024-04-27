@@ -172,7 +172,7 @@ namespace RenderSharp.Render3d
                 }
             }
 
-            return false;
+            return closeFar.Item2 != double.PositiveInfinity;
         }
     }
 }

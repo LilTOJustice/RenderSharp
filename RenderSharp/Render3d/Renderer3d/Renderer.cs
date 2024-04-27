@@ -255,12 +255,13 @@ namespace RenderSharp.Render3d
                     FVec3 intersection = ray.origin + ray.direction * sampleDepth;
                     outColor = scene.Lights.Values.Any(light =>
                     {
-                        Ray bounceRay = new(intersection, (light.Position - intersection).Norm());
+                        double lightDist;
+                        Ray bounceRay = new(intersection, (light.Position - intersection).Norm(out lightDist));
                         double bounceDepth;
                         return !scene.Actors.Values.Any(a =>
                             {
                                 a.Sample(bounceRay, scene.Time, out _, out bounceDepth);
-                                return bounceDepth != double.PositiveInfinity && bounceDepth != 0;
+                                return bounceDepth < lightDist;
                             });
                     }
                         ) ? outColor : new RGB((byte)(outColor.R / 2), (byte)(outColor.G / 2), (byte)(outColor.B / 2));

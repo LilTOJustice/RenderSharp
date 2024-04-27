@@ -98,7 +98,6 @@ namespace RenderSharp.Render3d
             public FinalStep WithActor(string actorId, ActorBuilder actorBuilder)
             {
                 Actor newActor = actorBuilder.Build();
-                newActor.Id = actorId;
                 actors.Add(actorId, newActor);
                 return this;
             }

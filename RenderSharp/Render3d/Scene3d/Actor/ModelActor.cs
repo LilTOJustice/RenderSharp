@@ -16,7 +16,6 @@ namespace RenderSharp.Render3d
         public VertexShader VertexShader { get; set; }
 
         internal ModelActor(
-            string id,
             FVec3 position,
             FVec3 size,
             RVec3 rotation,
@@ -24,7 +23,7 @@ namespace RenderSharp.Render3d
             FragShader fragShader,
             VertexShader vertexShader,
             Model model)
-            : base(id, position, size, rotation, texture, fragShader)
+            : base(position, size, rotation, texture, fragShader)
         {
             VertexShader = vertexShader;
             origModel = model;
@@ -51,7 +50,6 @@ namespace RenderSharp.Render3d
     internal override Actor Copy()
     {
         return new ModelActor(
-           Id,
            Position,
            Size,
            Rotation,

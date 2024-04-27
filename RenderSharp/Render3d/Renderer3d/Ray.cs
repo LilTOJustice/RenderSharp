@@ -10,7 +10,7 @@ namespace RenderSharp.Render3d
         {
             this.origin = origin;
             this.direction = direction;
-            inv = new FVec3(1 / direction.X, 1 / direction.Y, 1 / direction.Z);
+            inv = 1 / this.direction;
         }
     }
 }
