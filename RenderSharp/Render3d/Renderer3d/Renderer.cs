@@ -59,8 +59,6 @@ namespace RenderSharp.Render3d
         ///         End Render Settings
         /// ---------------------------------
 
-
-
         /// <inheritdoc cref="Renderer"/>
         public Renderer(int resX, int resY, Scene scene, FragShader? fragShader = null, CoordShader? coordShader = null)
         {
@@ -283,7 +281,6 @@ namespace RenderSharp.Render3d
                     }
                         ) ? outColor : new RGB((byte)(outColor.R / 2), (byte)(outColor.G / 2), (byte)(outColor.B / 2));
                 }
-
                 renderQueue.Add((outColor, sampleDepth));
             }
 
