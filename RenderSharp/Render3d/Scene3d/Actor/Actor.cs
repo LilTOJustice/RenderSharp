@@ -79,7 +79,7 @@ namespace RenderSharp.Render3d
             ClearFragShaders();
         }
 
-        internal abstract void Sample(in Ray ray, double time, out RGBA sample, out double depth);
+        internal abstract void Sample(in Ray ray, double time, out Sample sample);
 
         internal abstract Actor Copy();
     }

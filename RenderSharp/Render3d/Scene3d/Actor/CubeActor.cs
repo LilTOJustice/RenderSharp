@@ -21,7 +21,7 @@ namespace RenderSharp.Render3d
             cube = new Cube(position, size, rotation);
         }
 
-        internal override void Sample(in Ray ray, double time, out RGBA sample, out double depth)
+        internal override void Sample(in Ray ray, double time, out Sample sample)
         {
             (Cube.Face, Cube.Face) faceCloseFar;
             (double, double) closeFar;
