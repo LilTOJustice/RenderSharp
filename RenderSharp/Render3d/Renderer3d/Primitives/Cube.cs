@@ -20,8 +20,6 @@ namespace RenderSharp.Render3d
         private RVec3 rotation;
         private RotorTransform rotorTransform;
 
-        private static int count = 0;
-
         public Cube(in FVec3 position, in FVec3 size, in RVec3 rotation)
         {
             this.position = position;
