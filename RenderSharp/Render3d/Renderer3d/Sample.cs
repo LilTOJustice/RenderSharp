@@ -4,10 +4,19 @@ namespace RenderSharp.Render3d
 {
     internal struct Sample
     {
-        public readonly FVec3 hitPoint, hitNormal, hitDistance;
-        public readonly RGBA color;
+        public FVec3 hitPoint, hitNormal;
+        public double hitDistance;
+        public RGBA color;
 
-        public Sample(FVec3 hitPoint, FVec3 hitNormal, FVec3 hitDistance, RGBA color)
+        public Sample()
+        {
+            hitPoint = new();
+            hitNormal = new();
+            hitDistance = double.PositiveInfinity;
+            color = new();
+        }
+
+        public Sample(in FVec3 hitPoint, in FVec3 hitNormal, double hitDistance, in RGBA color)
         {
             this.hitPoint = hitPoint;
             this.hitNormal = hitNormal;

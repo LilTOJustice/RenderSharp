@@ -20,30 +20,38 @@ namespace RenderSharp.Render3d
             sphere = new Sphere(position, size, rotation);
         }
 
-        internal override void Sample(in Ray ray, double time, out RGBA sample, out double depth)
+        internal override Sample Sample(in Ray ray, double time)
         {
             (double, double) closeFar;
-            sample = new RGBA();
-            depth = double.PositiveInfinity;
             FVec3 relPosition = Position - ray.origin;
             if (sphere.Intersects(ray, out closeFar))
             {
                 FRGBA fOut;
                 FVec2 uvFar = GetUV((ray.direction * closeFar.Item2 - relPosition).Rotate(Rotation));
                 FragShader(Texture[uvFar], out fOut, (Vec2)(uvFar * Texture.Size), Texture.Size, time);
-                sample = ColorFunctions.AlphaBlend(fOut, sample);
-                depth = closeFar.Item2;
 
                 if (closeFar.Item1 == double.PositiveInfinity)
                 {
-                    return;
+                    FVec3 intersectionBack = ray.origin + ray.direction * closeFar.Item2;
+                    return new Sample(
+                        intersectionBack,
+                        (intersectionBack - Position).Norm(),
+                        closeFar.Item2,
+                        fOut);
                 }
 
                 FVec2 uvClose = GetUV((ray.direction * closeFar.Item1 - relPosition).Rotate(Rotation));
+                RGBA back = fOut;
                 FragShader(Texture[uvClose], out fOut, (Vec2)(uvClose * Texture.Size), Texture.Size, time);
-                sample = ColorFunctions.AlphaBlend(fOut, sample);
-                depth = closeFar.Item1;
+                FVec3 intersection = ray.origin + ray.direction * closeFar.Item1;
+                return new Sample(
+                    intersection,
+                    (intersection - Position).Norm(),
+                    closeFar.Item2,
+                    ColorFunctions.AlphaBlend(fOut, back));
             }
+
+            return new();
         }
 
         internal override Actor Copy()

@@ -18,16 +18,16 @@ namespace RenderSharpExample
                 .MakeDynamic()
                 .WithFramerate(framerate)
                 .WithDuration(duration)
-                .WithActor("car", new ModelActorBuilder()
+                /*.WithActor("car", new ModelActorBuilder()
                     .WithModel(Model.FromFile("../../../assets/car_bebo.obj"))
                     .WithSize(new FVec3(1, 1, 1))
                     .WithPosition(new FVec3(0, -0.5, 5))
-                )
-                /*.WithActor("sphere", new SphereActorBuilder()
+                )*/
+                .WithActor("sphere", new SphereActorBuilder()
                     .WithSize(new FVec3(1, 1, 1))
                     .WithPosition(new FVec3(0, -0.5, 5))
                     .WithColor(new RGB(0, 0, 255))
-                )*/
+                )
                 /*.WithActor("cube", new CubeActorBuilder()
                     .WithTexture(new Texture("../../../assets/gordon.jpg"))
                     .WithSize(new FVec3(1, 1, 1))
@@ -43,7 +43,6 @@ namespace RenderSharpExample
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
                     scene.GetLight("light").Position += new FVec3(0, 0, -2) * dt;
-                    scene["car"].Rotation += new RVec3(0, 1, 1) * dt;
                 })
                 .Build();
 
