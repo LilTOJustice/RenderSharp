@@ -39,10 +39,12 @@ namespace RenderSharpExample
                     .WithPosition(new FVec3(0, -2.5, 5))
                     .WithRotation(new DVec3(0, 1, 0))
                 )
-                .WithPointLight("light", new FVec3(2, -0.5, 6))
+                .WithPointLight("light1", new FVec3(2, -0.5, 6))
+                .WithPointLight("light2", new FVec3(-2, -0.5, 6))
                 .WithThink((SceneInstance scene, double time, double dt) =>
                 {
-                    scene.GetLight("light").Position += new FVec3(0, 0, -2) * dt;
+                    scene.GetLight("light1").Position += new FVec3(0, 0, -2) * dt;
+                    scene.GetLight("light2").Position += new FVec3(0, 0, -2) * dt;
                 })
                 .Build();
 

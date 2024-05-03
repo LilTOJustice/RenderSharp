@@ -274,32 +274,28 @@ namespace RenderSharp.Render3d
                     renderQueue.Add((sample.color, sample.hitDistance));
                 }
 
+                double intensity = 0.5;
                 foreach (PointLight light in scene.Lights.Values)
                 {
                     double lightDist;
                     Ray bounceRay = new(sample.hitPoint, (light.Position - sample.hitPoint).Norm(out lightDist));
-                    if (scene.Actors.Values.Any(a =>
+                    if (!scene.Actors.Values.Any(a =>
                         {
                             Sample bounceSample = a.Sample(bounceRay, scene.Time);
                             return bounceSample.hitDistance > ShadowBias && bounceSample.hitDistance < lightDist;
                         }))
                     {
-                        sample.color = new RGBA(
-                            (byte)(sample.color.R * 0.5),
-                            (byte)(sample.color.G * 0.5),
-                            (byte)(sample.color.B * 0.5),
-                            sample.color.A);
-                    }
-                    else
-                    {
-                        double intensity = Math.Max(0.5, (sample.hitNormal.Dot(bounceRay.direction) + 1) / 2);
-                        sample.color = new RGBA(
-                            (byte)(sample.color.R * intensity),
-                            (byte)(sample.color.G * intensity),
-                            (byte)(sample.color.B * intensity),
-                            sample.color.A);
+                        intensity += sample.hitNormal.Dot(bounceRay.direction) / 2;
                     }
                 }
+
+                intensity = Math.Min(1, intensity);
+
+                sample.color = new RGBA(
+                    (byte)(sample.color.R * intensity),
+                    (byte)(sample.color.G * intensity),
+                    (byte)(sample.color.B * intensity),
+                    sample.color.A);
 
                 renderQueue.Add((sample.color, sample.hitDistance));
             }
