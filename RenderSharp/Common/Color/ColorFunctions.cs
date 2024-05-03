@@ -25,10 +25,12 @@
             double M = Math.Max(Math.Max(R, G), B);
             double m = Math.Min(Math.Min(R, G), B);
             double V = M / 255;
-            double S = (M > 0 ? 1 - m / M : 0);
+            double S = M > 0 ? 1 - m / M : 0;
             double H = Math.Acos(
                 (R - .5 * G - .5 * B) / Math.Sqrt(R * R + G * G + B * B - R * G - R * B - G * B)
             ) * 180 / Math.PI;
+
+            H = double.IsNaN(H) ? 0 : H;
 
             if (B > G)
             {
