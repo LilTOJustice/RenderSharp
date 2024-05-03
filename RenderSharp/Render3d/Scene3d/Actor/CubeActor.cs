@@ -1,6 +1,4 @@
 ﻿using MathSharp;
-using System.Linq.Expressions;
-using System.Security.AccessControl;
 
 namespace RenderSharp.Render3d
 {
