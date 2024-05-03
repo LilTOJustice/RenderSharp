@@ -34,6 +34,11 @@
         /// </summary>
         public Scene.ThinkFunc Think { get; private set; }
 
+        /// <summary>
+        /// Skybox texture for the scene.
+        /// </summary>
+        public Texture SkyboxTexture { get; set; }
+
         internal Dictionary<string, Actor> Actors { get; set; }
 
         internal Dictionary<string, PointLight> Lights { get; set; }
@@ -51,6 +56,7 @@
             Time = 0;
             Index = 0;
             Think = scene.Think;
+            SkyboxTexture = scene.SkyboxTexture;
         }
 
         internal SceneInstance(SceneInstance scene, double time, int index)
@@ -66,6 +72,7 @@
             Time = time;
             Index = index;
             Think = scene.Think;
+            SkyboxTexture = scene.SkyboxTexture;
         }
 
         /// <summary>

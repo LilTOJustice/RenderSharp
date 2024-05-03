@@ -27,6 +27,8 @@ namespace RenderSharp.Render3d
         
         internal ThinkFunc Think { get; set; }
 
+        internal Texture SkyboxTexture { get; set; }
+
         internal Dictionary<string, Actor> Actors { get; set; }
 
         internal Dictionary<string, PointLight> Lights { get; set; }
@@ -36,6 +38,7 @@ namespace RenderSharp.Render3d
             double duration,
             Dictionary<string, Camera> cameras,
             ThinkFunc think,
+            Texture skyboxTexture,
             Dictionary<string, Actor> actors,
             Dictionary<string, PointLight> lights)
         {
@@ -43,6 +46,7 @@ namespace RenderSharp.Render3d
             Duration = duration;
             Cameras = cameras;
             Think = think;
+            SkyboxTexture = skyboxTexture;
             Actors = actors;
             Lights = lights;
 

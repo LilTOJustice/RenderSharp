@@ -6,7 +6,6 @@ namespace RenderSharp.Render3d
     {
         public static Ray ScreenToRay(in Vec2 screenPos, in Vec2 resolution, Camera camera)
         {
-            double aspectRatio = (double)resolution.X / resolution.Y;
             FVec2 screenPosNorm = (FVec2)screenPos * 2 / resolution - new FVec2(1, 1);
             screenPosNorm.Y *= -1;
             double lx = camera.FocalLength == 0 ? 1
@@ -14,7 +13,7 @@ namespace RenderSharp.Render3d
             double ly = camera.FocalLength == 0 ? 1
                 : camera.FocalLength * Math.Tan(camera.Fov.Y.Radians / 2);
             FVec3 cameraToScreen = new FVec3(
-                lx * screenPosNorm.X * aspectRatio,
+                lx * screenPosNorm.X,
                 ly * screenPosNorm.Y,
                 camera.FocalLength == 0 ? 1 : camera.FocalLength).Rotate(camera.Rotation);
             return new Ray(camera.Position + cameraToScreen, cameraToScreen.Norm());
