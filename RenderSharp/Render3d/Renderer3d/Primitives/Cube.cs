@@ -20,13 +20,15 @@ namespace RenderSharp.Render3d
         private RVec3 rotation;
         private RotorTransform rotorTransform;
 
+        private static int count = 0;
+
         public Cube(in FVec3 position, in FVec3 size, in RVec3 rotation)
         {
             this.position = position;
             this.size = size;
             size2 = size * size;
-            this.rotation = rotation;
-            rotorTransform = new RotorTransform(rotation);
+            this.rotation = rotation with { Y = Radian.IsZero(rotation.Y) ? new Radian(0.00000000000001) : rotation.Y };
+            rotorTransform = new RotorTransform(this.rotation);
         }
 
         private bool EpsilonCheck(double a, double b)
@@ -164,11 +166,6 @@ namespace RenderSharp.Render3d
                         faceCloseFar.Item1 = rotated.Z > 0 ? Face.PosZ : Face.NegZ;
                         closeFar.Item1 = tempCloseFar.Item1;
                     }
-                }
-
-                if (closeFar.Item1 != double.PositiveInfinity && closeFar.Item2 != double.PositiveInfinity)
-                {
-                    return true;
                 }
             }
 

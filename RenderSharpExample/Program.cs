@@ -37,7 +37,6 @@ namespace RenderSharpExample
                     .WithColor(new RGB(128, 128, 128))
                     .WithSize(new FVec3(10, 1, 10))
                     .WithPosition(new FVec3(0, -2.5, 5))
-                    .WithRotation(new DVec3(0, 1, 0))
                 )
                 .WithPointLight("light1", new FVec3(2, -0.5, 6))
                 .WithPointLight("light2", new FVec3(-2, -0.5, 6))
