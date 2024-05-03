@@ -31,7 +31,7 @@ namespace RenderSharp.Render3d
         {
             Position = new FVec3();
             FocalLength = 1;
-            Fov = new DVec2(90, 90);
+            Fov = new DVec2(60, 60);
             Rotation = new RVec3();
         }
 

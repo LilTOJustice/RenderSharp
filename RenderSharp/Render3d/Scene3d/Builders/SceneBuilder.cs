@@ -50,6 +50,7 @@ namespace RenderSharp.Render3d
             private double duration;
             private Dictionary<string, Camera> cameras;
             private Scene.ThinkFunc? think;
+            private Texture? skyboxTexture;
             private Dictionary<string, Actor> actors;
             private Dictionary<string, PointLight> lights;
 
@@ -107,10 +108,19 @@ namespace RenderSharp.Render3d
             /// </summary>
             /// <param name="name"></param>
             /// <param name="position"></param>
-            /// <returns></returns>
             public FinalStep WithPointLight(string name, in FVec3 position)
             {
                 lights.Add(name, new PointLight(position));
+                return this;
+            }
+
+            /// <summary>
+            /// Sets the skybox texture for the scene.
+            /// </summary>
+            /// <param name="texture">A spherical skybox texture.</param>
+            public FinalStep WithSkyboxTexture(Texture texture)
+            {
+                skyboxTexture = texture;
                 return this;
             }
 
@@ -126,6 +136,7 @@ namespace RenderSharp.Render3d
                 }
 
                 think ??= (SceneInstance scene, double time, double dt) => { };
+                skyboxTexture ??= new Texture(1, 1);
 
                 return new Scene(
                     framerate,
@@ -133,6 +144,7 @@ namespace RenderSharp.Render3d
                     new Dictionary<string, Camera>(
                         cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value)))),
                     think,
+                    skyboxTexture,
                     new Dictionary<string, Actor>(
                         actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy()))),
                     new Dictionary<string, PointLight>(

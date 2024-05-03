@@ -308,7 +308,21 @@ namespace RenderSharp.Render3d
                 outColor = ColorFunctions.AlphaBlend(sample, outColor);
             }
 
+            if (depth == double.PositiveInfinity)
+            {
+                outColor = scene.SkyboxTexture[GetSkyboxUV(ray.direction)];
+            }
+
             return ScreenSpaceShaderPass(scene, screenPos, outColor);
+        }
+
+        private FVec2 GetSkyboxUV(FVec3 direction)
+        {
+            double phi = Math.Atan2(direction.X, direction.Z);
+            double theta = Math.Asin(direction.Y);
+            double u = 0.5 + phi / (2 * Math.PI);
+            double v = 0.5 + theta / Math.PI;
+            return new FVec2(u, v);
         }
 
         private RGBA ScreenSpaceShaderPass(SceneInstance scene, Vec2 screenPos, RGBA inColor)

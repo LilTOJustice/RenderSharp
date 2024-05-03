@@ -44,7 +44,10 @@ namespace RenderSharpExample
                 {
                     scene.GetLight("light1").Position += new FVec3(0, 0, -2) * dt;
                     scene.GetLight("light2").Position += new FVec3(0, 0, -2) * dt;
+                    scene.Camera.Rotation += new RVec3(0, 1, 0) * dt;
                 })
+                .WithCamera("main", fov: new DVec2(90, 59))
+                .WithSkyboxTexture(new Texture("../../../assets/skybox.jpg"))
                 .Build();
 
             // Create renderer
