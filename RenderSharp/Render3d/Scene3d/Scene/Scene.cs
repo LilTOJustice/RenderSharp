@@ -29,18 +29,22 @@ namespace RenderSharp.Render3d
 
         internal Dictionary<string, Actor> Actors { get; set; }
 
+        internal Dictionary<string, PointLight> Lights { get; set; }
+
         internal Scene(
             int framerate,
             double duration,
             Dictionary<string, Camera> cameras,
             ThinkFunc think,
-            Dictionary<string, Actor> actors)
+            Dictionary<string, Actor> actors,
+            Dictionary<string, PointLight> lights)
         {
             Framerate = framerate;
             Duration = duration;
             Cameras = cameras;
             Think = think;
             Actors = actors;
+            Lights = lights;
 
             TimeSeq = new List<double>();
             for (int i = 0; i < framerate * duration; i++)

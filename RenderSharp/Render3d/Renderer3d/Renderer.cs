@@ -44,6 +44,21 @@ namespace RenderSharp.Render3d
         /// </summary>
         public CoordShader CoordShader { get; set; }
 
+        /// ---------------------------------
+        ///         Render Settings
+        /// ---------------------------------
+        
+        /// <summary>
+        /// Shadow bias for the renderer.
+        /// This is used to prevent self-shadowing artifacts (shadow acne) <see href="https://computergraphics.stackexchange.com/questions/2192/cause-of-shadow-acne"/>.
+        /// Default is 0.001.
+        /// </summary>
+        double ShadowBias { get; set; } = 0.001;
+
+        /// ---------------------------------
+        ///         End Render Settings
+        /// ---------------------------------
+
         /// <inheritdoc cref="Renderer"/>
         public Renderer(int resX, int resY, Scene scene, FragShader? fragShader = null, CoordShader? coordShader = null)
         {
@@ -117,7 +132,7 @@ namespace RenderSharp.Render3d
             List<SceneInstance> instances = Scene.Simulate();
 
             stopwatch.Stop();
-            Console.WriteLine($"Finished in {stopwatch.Elapsed}");
+            Console.WriteLine($" Finished in {stopwatch.Elapsed}.");
 
             int numThreads = Environment.ProcessorCount;
             List<Thread> threads = new();
@@ -240,17 +255,7 @@ namespace RenderSharp.Render3d
         {
             Vec2 screenPos = new(x, y);
             CoordShader(screenPos, out screenPos, Resolution, scene.Time);
-            FVec3 worldVec = Transforms.ScreenToWorldVec(screenPos, Resolution, scene.Camera);
-            double minDepth = scene.Camera.FocalLength == 0 ? 0 : worldVec.Mag();
-            if (scene.Camera.FocalLength != 0)
-            {
-                worldVec = worldVec / minDepth;
-            }
-            else
-            {
-                worldVec.Z = 0;
-                worldVec = new FVec3(0, 0, 1).Rotate(scene.Camera.Rotation);
-            }
+            Ray ray = Transforms.ScreenToRay(screenPos, Resolution, scene.Camera);
 
             RGBA outColor = new();
             
@@ -258,12 +263,44 @@ namespace RenderSharp.Render3d
         
             foreach (Actor actor in scene.Actors.Values)
             {
-                double sampleDepth;
-                actor.Sample(worldVec, minDepth, scene.Time, out outColor, out sampleDepth);
-                renderQueue.Add((outColor, sampleDepth));
+                Sample sample = actor.Sample(ray, scene.Time);
+                if (sample.hitDistance == double.PositiveInfinity)
+                {
+                    continue;
+                }
+
+                if (!scene.Lights.Any())
+                {
+                    renderQueue.Add((sample.color, sample.hitDistance));
+                }
+
+                double intensity = 0.5;
+                foreach (PointLight light in scene.Lights.Values)
+                {
+                    double lightDist;
+                    Ray bounceRay = new(sample.hitPoint, (light.Position - sample.hitPoint).Norm(out lightDist));
+                    if (!scene.Actors.Values.Any(a =>
+                        {
+                            Sample bounceSample = a.Sample(bounceRay, scene.Time);
+                            return bounceSample.hitDistance > ShadowBias && bounceSample.hitDistance < lightDist;
+                        }))
+                    {
+                        intensity += sample.hitNormal.Dot(bounceRay.direction) / 2;
+                    }
+                }
+
+                intensity = Math.Min(1, intensity);
+
+                sample.color = new RGBA(
+                    (byte)(sample.color.R * intensity),
+                    (byte)(sample.color.G * intensity),
+                    (byte)(sample.color.B * intensity),
+                    sample.color.A);
+
+                renderQueue.Add((sample.color, sample.hitDistance));
             }
 
-            renderQueue.Sort((a, b)  => b.Item2.CompareTo(a.Item2));
+            renderQueue.Sort((a, b) => b.Item2.CompareTo(a.Item2));
             depth = renderQueue.Count > 0 ? renderQueue.Last().Item2 : double.PositiveInfinity;
 
             foreach ((RGBA sample, _) in renderQueue)

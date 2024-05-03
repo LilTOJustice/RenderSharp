@@ -125,8 +125,15 @@ namespace RenderSharp
         /// <inheritdoc cref="IVec3{T, T, T, T}.Cross"/>
         public FRGB Cross(in FRGB other) => IVec3<FRGB, double, double, FRGB>.ICross(in this, in other);
 
-        /// <inheritdoc cref="IVec3{T, T, T, T}.Norm"/>
+        /// <inheritdoc cref="IVec3{T, T, T, T}.Norm()"/>
         public FRGB Norm() => IVec3<FRGB, double, double, FRGB>.INorm(this);
+
+        /// <inheritdoc cref="IVec3{T, T, T, T}.Norm()"/>
+        public FRGB Norm(out double mag)
+        {
+            mag = Mag();
+            return new FRGB(R / mag, G / mag, B / mag);
+        }
 
         /// <inheritdoc cref="IVec3{T, T, T, T}.IEquals(in T, in T)"/>
         public bool Equals(FRGB other) => IVec3<FRGB, double, double, FRGB>.IEquals(this, other);

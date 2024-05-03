@@ -9,9 +9,6 @@ namespace RenderSharp.Render3d
     public class ModelActor : Actor
     {
         private Model origModel, model;
-        private FVec3 origSize, origPosition;
-        private RVec3 origRotation;
-        private FVec3 cameraRelPosition;
         
         /// <summary>
         /// UNIMPLEMENTED. Shader to be applied to every vertex of the actor's model.
@@ -19,56 +16,56 @@ namespace RenderSharp.Render3d
         public VertexShader VertexShader { get; set; }
 
         internal ModelActor(
+            FVec3 position,
             FVec3 size,
             RVec3 rotation,
-            FVec3 position,
             Texture texture,
             FragShader fragShader,
             VertexShader vertexShader,
-            Model model,
-            FVec3? cameraPos = null,
-            bool newModel = true)
-            : base(size, rotation, position, texture, fragShader)
+            Model model)
+            : base(position, size, rotation, texture, fragShader)
         {
             VertexShader = vertexShader;
-            origSize = size;
-            origPosition = position;
-            origRotation = rotation;
-            cameraRelPosition = position - cameraPos ?? new FVec3();
             origModel = model;
-            this.model = newModel ? new Model(model, size, rotation, cameraRelPosition) : model;
+            this.model = new Model(origModel, size, rotation, position);
         }
 
-        internal override void Sample(in FVec3 worldVec, double minDepth, double time, out RGBA sample, out double depth)
+        internal override Sample Sample(in Ray ray, double time)
         {
-            List<(RGBA, FVec2, Material, double)> renderQueue;
-            model.Sample(worldVec, minDepth, out renderQueue, out depth);
-            sample = new RGBA();
+            List<Model.ToRender> renderQueue;
+            model.Sample(ray, out renderQueue);
 
-            renderQueue.Sort((a, b) => b.Item4.CompareTo(a.Item4));
-            depth = renderQueue.LastOrDefault((default, default, default!, double.PositiveInfinity)).Item4;
+            renderQueue.Sort((a, b) => b.distance.CompareTo(a.distance));
+            Model.ToRender last = renderQueue.LastOrDefault(
+                new Model.ToRender(default, default, default, default!, double.PositiveInfinity));
+            
+            Sample sample = new Sample(ray.origin + ray.direction * last.distance, last.normal, last.distance, new RGBA());
 
-            foreach ((RGBA s, FVec2 uv, Material mat, _) in renderQueue)
+            foreach (Model.ToRender toRender in renderQueue)
             {
                 FRGBA fOut;
-                FragShader(s, out fOut, (Vec2)(uv * mat.Diffuse.Size), mat.Diffuse.Size, time);
-                sample = ColorFunctions.AlphaBlend(fOut, sample);
+                FragShader(
+                    toRender.color,
+                    out fOut,
+                    (Vec2)(toRender.uv * toRender.material.Diffuse.Size),
+                    toRender.material.Diffuse.Size,
+                    time);
+                sample.color = ColorFunctions.AlphaBlend(fOut, sample.color);
             }
+
+            return sample;
         }
 
-    internal override Actor Copy(in FVec3 cameraPos)
+    internal override Actor Copy()
     {
-        bool newModel = cameraPos != cameraRelPosition || Size != origSize || Rotation != origRotation || Position != origPosition;
         return new ModelActor(
+           Position,
            Size,
            Rotation,
-           Position,
            Texture,
            FragShader,
            VertexShader,
-           origModel,
-           cameraPos,
-           newModel);
+           origModel);
     }
 }
 }

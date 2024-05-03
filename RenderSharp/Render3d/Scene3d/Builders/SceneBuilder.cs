@@ -51,6 +51,7 @@ namespace RenderSharp.Render3d
             private Dictionary<string, Camera> cameras;
             private Scene.ThinkFunc? think;
             private Dictionary<string, Actor> actors;
+            private Dictionary<string, PointLight> lights;
 
             internal FinalStep(int framerate, double duration)
             {
@@ -58,6 +59,7 @@ namespace RenderSharp.Render3d
                 this.duration = duration;
                 actors = new Dictionary<string, Actor>();
                 cameras = new Dictionary<string, Camera>();
+                lights = new Dictionary<string, PointLight>();
             }
 
             /// <summary>
@@ -95,7 +97,20 @@ namespace RenderSharp.Render3d
             /// <param name="actorId">Id of the actor for accessing it by <see cref="SceneInstance.this[string]"/>.</param>
             public FinalStep WithActor(string actorId, ActorBuilder actorBuilder)
             {
-                actors.Add(actorId, actorBuilder.Build());
+                Actor newActor = actorBuilder.Build();
+                actors.Add(actorId, newActor);
+                return this;
+            }
+
+            /// <summary>
+            /// Adds a point light to the scene.
+            /// </summary>
+            /// <param name="name"></param>
+            /// <param name="position"></param>
+            /// <returns></returns>
+            public FinalStep WithPointLight(string name, in FVec3 position)
+            {
+                lights.Add(name, new PointLight(position));
                 return this;
             }
 
@@ -119,7 +134,9 @@ namespace RenderSharp.Render3d
                         cameras.Select(pair => new KeyValuePair<string, Camera>(pair.Key, new Camera(pair.Value)))),
                     think,
                     new Dictionary<string, Actor>(
-                        actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy(cameras.First().Value.Position)))));
+                        actors.Select(pair => new KeyValuePair<string, Actor>(pair.Key, pair.Value.Copy()))),
+                    new Dictionary<string, PointLight>(
+                        lights.Select(pair => new KeyValuePair<string, PointLight>(pair.Key, new PointLight(pair.Value.Position)))));
             }
         }
 

@@ -13,23 +13,23 @@ namespace RenderSharp.Render3d
             this.max = max;
         }
 
-        public bool Intersects(in FVec3 test)
+        public bool Intersects(in Ray ray)
         {
             // Slab method
-            double txMin = min.X / test.X;
-            double txMax = max.X / test.X;
+            double txMin = (min.X - ray.origin.X) * ray.inv.X;
+            double txMax = (max.X - ray.origin.X) * ray.inv.X;
 
             double tmin = Math.Min(txMin, txMax);
             double tmax = Math.Max(txMin, txMax);
 
-            double tyMin = min.Y / test.Y;
-            double tyMax = max.Y / test.Y;
+            double tyMin = (min.Y - ray.origin.Y) * ray.inv.Y;
+            double tyMax = (max.Y - ray.origin.Y) * ray.inv.Y;
 
             tmin = Math.Max(tmin, Math.Min(tyMin, tyMax));
             tmax = Math.Min(tmax, Math.Max(tyMin, tyMax));
 
-            double tzMin = min.Z / test.Z;
-            double tzMax = max.Z / test.Z;
+            double tzMin = (min.Z - ray.origin.Z) * ray.inv.Z;
+            double tzMax = (max.Z - ray.origin.Z) * ray.inv.Z;
 
             tmin = Math.Max(tmin, Math.Min(tzMin, tzMax));
             tmax = Math.Min(tmax, Math.Max(tzMin, tzMax));

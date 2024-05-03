@@ -114,8 +114,15 @@ namespace RenderSharp
         /// <inheritdoc cref="IVec4{T, T, T, T}.Dot"/>
         public double Dot(in HSVA other) => IVec4<HSVA, double, double, HSVA>.IDot(this, other);
 
-        /// <inheritdoc cref="IVec4{T, T, T, T}.Norm"/>
+        /// <inheritdoc cref="IVec4{T, T, T, T}.Norm()"/>
         public HSVA Norm() => IVec4<HSVA, double, double, HSVA>.INorm(this);
+
+        /// <inheritdoc cref="IVec4{T, T, T, T}.Norm()"/>
+        public HSVA Norm(out double mag)
+        {
+            mag = Mag();
+            return new HSVA(X / mag, Y / mag, Z / mag, W / mag);
+        }
 
         /// <inheritdoc cref="IVec4{T, T, T, T}.IEquals(in T, in T)"/>
         public bool Equals(HSVA other) => IVec4<HSVA, double, double, HSVA>.IEquals(this, other);

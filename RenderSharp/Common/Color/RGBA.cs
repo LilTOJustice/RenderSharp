@@ -115,8 +115,15 @@ namespace RenderSharp
         /// <inheritdoc cref="IVec4{T, T, T, T}.Dot"/>
         public byte Dot(in RGBA other) => IVec4<RGBA, byte, double, FVec4>.IDot(this, other);
 
-        /// <inheritdoc cref="IVec4{T, T, T, T}.Norm"/>
+        /// <inheritdoc cref="IVec4{T, T, T, T}.Norm()"/>
         public FVec4 Norm() => IVec4<RGBA, byte, double, FVec4>.INorm(this);
+
+        /// <inheritdoc cref="IVec4{T, T, T, T}.Norm()"/>
+        public FVec4 Norm(out double mag)
+        {
+            mag = Mag();
+            return new FVec4(X / mag, Y / mag, Z / mag, W / mag);
+        }
 
         /// <inheritdoc cref="IVec4{T, T, T, T}.IEquals(in T, in T)"/>
         public bool Equals(RGBA other) => IVec4<RGBA, byte, double, FVec4>.IEquals(this, other);
