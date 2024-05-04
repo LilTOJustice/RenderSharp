@@ -53,7 +53,24 @@ namespace RenderSharp.Render3d
         /// This is used to prevent self-shadowing artifacts (shadow acne) <see href="https://computergraphics.stackexchange.com/questions/2192/cause-of-shadow-acne"/>.
         /// Default is 0.001.
         /// </summary>
-        double ShadowBias { get; set; } = 0.001;
+        public double ShadowBias { get; set; } = 0.001;
+
+        /// <summary>
+        /// Number of rays to bounce on each ray intersection.
+        /// Only used if <see cref="PathTrace"/> is true.
+        /// </summary>
+        public int BounceRays { get; set; } = 1;
+
+        /// <summary>
+        /// Number of bounces to calculate for each ray.
+        /// Only used if <see cref="PathTrace"/> is true.
+        /// </summary>
+        public int Bounces { get; set; } = 1;
+
+        /// <summary>
+        /// Whether to use path tracing.
+        /// </summary>
+        public bool PathTrace { get; set; } = false;
 
         /// ---------------------------------
         ///         End Render Settings
@@ -222,7 +239,7 @@ namespace RenderSharp.Render3d
                 for (int x = 0; x < Width; x++)
                 {
                     double depth;
-                    output[x, y] = RenderPixel(scene, x, y, out depth);
+                    output[x, y] = PathTrace ? RenderPixelPathTrace(scene, x, y, out depth) : RenderPixel(scene, x, y, out depth);
                     maxDepth = depth != double.PositiveInfinity ? Math.Max(maxDepth, depth) : maxDepth;
                     depthBuffer[x, y] = depth;
                 }
@@ -314,6 +331,89 @@ namespace RenderSharp.Render3d
             }
 
             return ScreenSpaceShaderPass(scene, screenPos, outColor);
+        }
+
+        private Sample RecursivePathTrace(in Ray ray, SceneInstance scene, int bouncesLeft)
+        {
+            if (bouncesLeft == 0)
+            {
+                return new Sample();
+            }
+
+            Sample closestSample = new();
+            foreach (Actor actor in scene.Actors.Values)
+            {
+                Sample newSample = actor.Sample(ray, scene.Time);
+                closestSample = newSample.hitDistance < closestSample.hitDistance ? newSample : closestSample;
+            }
+
+            if (closestSample.hitDistance == double.PositiveInfinity)
+            {
+                closestSample.color = scene.SkyboxTexture[GetSkyboxUV(ray.direction)];
+                return closestSample;
+            }
+
+            FRGB lightColor = new();
+            int lights = 0;
+            double sqrt3 = Math.Sqrt(3);
+            foreach (PointLight light in scene.Lights.Values)
+            {
+                double lightDist;
+                Ray bounceRay = new(closestSample.hitPoint, (light.Position - closestSample.hitPoint).Norm(out lightDist));
+                if (!scene.Actors.Values.Any(a =>
+                    {
+                        Sample bounceSample = a.Sample(bounceRay, scene.Time);
+                        return bounceSample.hitDistance > ShadowBias && bounceSample.hitDistance < lightDist;
+                    }))
+                {
+                    lightColor += new FRGB(1 / sqrt3, 1 / sqrt3, 1 / sqrt3) * (closestSample.hitNormal.Dot(bounceRay.direction) / 2 + 0.5);
+                    lights++;
+                }
+            }
+
+            lightColor /= lights;
+
+            FRGB bounceColor = new();
+            for (int i = 0; i < BounceRays; i++)
+            {
+                Ray bounceRay = new(closestSample.hitPoint, closestSample.hitNormal);
+                Sample bounceSample = RecursivePathTrace(bounceRay, scene, bouncesLeft - 1);
+                bounceColor += (FRGB)bounceSample.color;
+            }
+
+            FRGB emitted = (lightColor + bounceColor) / (lights + BounceRays);
+
+            FRGB asFRGB = (FRGB)closestSample.color;
+            
+            closestSample.color = new FRGBA(
+                asFRGB.R + emitted.R,
+                asFRGB.G + emitted.G,
+                asFRGB.B + emitted.B,
+                closestSample.color.A);
+
+            double maxChannel = Math.Max(closestSample.color.R, Math.Max(closestSample.color.G, closestSample.color.B));
+
+            if (maxChannel > 1)
+            {
+                closestSample.color = new FRGBA(
+                   closestSample.color.R / maxChannel,
+                   closestSample.color.G / maxChannel,
+                   closestSample.color.B / maxChannel,
+                   closestSample.color.A);
+            }
+
+
+            return closestSample;
+        }
+
+        private RGBA RenderPixelPathTrace(SceneInstance scene, int x, int y, out double depth)
+        {
+            Vec2 screenPos = new(x, y);
+            CoordShader(screenPos, out screenPos, Resolution, scene.Time);
+            Ray ray = Transforms.ScreenToRay(screenPos, Resolution, scene.Camera);
+            Sample sample = RecursivePathTrace(ray, scene, Bounces);
+            depth = sample.hitDistance;
+            return ScreenSpaceShaderPass(scene, screenPos, sample.color);
         }
 
         private FVec2 GetSkyboxUV(FVec3 direction)
