@@ -59,13 +59,13 @@ namespace RenderSharp.Render3d
         /// Number of rays to bounce on each ray intersection.
         /// Only used if <see cref="PathTrace"/> is true.
         /// </summary>
-        public int BounceRays { get; set; } = 1;
+        public int BounceRays { get; set; } = 4;
 
         /// <summary>
         /// Number of bounces to calculate for each ray.
         /// Only used if <see cref="PathTrace"/> is true.
         /// </summary>
-        public int Bounces { get; set; } = 1;
+        public int Bounces { get; set; } = 2;
 
         /// <summary>
         /// Whether to use path tracing.
@@ -333,9 +333,22 @@ namespace RenderSharp.Render3d
             return ScreenSpaceShaderPass(scene, screenPos, outColor);
         }
 
+        private FVec3 RandomBounceNormal(FVec3 normal)
+        {
+            double phi = Math.Atan2(normal.X, normal.Z);
+            double theta = Math.Asin(normal.Y);
+            Random random = new();
+            phi += random.NextDouble() * Math.PI / 4 - Math.PI / 8;
+            theta += random.NextDouble() * Math.PI / 4 - Math.PI / 8;
+            return new FVec3(
+                Math.Sin(theta) * Math.Cos(phi),
+                Math.Cos(theta),
+                Math.Sin(theta) * Math.Sin(phi));
+        }
+
         private Sample RecursivePathTrace(in Ray ray, SceneInstance scene, int bouncesLeft)
         {
-            if (bouncesLeft == 0)
+            if (bouncesLeft < 0)
             {
                 return new Sample();
             }
@@ -355,7 +368,6 @@ namespace RenderSharp.Render3d
 
             FRGB lightColor = new();
             int lights = 0;
-            double sqrt3 = Math.Sqrt(3);
             foreach (PointLight light in scene.Lights.Values)
             {
                 double lightDist;
@@ -366,19 +378,17 @@ namespace RenderSharp.Render3d
                         return bounceSample.hitDistance > ShadowBias && bounceSample.hitDistance < lightDist;
                     }))
                 {
-                    lightColor += new FRGB(1 / sqrt3, 1 / sqrt3, 1 / sqrt3) * (closestSample.hitNormal.Dot(bounceRay.direction) / 2 + 0.5);
+                    lightColor += new FRGB(1, 1, 1) * Math.Max(0, closestSample.hitNormal.Dot(bounceRay.direction)) / (lightDist * lightDist);
                     lights++;
                 }
-            }
-
-            lightColor /= lights;
+            } 
 
             FRGB bounceColor = new();
             for (int i = 0; i < BounceRays; i++)
             {
-                Ray bounceRay = new(closestSample.hitPoint, closestSample.hitNormal);
+                Ray bounceRay = new(closestSample.hitPoint + closestSample.hitNormal * ShadowBias, RandomBounceNormal(closestSample.hitNormal));
                 Sample bounceSample = RecursivePathTrace(bounceRay, scene, bouncesLeft - 1);
-                bounceColor += (FRGB)bounceSample.color;
+                bounceColor += (FRGB)bounceSample.color / (bounceSample.hitDistance != double.PositiveInfinity ? bounceSample.hitDistance * bounceSample.hitDistance : 1);
             }
 
             FRGB emitted = (lightColor + bounceColor) / (lights + BounceRays);
@@ -386,9 +396,9 @@ namespace RenderSharp.Render3d
             FRGB asFRGB = (FRGB)closestSample.color;
             
             closestSample.color = new FRGBA(
-                asFRGB.R + emitted.R,
-                asFRGB.G + emitted.G,
-                asFRGB.B + emitted.B,
+                asFRGB.R * emitted.R,
+                asFRGB.G * emitted.G,
+                asFRGB.B * emitted.B,
                 closestSample.color.A);
 
             double maxChannel = Math.Max(closestSample.color.R, Math.Max(closestSample.color.G, closestSample.color.B));
