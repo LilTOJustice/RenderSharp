@@ -26,7 +26,7 @@
 
   <ItemGroup>
     <PackageReference Include="LilTOJustice.MathSharp" Version="1.2.3" />
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.7.0" />
     <PackageReference Include="Xabe.FFmpeg.Downloader" Version="5.2.6" />
   </ItemGroup>
 
